@@ -17,45 +17,7 @@ body {
     display: flex;
     flex-direction: column;
     color: #374151;
-}
-
-header {
-    padding: 20px 5%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    z-index: 10;
-}
-
-.back-btn {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 25px;
-}
-
-.nav-login-btn {
-    background-color: #D996AA;
-    color: white;
-    padding: 8px 25px;
-    border-radius: 12px;
-    font-weight: bold;
-    border: none;
-    font-size: 14px;
-}
-
-.nav-signup-link {
-    font-weight: bold;
-    text-decoration: none;
-    color: black;
-    font-size: 14px;
+    padding-top: 110px;
 }
 
 main {
@@ -64,6 +26,43 @@ main {
     align-items: center;
     justify-content: center;
     padding: 20px;
+}
+
+.custom-navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 900;
+
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+    padding: 6px 18px;
+}
+
+.custom-navbar i {
+    font-size: 14px;
+}
+
+.custom-navbar span,
+.signUp-btn {
+    font-size: 16px;
+}
+
+.login-btn {
+    background-color: #d48a96 !important;
+    color: #fff !important;
+    border-radius: 10px;
+    padding: 5px 14px;
+    border: none;
+    font-size: 14px;
+}
+
+.navbar .d-flex {
+    gap: 10px;
 }
 
 .content-wrapper {

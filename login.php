@@ -30,18 +30,25 @@ if (isset($_POST['btnLogin'])) {
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="min-vh-100 d-flex flex-column">
 
-    <header class="header-container">
-        <button class="back-btn"><i class="fa-solid fa-arrow-left"></i></button>
-        <div class="header-right">
-            <span class="lang-selector"><i class="fa-solid fa-globe me-2"></i> EN</span>
-            <button class="nav-login-btn">Login</button>
-            <a href="register.php" class="nav-signup-link">Sign Up</a>
+    <nav class="custom-navbar navbar navbar-expand-lg">
+        <button class="btn p-1" onclick="history.back()">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+
+        <div class="ms-auto d-flex align-items-center nav-right">
+            <div class="d-flex align-items-center gap-1 lang">
+                <i class="fa-solid fa-globe"></i>
+                <span>EN</span>
+            </div>
+            <button class="btn login-btn">Login</button>
+            <a href="register.php" class="btn signUp-btn">Sign Up</a>
+
         </div>
-    </header>
+    </nav>
 
     <main class="main-content">
         <div class="content-wrapper">
@@ -55,7 +62,7 @@ if (isset($_POST['btnLogin'])) {
 
                     <div class="input-wrapper">
                         <input type="password" name="password" id="password" placeholder="Password" class="input-field" required>
-                        <i class="fa-regular fa-eye toggle-password" id="togglePassword"></i>
+                        <i class="fa-regular fa-eye-slash toggle-password" id="togglePassword"></i>
                     </div>
 
                     <div class="forget-pwd-container">
