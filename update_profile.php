@@ -1,19 +1,22 @@
 <?php
 require_once("db.php");
+session_start();
 
 if (!isset($_SESSION["user_id"])) {
     header("Location: login.php");
     exit();
 }
 
-$id = $_SESSION["user_id"];
-$display_name = $_POST["display_name"];
+$display_name = trim($_POST["display_name"] ?? "");
+
+if ($display_name === "") {
+    echo "Display name cannot be empty";
+    exit();
+}
 
 $stmt = $conn->prepare("UPDATE users SET display_name = ? WHERE id = ?");
-$stmt->bind_param("si", $display_name, $id);
+$stmt->bind_param("si", $display_name, $_SESSION["user_id"]);
+$stmt->execute();
 
-if ($stmt->execute()) {
-    header("Location: profile.php");
-} else {
-    echo "Lỗi cập nhật!";
-}
+header("Location: profile.php");
+exit();
