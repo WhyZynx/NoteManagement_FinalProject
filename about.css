@@ -1,0 +1,361 @@
+.logo {
+    font-family: 'Dancing Script', cursive;
+    font-size: 30px;
+    font-weight: 700;
+    color: #374151;
+    cursor: pointer;
+}
+
+.hero-section {
+    display: flex;
+    align-items: center; 
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 120px 8% 100px; 
+    gap: 60px;
+    margin-top: -140px;
+}
+
+.hero-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; 
+    padding-bottom: 80px;
+}
+
+.hero-title {
+    font-size: clamp(50px, 6vw, 80px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 25px;
+    color: #000;
+}
+
+.hero-subtitle {
+    font-size: 20px;
+    line-height: 1.6;
+    color: #6b7280;
+    margin-bottom: 50px; 
+    max-width: 480px;
+}
+
+.btn-start {
+    background-color: #D996AA;
+    color: white !important;
+    text-decoration: none !important;
+    padding: 15px 45px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 18px;
+    display: inline-block;
+    width: fit-content;
+    transition: 0.3s;
+}
+
+.btn-start:hover {
+    background-color: #c47d93;
+    transform: translateY(-2px);
+    text-decoration: none;
+    box-shadow: 0 5px 15px rgba(217, 150, 170, 0.4);
+}
+
+.hero-image {
+    flex: 1.3;
+    display: flex;
+    justify-content: center;
+}
+
+.hero-image img {
+    width: 100%;
+    height: auto;
+    max-width: 600px;
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        flex-direction: column;
+        text-align: center;
+        padding: 80px 0 40px; 
+        gap: 40px;
+    }
+
+    .hero-image {
+        order: 1;
+        width: 80%;
+    }
+
+    .hero-content {
+        order: 2;
+        align-items: center;
+    }
+
+    .hero-subtitle {
+        margin-bottom: 30px;
+        font-size: 20px;
+    }
+
+    .hero-title {
+        font-size: 40px;
+    }
+}
+
+.features-intro {
+    width: 100%;
+    background-color: white;
+    padding: 80px 0;
+}
+
+.features-intro .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.features-intro .section-header {
+    margin: 0 0 80px;
+}
+.section-header h2 {
+    font-size: 36px;
+    font-weight: 700;
+    text-align: center;
+    padding: 0 20px;
+}
+
+.section-header p {
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+
+    .features-intro .section-header {
+        margin: 0 0 40px;
+    }
+
+    .section-header h2 {
+        font-size: 24px;
+    }
+    
+    .section-header p {
+        font-size: 14px; 
+        padding: 0 15px;
+    }
+}
+
+.features-intro {
+    width: 100%;
+    background-color: white;
+    padding: 80px 0;
+}
+
+.features-intro .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-header {
+    margin: 20px 0 80px;
+}
+
+.section-header h2 {
+    font-size: 36px;
+    font-weight: 700;
+    text-align: center;
+    padding: 0 20px;
+}
+
+.section-header p {
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .section-header h2 {
+        font-size: 24px;
+    }
+    
+    .section-header p {
+        font-size: 14px; 
+        padding: 0 15px;
+    }
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 120px;
+    margin-bottom: 100px;
+    padding: 0 20px;
+}
+
+.feature-text {
+    flex: 1;
+    max-width: 380px;
+}
+
+.feature-text h3 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.feature-text p {
+    font-size: 20px;
+    line-height: 1.5;
+    color: #6b7280;
+}
+
+.image-box {
+    flex: 0 1 450px;
+    height: 280px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-box img {
+    width: 75%;
+    height: auto;
+}
+
+.cream_img { background: #F7EFE6; }
+.mint_img{ background: #EEF7F3; }
+.blue_img { background: #EEF5F9; }
+
+@media (max-width: 772px) { 
+    .features-intro { 
+        padding: 40px 0; 
+    }
+
+    .features-intro .container {
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    .feature-item { 
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 15px;
+        padding: 20px;
+        border-radius: 30px;
+        margin-bottom: 30px;
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .feature-item.left-pop-out {
+        flex-direction: row;
+    }
+
+    .image-box { 
+        flex: 0 0 35%;
+        height: auto;
+        background: transparent;
+        padding: 0;
+    }
+
+    .image-box img {
+        width: 75%;
+        height: auto;
+    }
+
+    .feature-text { 
+        flex: 1;
+        text-align: left;
+        max-width: 100%;
+    }
+
+    .feature-text h3 { 
+        font-size: 18px; 
+        margin-bottom: 4px;
+    }
+
+    .feature-text p { 
+        font-size: 13px; 
+        line-height: 1.4;
+        margin: 0;
+    }
+
+    .feature-item.box-cream { background: #F7EFE6; }
+    .feature-item.box-mint { background: #EEF7F3; }
+    .feature-item.box-blue { background: #EEF5F9; }
+}
+
+.notes-features {
+    padding: 10px 0 100px;
+    background-color: #ffffff;
+    text-align: center;
+}
+
+.notes-features .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-title {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 60px;
+    display: inline-block;
+    position: relative;
+    padding-bottom: 5px;
+}
+
+.features-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.feature-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.icon-box {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-box img {
+    width: 100%;
+    height: auto;
+}
+
+.feature-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 15px;
+}
+
+.feature-card p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    text-align: left;
+}
+
+@media (max-width: 768px) {
+    .features-grid {
+        flex-direction: column;
+        gap: 50px;
+    }
+    
+    .feature-card p {
+        text-align: center; 
+    }
+}

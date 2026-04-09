@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="about.css">
 </head>
 <body>
 
@@ -48,36 +49,78 @@
             </div>
         </div>
 
-        <div class="feature-item">
+        <div class="feature-item box-cream">
             <div class="feature-text">
                 <h3>Deep Focus</h3>
                 <p>Enjoy a distraction-free space designed to help you think clearly. Our minimalist interface stays out of your way so your creativity can flow.</p>
             </div>
-            <div class="image-box box-cream">
-                <img src="web_img/writing.png" alt="Focus">
+            <div class="image-box cream_img">
+                <img src="web_img/writing.png">
             </div>
         </div>
 
-        <div class="feature-item reverse">
-            <div class="image-box box-mint">
-                <img src="web_img/Mobile note list-amico.png" alt="Seamless">
+        <div class="feature-item left-pop-out box-mint">
+            <div class="image-box mint_img">
+                <img src="web_img/Mobile note list-amico.png">
             </div>
-            <div class="feature-text">
+            <div class="feature-text" style="text-align: right;">
                 <h3>Seamless Flow</h3>
                 <p>Your notes follow you everywhere. Whether you're on your phone or laptop, your latest thoughts are always synced and ready when you are.</p>
             </div>
         </div>
 
-        <div class="feature-item">
+        <div class="feature-item box-blue">
             <div class="feature-text">
                 <h3>Total Privacy</h3>
                 <p>Rest easy knowing your personal ideas are encrypted and locked. Your data is yours alone, kept safe with industry-standard security.</p>
             </div>
-            <div class="image-box box-blue">
-                <img src="web_img/GDPR-amico.png" alt="Privacy">
+            <div class="image-box blue_img">
+                <img src="web_img/GDPR-amico.png">
             </div>
         </div>
     </section>
-</main>
+
+    <section class="notes-features">
+        <div class="container">
+            <h2 class="section-title">Discover NotesFlow features</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="icon-box">
+                        <img src="web_img/idea.png" alt="Organize">
+                    </div>
+                    <h3>Organize your ideas</h3>
+                    <p>Offers flexible Grid/List views, supports pinning important notes, and automatically sorts them by latest activity for a clear, organized layout.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="icon-box">
+                        <img src="web_img/ease.png" alt="Manage">
+                    </div>
+                    <h3>Manage with Ease</h3>
+                    <p>Enables seamless note-taking with auto-save, flexible labeling, and instant live search for quick and efficient access.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="icon-box">
+                        <img src="web_img/key.png" alt="Secure">
+                    </div>
+                    <h3>Secure & Collaborate</h3>
+                    <p>Ensures note security with password protection, supports sharing via email with access permissions, and enables real-time collaboration.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer-bg">
+        <div class="container">
+            <h5>Support</h5>
+            <ul class="list-unstyled">
+                <li><a href="#">Help</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </footer>
+
 </body>
 </html>
