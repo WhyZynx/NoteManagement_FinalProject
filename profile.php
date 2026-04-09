@@ -1,5 +1,6 @@
 <?php
 require_once("db.php");
+session_start();
 
 if (!isset($_SESSION["user_id"])) {
     header("Location: login.php");
@@ -8,7 +9,7 @@ if (!isset($_SESSION["user_id"])) {
 
 $id = $_SESSION["user_id"];
 
-$stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
+$stmt = $conn->prepare("SELECT display_name, email FROM users WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
@@ -17,7 +18,7 @@ $user = $stmt->get_result()->fetch_assoc();
 <h2>PROFILE</h2>
 
 <form action="update_profile.php" method="POST">
-    Tên hiển thị:
+    Display Name:
     <input type="text" name="display_name" value="<?= $user['display_name'] ?>" required>
     <br><br>
 
@@ -25,7 +26,7 @@ $user = $stmt->get_result()->fetch_assoc();
     <b><?= $user['email'] ?></b>
     <br><br>
 
-    <button type="submit">Cập nhật</button>
+    <button type="submit">Update Profile</button>
 </form>
 
 <br>
