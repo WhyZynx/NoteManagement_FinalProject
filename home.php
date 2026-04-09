@@ -47,6 +47,36 @@
                 <p>Capture everything that is, was, or could be important and access it anytime, anywhere.</p>
             </div>
         </div>
+
+        <div class="feature-item">
+            <div class="feature-text">
+                <h3>Deep Focus</h3>
+                <p>Enjoy a distraction-free space designed to help you think clearly. Our minimalist interface stays out of your way so your creativity can flow.</p>
+            </div>
+            <div class="image-box box-cream">
+                <img src="web_img/writing.png" alt="Focus">
+            </div>
+        </div>
+
+        <div class="feature-item reverse">
+            <div class="image-box box-mint">
+                <img src="web_img/Mobile note list-amico.png" alt="Seamless">
+            </div>
+            <div class="feature-text">
+                <h3>Seamless Flow</h3>
+                <p>Your notes follow you everywhere. Whether you're on your phone or laptop, your latest thoughts are always synced and ready when you are.</p>
+            </div>
+        </div>
+
+        <div class="feature-item">
+            <div class="feature-text">
+                <h3>Total Privacy</h3>
+                <p>Rest easy knowing your personal ideas are encrypted and locked. Your data is yours alone, kept safe with industry-standard security.</p>
+            </div>
+            <div class="image-box box-blue">
+                <img src="web_img/GDPR-amico.png" alt="Privacy">
+            </div>
+        </div>
     </section>
 </main>
 </body>
