@@ -1,23 +1,29 @@
 <?php
-include 'db.php';
+include __DIR__ . '/../db.php';
+
+$error = "";
 
 if (isset($_POST['btnLogin'])) {
-    $email = $_POST['email'];
-    $pass = $_POST['password'];
+    $email = trim($_POST['email']);
+    $pass = trim($_POST['password']);
 
-    $sql = "SELECT * FROM users WHERE email = '$email'";
-    $result = mysqli_query($conn, $sql);
-    $user = mysqli_fetch_assoc($result);
+    $sql = "SELECT * FROM users WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
 
     if ($user && password_verify($pass, $user['password_hash'])) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_name'] = $user['display_name'];
         $_SESSION['is_verified'] = $user['is_verified'];
-        
-        header("Location: index.php");
+
+        header("Location: ../index.php");
         exit();
     } else {
-        $error = "Email hoặc mật khẩu không chính xác!";
+        $error = "Email or password is incorrect!";
     }
 }
 ?>
@@ -30,7 +36,7 @@ if (isset($_POST['btnLogin'])) {
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../Assets/css/style.css">
 </head>
 <body class="min-vh-100 d-flex flex-column">
 
@@ -57,7 +63,7 @@ if (isset($_POST['btnLogin'])) {
 
                 <form action="login.php" method="POST" class="login-form">
                     <div class="input-wrapper">
-                        <input type="text" name="email" placeholder="Email address or Username" class="input-field" required>
+                        <input type="text" name="email" placeholder="Email address" class="input-field" required>
                     </div>
 
                     <div class="input-wrapper">
@@ -66,12 +72,17 @@ if (isset($_POST['btnLogin'])) {
                     </div>
 
                     <div class="forget-pwd-container">
-                        <a href="#" class="forget-link">Forget Password?</a>
+                        <a href="forgot_password.php" class="forget-link">Forgot Password?</a>
                     </div>
 
                     <button type="submit" name="btnLogin" class="btn-submit-login">
                         Login
                     </button>
+                    <?php if (!empty($error)) : ?>
+                        <p style="color:red; margin-top:10px;">
+                            <?= $error ?>
+                        </p>
+                    <?php endif; ?>
 
                     <p class="signup-prompt">
                         Don't have an account? <a href="register.php">Sign up</a>
@@ -80,7 +91,7 @@ if (isset($_POST['btnLogin'])) {
             </div>
 
             <div class="illustration-box">
-                <img src="web_img/rose.png" alt="Rose Illustration">
+                <img src="../Assets/images/web_img/rose.png" alt="Rose Illustration">
             </div>
         </div>
     </main>

@@ -1,14 +1,14 @@
 <?php
 session_start();
+
 $host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "note_management"; 
+$dbname = "note_management";
+$username = "root";
+$password = "";
 
-$conn = mysqli_connect($host, $user, $pass, $dbname);
+$conn = new mysqli($host, $username, $password, $dbname);
 
-if (!$conn) {
-    die("Kết nối thất bại: " . mysqli_connect_error());
+if ($conn->connect_error) {
+    die("Database connection failed");
 }
-mysqli_set_charset($conn , "utf8");
 ?>
