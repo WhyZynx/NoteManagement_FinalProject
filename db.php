@@ -1,14 +1,11 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-$host = "localhost";
-$dbname = "note_management";
-$username = "root";
-$password = "";
-
-$conn = new mysqli($host, $username, $password, $dbname);
+$conn = new mysqli("localhost", "root", "", "note_management");
 
 if ($conn->connect_error) {
-    die("Database connection failed");
+    die("Connection failed: " . $conn->connect_error);
 }
 ?>

@@ -1,0 +1,48 @@
+document.addEventListener("DOMContentLoaded", function () {
+    const loginForm = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const toggle = document.getElementById("togglePassword");
+
+    loginForm.addEventListener('submit', function (e) {
+        let isValid = true;
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(emailInput.value)) {
+            showError(emailInput, 'emailError', 'Please enter your email address in the correct format');
+            isValid = false;
+        } else {
+            hideError(emailInput, 'emailError');
+        }
+
+        if (passwordInput.value.trim() === "") {
+            showError(passwordInput, 'passwordError', 'The password cannot be left blank');
+            isValid = false;
+        } else {
+            hideError(passwordInput, 'passwordError');
+        }
+
+        if (!isValid) e.preventDefault();
+    });
+
+    function showError(input, spanId, message) {
+        input.classList.add('is-invalid');
+        const span = document.getElementById(spanId);
+        span.style.display = 'block';
+        span.innerText = message;
+    }
+
+    function hideError(input, spanId) {
+        input.classList.remove('is-invalid');
+        const span = document.getElementById(spanId);
+        span.style.display = 'none';
+    }
+
+    toggle.addEventListener("click", function () {
+        const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+        passwordInput.setAttribute("type", type);
+        this.classList.toggle("fa-eye");
+        this.classList.toggle("fa-eye-slash");
+    });
+});

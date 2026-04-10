@@ -1,9 +1,12 @@
 <?php
+
 include __DIR__ . '/../db.php';
+include __DIR__ . '/../Utils/email.php';
 
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
     $email = trim($_POST["email"]);
     $display_name = trim($_POST["display_name"]);
     $password = trim($_POST["password"]);
@@ -12,24 +15,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($password !== $confirm_password) {
         $error = "Passwords do not match";
     } else {
+
         $password_hash = password_hash($password, PASSWORD_BCRYPT);
         $verify_token = bin2hex(random_bytes(32));
 
-        $sql = "INSERT INTO users(email, display_name, password_hash, verify_token)
-                VALUES (?, ?, ?, ?)";
+        $check_sql = "SELECT id, display_name, is_verified FROM users WHERE email = ?";
+        $check_stmt = $conn->prepare($check_sql);
+        $check_stmt->bind_param("s", $email);
+        $check_stmt->execute();
+        $result = $check_stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+
+            $_SESSION["user_id"] = $user["id"];
+            $_SESSION["user_name"] = $user["display_name"];
+            $_SESSION["is_verified"] = $user["is_verified"];
+
+            if ($user["is_verified"] == 0) {
+                sendVerificationEmail($email, $verify_token);
+            }
+
+            header("Location: ../index.php");
+            exit();
+        }
+
+        $sql = "INSERT INTO users (email, display_name, password_hash, verify_token, is_verified)
+                VALUES (?, ?, ?, ?, 0)";
 
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ssss", $email, $display_name, $password_hash, $verify_token);
 
         if ($stmt->execute()) {
-            $_SESSION["user_id"] = $conn->insert_id;
-            $_SESSION["display_name"] = $display_name;
+
+            $_SESSION["user_id"] = $stmt->insert_id;
+            $_SESSION["user_name"] = $display_name;
             $_SESSION["is_verified"] = 0;
+
+            sendVerificationEmail($email, $verify_token);
 
             header("Location: ../index.php");
             exit();
+
         } else {
-            $error = "Email already exists";
+            $error = "Registration failed";
         }
     }
 }
@@ -38,13 +67,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="../Assets/css/style.css">
 </head>
 <body>
 
-<nav class="custom-navbar">
-    <div class="logo">NotesFlow</div>
-</nav>
+    <nav class="custom-navbar navbar navbar-expand-lg">
+    
+        <button class="btn p-1" onclick="history.back()">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+
+        <div class="ms-auto d-flex align-items-center nav-right">
+            
+            <div class="d-flex align-items-center gap-1 lang">
+                <i class="fa-solid fa-globe"></i>
+                <span>EN</span>
+            </div>
+
+            <a href="login.php" class="btn signUp-btn">Login</a>
+            <button class="btn login-btn">Sign Up</button>
+
+        </div>
+    </nav>
 
     <main>
         <div class="content-wrapper">
