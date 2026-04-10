@@ -18,7 +18,7 @@ body {
     display: flex;
     flex-direction: column;
     color: #374151;
-    padding-top: 110px;
+    padding-top: 70px;
 }
 
 main {
@@ -106,12 +106,12 @@ main {
 .input-wrapper {
     position: relative;
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 22px;
 }
 
 .input-field {
     width: 100%;
-    padding: 12px 22px;
+    padding: 12px 45px 12px 22px;
     border: 2px solid #D996AA;
     border-radius: 50px;
     outline: none;
@@ -127,6 +127,19 @@ main {
     cursor: pointer;
     color: #9ca3af;
     font-size: 18px;
+}
+
+.error-message {
+    display: none;
+    color: #dc3545;
+    font-size: 11px;
+    margin-top: 6px;
+    margin-left: 8px;
+    font-weight: 600;
+}
+
+.error-message.show {
+    display: block;
 }
 
 .forget-pwd-container {

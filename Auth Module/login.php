@@ -1,4 +1,5 @@
 <?php
+session_start();
 include __DIR__ . '/../db.php';
 
 $error = "";
@@ -61,15 +62,22 @@ if (isset($_POST['btnLogin'])) {
             <div class="login-card">
                 <h1 class="card-title">Login</h1>
 
-                <form action="login.php" method="POST" class="login-form">
+                <form action="login.php" method="POST" class="login-form" id="loginForm">
                     <div class="input-wrapper">
-                        <input type="text" name="email" placeholder="Email address" class="input-field" required>
+                        <input type="text" name="email" id="email" placeholder="Email address or Username" class="input-field">
+                        <span class="error-message" id="emailError"></span>
                     </div>
 
                     <div class="input-wrapper">
-                        <input type="password" name="password" id="password" placeholder="Password" class="input-field" required>
+                        <input type="password" name="password" id="password" placeholder="Password" class="input-field">
                         <i class="fa-regular fa-eye-slash toggle-password" id="togglePassword"></i>
                     </div>
+                    
+                    <span class="error-message <?php if (isset($error)) echo 'show'; ?>" id="passwordError">
+                        <?php 
+                            if (isset($error)) echo $error;
+                        ?>
+                    </span>
 
                     <div class="forget-pwd-container">
                         <a href="forgot_password.php" class="forget-link">Forgot Password?</a>
@@ -107,15 +115,54 @@ if (isset($_POST['btnLogin'])) {
     </footer>
 
     <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
         const toggle = document.getElementById("togglePassword");
-        const passwordField = document.getElementById("password");
+
+        loginForm.addEventListener('submit', function (e) {
+            let isValid = true;
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!emailRegex.test(emailInput.value)) {
+                showError(emailInput, 'emailError', 'Please enter your email address in the correct format');
+                isValid = false;
+            } else {
+                hideError(emailInput, 'emailError');
+            }
+
+            if (passwordInput.value.trim() === "") {
+                showError(passwordInput, 'passwordError', 'The password cannot be left blank');
+                isValid = false;
+            } else {
+                hideError(passwordInput, 'passwordError');
+            }
+
+            if (!isValid) e.preventDefault();
+        });
+
+        function showError(input, spanId, message) {
+            input.classList.add('is-invalid');
+            const span = document.getElementById(spanId);
+            span.style.display = 'block';
+            span.innerText = message;
+        }
+
+        function hideError(input, spanId) {
+            input.classList.remove('is-invalid');
+            const span = document.getElementById(spanId);
+            span.style.display = 'none';
+        }
 
         toggle.addEventListener("click", function () {
-            const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
-            passwordField.setAttribute("type", type);
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
             this.classList.toggle("fa-eye");
             this.classList.toggle("fa-eye-slash");
         });
+    });
     </script>
 </body>
 </html>
