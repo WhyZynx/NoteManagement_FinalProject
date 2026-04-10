@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'db.php';
 
 if (isset($_POST['btnRegister'])) {
@@ -8,7 +9,7 @@ if (isset($_POST['btnRegister'])) {
     $repass = $_POST['re_password'];
 
     if ($pass !== $repass) {
-        $error = "Mật khẩu nhập lại không khớp!";
+        $error = "The password entered again doesn't match!";
     } else {
         $hashed_pass = password_hash($pass, PASSWORD_BCRYPT);
         
@@ -23,7 +24,7 @@ if (isset($_POST['btnRegister'])) {
             header("Location: index.php");
             exit();
         } else {
-            $error = "Email đã tồn tại hoặc lỗi hệ thống!";
+            $error = "The email address already exists, or there's a system error!";
         }
     }
 }
@@ -65,26 +66,28 @@ if (isset($_POST['btnRegister'])) {
             <div class="login-card">
                 <h2 class="card-title">Sign Up</h2>
                 
-                <form method="POST" class="login-form">
-                    <?php if(isset($error)) echo "<p style='color:red; font-size:12px; margin-bottom:10px;'>$error</p>"; ?>
-                    
+                <form method="POST" class="login-form" id="registerForm">
                     <div class="input-wrapper">
-                        <input type="email" name="email" class="input-field" placeholder="Email address or Username" required>
+                        <input type="email" name="email" id="email" class="input-field" placeholder="Email address">
+                        <span class="error-message" id="emailError"></span>
                     </div>
 
                     <div class="input-wrapper">
-                        <input type="text" name="display_name" class="input-field" placeholder="Display Name" required>
+                        <input type="text" name="display_name" id="name" class="input-field" placeholder="Display Name">
+                        <span class="error-message" id="nameError"></span>
                     </div>
 
                     <div class="input-wrapper">
-                        <input type="password" name="password" class="input-field password-field" name="re_password" class="input-field" placeholder="Password" required>
+                        <input type="password" name="password" id="password" class="input-field" placeholder="Password">
                         <i class="fa-regular fa-eye-slash toggle-password"></i>
                     </div>
+                    <span class="error-message" id="passwordError"></span>
 
                     <div class="input-wrapper">
-                        <input type="password" name="re_password" class="input-field password-field" name="re_password" class="input-field" placeholder="Confirm Password" required>
+                        <input type="password" name="re_password" id="repassword" class="input-field" placeholder="Confirm Password">
                         <i class="fa-regular fa-eye-slash toggle-password"></i>
                     </div>
+                    <span class="error-message" id="repasswordError"></span>
 
                     <button type="submit" name="btnRegister" class="btn-submit-login">Sign Up</button>
                 </form>
@@ -108,6 +111,56 @@ if (isset($_POST['btnRegister'])) {
     </footer>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("registerForm");
+
+            const email = document.getElementById("email");
+            const name = document.getElementById("name");
+            const password = document.getElementById("password");
+            const repassword = document.getElementById("repassword");
+
+            form.addEventListener("submit", function (e) {
+                let isValid = true;
+
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (!emailRegex.test(email.value)) {
+                    showError(email, "emailError", "Invalid email format");
+                    isValid = false;
+                } else hideError(email, "emailError");
+
+                if (name.value.trim() === "") {
+                    showError(name, "nameError", "Name cannot be empty");
+                    isValid = false;
+                } else hideError(name, "nameError");
+
+                if (password.value.trim() === "") {
+                    showError(password, "passwordError", "Password cannot be empty");
+                    isValid = false;
+                } else hideError(password, "passwordError");
+
+                if (repassword.value !== password.value || repassword.value === "") {
+                    showError(repassword, "repasswordError", "Passwords do not match");
+                    isValid = false;
+                } else hideError(repassword, "repasswordError");
+
+                if (!isValid) e.preventDefault();
+            });
+
+            function showError(input, id, message) {
+                input.classList.add("is-invalid");
+                const span = document.getElementById(id);
+                span.innerText = message;
+                span.classList.add("show");
+            }
+
+            function hideError(input, id) {
+                input.classList.remove("is-invalid");
+                const span = document.getElementById(id);
+                span.classList.remove("show");
+            }
+        });
+
         const toggles = document.querySelectorAll(".toggle-password");
         toggles.forEach(toggle => {
             toggle.addEventListener("click", function () {
@@ -120,7 +173,8 @@ if (isset($_POST['btnRegister'])) {
                 this.classList.toggle("fa-eye-slash");
             });
         });
-        </script>
+
+    </script>
 
 </body>
 </html>
