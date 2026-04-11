@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const loginForm = document.getElementById('loginForm');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
-    const toggle = document.getElementById("togglePassword");
+    const toggle = document.querySelector(".toggle-password");
 
     loginForm.addEventListener('submit', function (e) {
         let isValid = true;

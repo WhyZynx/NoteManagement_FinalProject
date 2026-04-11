@@ -358,4 +358,26 @@
     .feature-card p {
         text-align: center; 
     }
+
+    .section-title {
+        font-size: 26px;
+        font-weight: 800;
+        margin-bottom: 35px;
+    }
+
+    .feature-card h3 {
+        font-size: 20px;
+        text-align:center;
+    }
+
+    .feature-card p {
+        font-size: 14px;
+        text-align:center;
+    }
+
+    .notes-features .container {
+        max-width: 380px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
 }
