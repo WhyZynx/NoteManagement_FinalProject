@@ -5,29 +5,33 @@ include __DIR__ . '/../db.php';
 $error = "";
 
 if (isset($_POST['btnLogin'])) {
-    $email = trim($_POST['email']);
+    $email = trim(strtolower($_POST['email']));
     $pass = trim($_POST['password']);
 
-    $sql = "SELECT * FROM users WHERE email = ?";
-    $stmt = $conn->prepare($sql);
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
-
     $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
 
-    if ($user && password_verify($pass, $user['password_hash'])) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_name'] = $user['display_name'];
-        $_SESSION['is_verified'] = $user['is_verified'];
+    if ($user = $result->fetch_assoc()) {
 
-        header("Location: ../index.php");
-        exit();
+        if (!password_verify($pass, $user['password_hash'])) {
+            $error = "Invalid email or password";
+        } else {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['display_name'] = $user['display_name'];
+
+            header("Location: ../index.php");
+            exit;
+        }
+
     } else {
-        $error = "Email or password is incorrect!";
+        $error = "Invalid email or password";
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>

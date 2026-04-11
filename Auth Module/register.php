@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 include __DIR__ . '/../db.php';
 include __DIR__ . '/../Utils/email.php';
 
@@ -7,7 +7,7 @@ $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $email = trim($_POST["email"]);
+    $email = trim(strtolower($_POST["email"]));
     $display_name = trim($_POST["display_name"]);
     $password = trim($_POST["password"]);
     $confirm_password = trim($_POST["confirm_password"]);
@@ -28,13 +28,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result->num_rows > 0) {
             $user = $result->fetch_assoc();
 
-            $_SESSION["user_id"] = $user["id"];
-            $_SESSION["user_name"] = $user["display_name"];
-            $_SESSION["is_verified"] = $user["is_verified"];
-
             if ($user["is_verified"] == 0) {
+                $update_sql = "UPDATE users SET verify_token = ? WHERE id = ?";
+                $update_stmt = $conn->prepare($update_sql);
+                $update_stmt->bind_param("si", $verify_token, $user["id"]);
+                $update_stmt->execute();
+
                 sendVerificationEmail($email, $verify_token);
             }
+
+            $_SESSION["user_id"] = $user["id"];
+            $_SESSION["display_name"] = $user["display_name"];
+            $_SESSION["is_verified"] = $user["is_verified"];
 
             header("Location: ../index.php");
             exit();
@@ -49,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($stmt->execute()) {
 
             $_SESSION["user_id"] = $stmt->insert_id;
-            $_SESSION["user_name"] = $display_name;
+            $_SESSION["display_name"] = $display_name;
             $_SESSION["is_verified"] = 0;
 
             sendVerificationEmail($email, $verify_token);

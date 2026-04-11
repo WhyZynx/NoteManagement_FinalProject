@@ -1,5 +1,6 @@
 <?php
 include 'db.php';
+session_start();
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: Auth Module/login.php");
@@ -26,7 +27,7 @@ if (!isset($_SESSION['user_id'])) {
         </div>
     <?php endif; ?>
 
-    <h1>Welcome, <?= $_SESSION['user_name']; ?>!</h1>
+    <h1>Welcome, <?= $_SESSION['display_name']; ?>!</h1>
 
     <nav>
         <a href="profile.php">Profile</a> |
