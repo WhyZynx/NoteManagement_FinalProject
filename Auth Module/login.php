@@ -72,15 +72,12 @@ if (isset($_POST['btnLogin'])) {
                     </div>
 
                     <div class="input-wrapper">
-                        <input type="password" name="password" id="password" placeholder="Password" class="input-field">
-                        <i class="fa-regular fa-eye-slash toggle-password" id="togglePassword"></i>
+                        <div class="input-group-custom">
+                            <input type="password" name="password" id="password" class="input-field" placeholder="Password">
+                            <i class="fa-regular fa-eye-slash toggle-password"></i>
+                        </div>
+                        <span class="error-message" id="passwordError"></span>
                     </div>
-                    
-                    <span class="error-message <?php if (isset($error)) echo 'show'; ?>" id="passwordError">
-                        <?php 
-                            if (isset($error)) echo $error;
-                        ?>
-                    </span>
 
                     <div class="forget-pwd-container">
                         <a href="forgot_password.php" class="forget-link">Forgot Password?</a>

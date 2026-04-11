@@ -80,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <nav class="custom-navbar navbar navbar-expand-lg">
     
-        <button class="btn p-1" onclick="history.back()">
+        <button class="btn p-1" onclick="window.location.href='../about.html'">
             <i class="fa-solid fa-arrow-left"></i>
         </button>
 
@@ -103,33 +103,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <img src="../Assets/images/web_img/potted plants-pana.png" alt="Illustration"> 
             </div>
 
-            <div class="login-card">
+            <div class="register-card">
                 <h2 class="card-title">Sign Up</h2>
                 
                 <form method="POST" class="login-form" id="registerForm">
                     <div class="input-wrapper">
-                        <input type="email" name="email" id="email" class="input-field" placeholder="Email address" required>
+                        <input type="email" name="email" id="email" class="input-field" placeholder="Email address">
                         <span class="error-message" id="emailError"></span>
                     </div>
 
                     <div class="input-wrapper">
-                        <input type="text" name="display_name" id="name" class="input-field" placeholder="Display Name" required>
+                        <input type="text" name="display_name" id="name" class="input-field" placeholder="Display Name">
                         <span class="error-message" id="nameError"></span>
                     </div>
 
                     <div class="input-wrapper">
-                        <input type="password" name="password" id="password" class="input-field" placeholder="Password" required>
-                        <i class="fa-regular fa-eye-slash toggle-password"></i>
+                        <div class="input-group-custom">
+                            <input type="password" name="password" id="password" class="input-field" placeholder="Password">
+                            <i class="fa-regular fa-eye-slash toggle-password"></i>
+                        </div>
+                        <span class="error-message" id="passwordError"></span>
                     </div>
-                    <span class="error-message" id="passwordError"></span>
 
                     <div class="input-wrapper">
-                       <input type="password" name="confirm_password" id="confirm-password" class="input-field" placeholder="Confirm Password" required>
-                        <i class="fa-regular fa-eye-slash toggle-password"></i>
+                        <div class="input-group-custom">
+                            <input type="password" name="confirm_password" id="confirm-password" class="input-field" placeholder="Confirm Password">
+                            <i class="fa-regular fa-eye-slash toggle-password"></i>
+                        </div>
+                        <span class="error-message" id="repasswordError"></span>
                     </div>
-                    <span class="error-message" id="repasswordError"></span>
 
-                    <button type="submit" name="btnRegister" class="btn-submit-login">Sign Up</button>
+                    <button type="submit" name="btnRegister" class="btn-submit-signUp">Sign Up</button>
                 </form>
 
                 <div class="signup-prompt">

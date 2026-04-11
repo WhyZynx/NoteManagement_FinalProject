@@ -32,41 +32,78 @@ main {
 .custom-navbar {
     position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     width: 100%;
+    height: 70px;
     z-index: 900;
-
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-
-    padding: 6px 18px;
+    padding: 0 40px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
 }
 
-.custom-navbar i {
-    font-size: 14px;
+.nav-auth, .navbar .d-flex {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-left: auto;
+    flex-shrink: 0;
 }
 
-.custom-navbar span,
-.signUp-btn {
+.nav-item, 
+.login-btn,
+.signUp-btn,
+.signup-btn-about,
+.login-btn-about,
+.lang {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    border-radius: 12px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
     font-size: 16px;
 }
 
-.login-btn {
-    background-color: #d48a96 !important;
-    color: #fff !important;
-    border-radius: 10px;
-    padding: 5px 14px;
-    border: none;
-    font-size: 14px;
+.nav-item {
+    color: #333;
+    font-weight: 500;
 }
 
-.navbar .d-flex {
-    gap: 10px;
+.nav-item:hover {
+    background-color: #eecad4;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.login-btn {
+    background-color: #eecad4 !important;
+    color: #fff !important;
+    border: none;
+}
+
+.lang {
+    min-width: 85px;
+    padding: 0 10px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.custom-navbar i, .lang i {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.lang i {
+    margin-right: 6px;
 }
 
 .content-wrapper {
@@ -80,7 +117,8 @@ main {
     margin-bottom: 100px;
 }
 
-.login-card {
+.login-card,
+.register-card {
     background: white;
     border-radius: 35px;
     padding: 35px 40px;
@@ -119,14 +157,26 @@ main {
     background: transparent;
 }
 
-.toggle-password {
+.input-group-custom {
+    position: relative;
+}
+
+.input-group-custom .toggle-password {
     position: absolute;
     right: 18px;
     top: 50%;
     transform: translateY(-50%);
-    cursor: pointer;
+}
+
+.toggle-password {
     color: #9ca3af;
     font-size: 18px;
+}
+
+.error-message {
+    display: none;
+    margin-top: 4px;
+    margin-left: 12px;
 }
 
 .error-message {
@@ -155,7 +205,8 @@ main {
     text-decoration: none;
 }
 
-.btn-submit-login {
+.btn-submit-login,
+.btn-submit-signUp {
     background-color: #D996AA;
     color: white;
     padding: 10px 45px;
@@ -167,8 +218,12 @@ main {
     font-size: 15px;
 }
 
-.btn-submit-login:hover {
+.btn-submit-login:hover,
+.btn-submit-signUp:hover {
     background-color: #c47d93;
+    transform: translateY(-2px);
+    text-decoration: none;
+    box-shadow: 0 5px 15px rgba(217, 150, 170, 0.4);
 }
 
 .signup-prompt {
@@ -197,7 +252,8 @@ main {
         transform: translateY(0);
     }
     .illustration-box { display: none; }
-    .login-card { max-width: 100%; }
+    .login-card,
+    .register-card { max-width: 100%; }
 }
 
 footer {

@@ -288,30 +288,30 @@
 }
 
 .notes-features {
-    padding: 10px 0 100px;
+    padding: 10px 0 200px;
     background-color: #ffffff;
     text-align: center;
 }
 
 .notes-features .container {
-    max-width: 1200px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
 .section-title {
-    font-size: 32px;
+    font-size: 38px;
     font-weight: 800;
     margin-bottom: 60px;
     display: inline-block;
     position: relative;
-    padding-bottom: 5px;
+    padding-bottom: 40px;
 }
 
 .features-grid {
     display: flex;
     justify-content: space-between;
-    gap: 40px;
+    gap: 100px;
 }
 
 .feature-card {
@@ -336,17 +336,17 @@
 }
 
 .feature-card h3 {
-    font-size: 20px;
+    font-size: 28px;
     font-weight: 700;
     color: #000;
     margin-bottom: 15px;
 }
 
 .feature-card p {
-    font-size: 16px;
+    font-size: 20px;
     line-height: 1.6;
     color: #333;
-    text-align: left;
+    text-align:initial;
 }
 
 @media (max-width: 768px) {

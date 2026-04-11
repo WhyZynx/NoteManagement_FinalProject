@@ -66,10 +66,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function showError(input, id, message) {
         input.classList.add("is-invalid");
-        document.getElementById(id).innerText = message;
+        const el = document.getElementById(id);
+        el.innerText = message;
+        el.classList.add("show");
     }
 
-    function clearError(id) {
-        document.getElementById(id).innerText = "";
+    function clearError(id, input) {
+        const el = document.getElementById(id);
+        el.innerText = "";
+        el.classList.remove("show");
+
+        if (input) input.classList.remove("is-invalid");
     }
 });
