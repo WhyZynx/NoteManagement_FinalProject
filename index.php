@@ -31,7 +31,6 @@ if (!isset($_SESSION['user_id'])) {
 
     <nav>
         <a href="User Module/profile.php">View Profile</a> |
-        <a href="settings.php">Settings</a> |
         <a href="Auth Module/logout.php">Logout</a>
     </nav>
 

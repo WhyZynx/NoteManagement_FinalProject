@@ -21,7 +21,7 @@ if (!$user) {
     exit();
 }
 
-$avatarPath = (!empty($user['avatar']) && file_exists(__DIR__ . '/../' . $user['avatar']))
+$avatarPath = (!empty($user['avatar']))
     ? "../" . $user['avatar']
     : "../Assets/images/avatar/sbcf-default-avatar.png";
 ?>
@@ -36,20 +36,21 @@ $avatarPath = (!empty($user['avatar']) && file_exists(__DIR__ . '/../' . $user['
 <h2>User Profile</h2>
 
 <div>
-    <img src="<?php echo htmlspecialchars($avatarPath); ?>" width="120" height="120" alt="Avatar">
+    <img src="<?php echo $avatarPath; ?>" width="120" height="120" alt="Avatar">
 </div>
 
 <div>
-    <p>Display Name: <?php echo htmlspecialchars($user['display_name']); ?></p>
-    <p>Email: <?php echo htmlspecialchars($user['email']); ?></p>
+    <p>Display Name: <?php echo$user['display_name']; ?></p>
+    <p>Email: <?php echo $user['email']; ?></p>
     <p>Status: <?php echo $user['is_verified'] ? 'Verified' : 'Unverified'; ?></p>
-    <p>Member Since: <?php echo htmlspecialchars($user['created_at']); ?></p>
+    <p>Member Since: <?php echo $user['created_at']; ?></p>
 </div>
 
 <br>
 
 <a href="../index.php">Back to Home</a>
 <a href="setting.php">Edit Profile</a>
+<a href="change_password.php">Password</a>
 
 </body>
 </html>

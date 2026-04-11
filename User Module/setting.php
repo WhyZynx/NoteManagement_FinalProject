@@ -44,7 +44,7 @@ $user = $result->fetch_assoc();
 
 <br>
 
-<a href="../profile.php">Back</a>
+<a href="profile.php">Back</a>
 
 </body>
 </html>
