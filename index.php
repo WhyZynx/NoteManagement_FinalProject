@@ -30,7 +30,7 @@ if (!isset($_SESSION['user_id'])) {
     <h1>Welcome, <?= $_SESSION['display_name']; ?>!</h1>
 
     <nav>
-        <a href="profile.php">Profile</a> |
+        <a href="User Module/profile.php">View Profile</a> |
         <a href="settings.php">Settings</a> |
         <a href="Auth Module/logout.php">Logout</a>
     </nav>

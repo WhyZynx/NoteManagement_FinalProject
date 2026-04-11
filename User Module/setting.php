@@ -1,53 +1,50 @@
 <?php
-require_once("db.php");
 session_start();
+include __DIR__ . '/../db.php';
 
-if (!isset($_SESSION["user_id"])) {
-    header("Location: login.php");
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../Auth Module/login.php");
     exit();
 }
 
-$id = $_SESSION["user_id"];
+$userId = $_SESSION['user_id'];
 
-$stmt = $conn->prepare("SELECT theme_mode, font_size FROM users WHERE id = ?");
-$stmt->bind_param("i", $id);
+$sql = "SELECT display_name, avatar FROM users WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $userId);
 $stmt->execute();
-$user = $stmt->get_result()->fetch_assoc();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
 ?>
 
-<h2>SETTINGS</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Profile</title>
+</head>
+<body>
 
-<form action="save_preferences.php" method="POST">
-    Theme:
-    <select name="theme_mode">
-        <option value="light" <?= $user['theme_mode'] == 'light' ? 'selected' : '' ?>>Light</option>
-        <option value="dark" <?= $user['theme_mode'] == 'dark' ? 'selected' : '' ?>>Dark</option>
-    </select>
+<h2>Edit Profile</h2>
+
+<form action="update_profile.php" method="POST" enctype="multipart/form-data">
+
+    <label>Display Name</label><br>
+    <input type="text" name="display_name" value="<?php echo htmlspecialchars($user['display_name']); ?>" required>
+
     <br><br>
 
-    Font Size:
-    <input type="number" name="font_size" value="<?= $user['font_size'] ?>" min="12" max="40">
+    <label>Avatar</label><br>
+    <input type="file" name="avatar">
+
     <br><br>
 
-    <button type="submit">Save Preferences</button>
+    <button type="submit">Update</button>
+
 </form>
 
 <br>
 
-<h3>Change Password</h3>
+<a href="../profile.php">Back</a>
 
-<form action="change_password.php" method="POST">
-    Old Password:
-    <input type="password" name="old_password" required>
-    <br><br>
-
-    New Password:
-    <input type="password" name="new_password" required>
-    <br><br>
-
-    <button type="submit">Change Password</button>
-</form>
-
-<br>
-
-<a href="profile.php">Back to Profile</a>
+</body>
+</html>
