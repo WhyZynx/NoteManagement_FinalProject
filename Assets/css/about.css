@@ -288,8 +288,8 @@
 }
 
 .notes-features {
-    padding: 10px 0 200px;
-    background-color: #ffffff;
+    padding: 100px 0 0;
+    background-color: #FAF7EA;
     text-align: center;
 }
 
@@ -305,7 +305,7 @@
     margin-bottom: 60px;
     display: inline-block;
     position: relative;
-    padding-bottom: 40px;
+    padding-bottom: 20px;
 }
 
 .features-grid {
@@ -328,6 +328,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-bottom: 30px;
 }
 
 .icon-box img {
@@ -339,7 +340,7 @@
     font-size: 28px;
     font-weight: 700;
     color: #000;
-    margin-bottom: 15px;
+    margin-bottom: 30px;
 }
 
 .feature-card p {
@@ -349,35 +350,41 @@
     text-align:initial;
 }
 
+.notes-features img {
+    width: 70%;
+    padding-top: 80px;
+}
 @media (max-width: 768px) {
     .features-grid {
         flex-direction: column;
         gap: 50px;
     }
-    
-    .feature-card p {
-        text-align: center; 
-    }
 
     .section-title {
         font-size: 26px;
         font-weight: 800;
-        margin-bottom: 35px;
+        padding: 5px 0 10px;
     }
 
     .feature-card h3 {
-        font-size: 20px;
+        font-size: 26px;
         text-align:center;
+        padding-top: 30px;
     }
 
     .feature-card p {
-        font-size: 14px;
+        font-size: 16px;
         text-align:center;
     }
 
     .notes-features .container {
-        max-width: 380px;
+        max-width: 450px;
         margin: 0 auto;
         padding: 0 20px;
+    }
+
+    .notes-features img {
+        width: 100%;
+        padding-top: 80px;
     }
 }
