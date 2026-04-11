@@ -19,7 +19,7 @@ function createMailer()
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = 587;
 
-    $mail->setFrom('mindflow.notes2026@gmail.com', 'Notes App');
+    $mail->setFrom('mindflow.notes2026@gmail.com', 'MindFlow');
     $mail->isHTML(true);
 
     return $mail;
@@ -35,7 +35,7 @@ function sendVerificationEmail($email, $token)
 
         $mail->Subject = "Verify your account";
         $mail->Body = "
-            <h2>Welcome to NotesFlow</h2>
+            <h2>Welcome to MindFlow</h2>
             <p>Thanks for registering.</p>
             <p>Please verify your account:</p>
             <p><a href='$verifyLink'>Click here to verify</a></p>

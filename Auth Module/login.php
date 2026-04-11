@@ -5,29 +5,31 @@ include __DIR__ . '/../db.php';
 $error = "";
 
 if (isset($_POST['btnLogin'])) {
-    $email = trim(strtolower($_POST['email']));
-    $pass = trim($_POST['password']);
+    $email = trim(strtolower($_POST['email'] ?? ''));
+    $pass = trim($_POST['password'] ?? '');
 
-    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($user = $result->fetch_assoc()) {
-
-        if (!password_verify($pass, $user['password_hash'])) {
-            $error = "Invalid email or password";
-        } else {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['email'] = $user['email'];
-            $_SESSION['display_name'] = $user['display_name'];
-
-            header("Location: ../index.php");
-            exit;
-        }
-
+    if ($email === "" || $pass === "") {
+        $error = "Please fill in all fields";
     } else {
-        $error = "Invalid email or password";
+        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($user = $result->fetch_assoc()) {
+            if (password_verify($pass, $user['password_hash'])) {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['display_name'] = $user['display_name'];
+
+                header("Location: ../index.php");
+                exit();
+            } else {
+                $error = "Invalid email or password";
+            }
+        } else {
+            $error = "Invalid email or password";
+        }
     }
 }
 ?>
@@ -64,6 +66,11 @@ if (isset($_POST['btnLogin'])) {
         <div class="content-wrapper">
             <div class="login-card">
                 <h1 class="card-title">Login</h1>
+                <?php if (!empty($error)): ?>
+                    <div class="alert alert-danger">
+                        <?= htmlspecialchars($error) ?>
+                    </div>
+                <?php endif; ?>
 
                 <form action="login.php" method="POST" class="login-form" id="loginForm">
                     <div class="input-wrapper">
@@ -74,7 +81,7 @@ if (isset($_POST['btnLogin'])) {
                     <div class="input-wrapper">
                         <div class="input-group-custom">
                             <input type="password" name="password" id="password" class="input-field" placeholder="Password">
-                            <i class="fa-regular fa-eye-slash toggle-password"></i>
+                            <i class="fa-regular fa-eye-slash toggle-password" id="togglePassword"></i>
                         </div>
                         <span class="error-message" id="passwordError"></span>
                     </div>
@@ -109,6 +116,6 @@ if (isset($_POST['btnLogin'])) {
             </ul>
         </div>
     </footer>
-    <script src="../Assets/js/login.js"></script>
+    <script src="/Assets/js/login.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

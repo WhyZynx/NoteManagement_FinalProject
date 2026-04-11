@@ -1,6 +1,7 @@
 <?php
-require_once("../db.php");
 session_start();
+require_once("../db.php");
+include __DIR__ . '/../Utils/preferences.php';
 
 if (!isset($_SESSION["user_id"])) {
     header("Location: ../Auth Module/login.php");
@@ -44,37 +45,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <html>
 <head>
     <title>Change Password</title>
+    <link rel="stylesheet" href="../Assets/css/theme.css">
+
 </head>
-<body>
+<body  class="<?= htmlspecialchars($themeMode) ?>"
+        style="font-size: <?= (int)$fontSize ?>px; font-family: '<?= htmlspecialchars($fontStyle) ?>', sans-serif;">
+    <h2>Change Password</h2>
+    <p><?php echo $message; ?></p>
+    <form method="POST">
+        <label>Old Password</label><br>
+        <input type="password" name="old_password" required>
 
-<h2>Change Password</h2>
+        <br><br>
 
-<p><?php echo $message; ?></p>
+        <label>New Password</label><br>
+        <input type="password" name="new_password" required>
 
-<form method="POST">
+        <br><br>
 
-    <label>Old Password</label><br>
-    <input type="password" name="old_password" required>
+        <label>Confirm Password</label><br>
+        <input type="password" name="confirm_password" required>
 
-    <br><br>
+        <br><br>
 
-    <label>New Password</label><br>
-    <input type="password" name="new_password" required>
-
-    <br><br>
-
-    <label>Confirm Password</label><br>
-    <input type="password" name="confirm_password" required>
-
-    <br><br>
-
-    <button type="submit">Change Password</button>
-
-</form>
-
-<br>
-
-<a href="profile.php">Back</a>
-
+        <button type="submit">Change Password</button>
+    </form>
+    <br>
+    <a href="profile.php">Back</a>
 </body>
 </html>

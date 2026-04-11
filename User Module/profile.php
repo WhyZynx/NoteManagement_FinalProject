@@ -1,6 +1,7 @@
 <?php
 session_start();
 include __DIR__ . '/../db.php';
+include __DIR__ . '/../Utils/preferences.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Auth Module/login.php");
@@ -30,27 +31,28 @@ $avatarPath = (!empty($user['avatar']))
 <html>
 <head>
     <title>User Profile</title>
+    <link rel="stylesheet" href="../Assets/css/theme.css">
+
 </head>
-<body>
+<body  class="<?= htmlspecialchars($themeMode) ?>"
+    style="font-size: <?= (int)$fontSize ?>px; font-family: '<?= htmlspecialchars($fontStyle) ?>', sans-serif;">
+    <h2>User Profile</h2>
 
-<h2>User Profile</h2>
+    <div>
+        <img src="<?php echo $avatarPath; ?>" width="120" height="120" alt="Avatar">
+    </div>
 
-<div>
-    <img src="<?php echo $avatarPath; ?>" width="120" height="120" alt="Avatar">
-</div>
+    <div>
+        <p>Display Name: <?php echo$user['display_name']; ?></p>
+        <p>Email: <?php echo $user['email']; ?></p>
+        <p>Status: <?php echo $user['is_verified'] ? 'Verified' : 'Unverified'; ?></p>
+        <p>Member Since: <?php echo $user['created_at']; ?></p>
+    </div>
 
-<div>
-    <p>Display Name: <?php echo$user['display_name']; ?></p>
-    <p>Email: <?php echo $user['email']; ?></p>
-    <p>Status: <?php echo $user['is_verified'] ? 'Verified' : 'Unverified'; ?></p>
-    <p>Member Since: <?php echo $user['created_at']; ?></p>
-</div>
+    <br>
 
-<br>
-
-<a href="../index.php">Back to Home</a>
-<a href="setting.php">Edit Profile</a>
-<a href="change_password.php">Password</a>
-
+    <a href="../index.php">Back to Home</a>
+    <a href="setting.php">Edit Profile</a>
+    <a href="change_password.php">Password</a>`
 </body>
 </html>

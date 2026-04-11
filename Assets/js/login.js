@@ -6,18 +6,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     loginForm.addEventListener('submit', function (e) {
         let isValid = true;
-
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        if (!emailRegex.test(emailInput.value)) {
-            showError(emailInput, 'emailError', 'Please enter your email address in the correct format');
+        if (emailInput.value.trim() === "") {
+            showError(emailInput, 'emailError', 'Email address is required');
+            isValid = false;
+        } else if (!emailRegex.test(emailInput.value.trim())) {
+            showError(emailInput, 'emailError', 'Invalid email format');
             isValid = false;
         } else {
             hideError(emailInput, 'emailError');
         }
 
         if (passwordInput.value.trim() === "") {
-            showError(passwordInput, 'passwordError', 'The password cannot be left blank');
+            showError(passwordInput, 'passwordError', 'Password is required');
             isValid = false;
         } else {
             hideError(passwordInput, 'passwordError');
@@ -37,12 +39,15 @@ document.addEventListener("DOMContentLoaded", function () {
         input.classList.remove('is-invalid');
         const span = document.getElementById(spanId);
         span.style.display = 'none';
+        span.innerText = '';
     }
 
-    toggle.addEventListener("click", function () {
-        const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
-        passwordInput.setAttribute("type", type);
-        this.classList.toggle("fa-eye");
-        this.classList.toggle("fa-eye-slash");
-    });
+    if (toggle) {
+        toggle.addEventListener("click", function () {
+            const type = passwordInput.type === "password" ? "text" : "password";
+            passwordInput.type = type;
+            this.classList.toggle("fa-eye");
+            this.classList.toggle("fa-eye-slash");
+        });
+    }
 });

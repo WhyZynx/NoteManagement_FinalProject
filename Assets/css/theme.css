@@ -1,0 +1,22 @@
+body.light {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+body.dark {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+.alert-success,
+.alert-warning {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+}
