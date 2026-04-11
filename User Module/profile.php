@@ -22,9 +22,17 @@ if (!$user) {
     exit();
 }
 
-$avatarPath = (!empty($user['avatar']))
-    ? "../" . $user['avatar']
-    : "../Assets/images/avatar/sbcf-default-avatar.png";
+$defaultAvatar = "../Assets/images/avatar/sbcf-default-avatar.png";
+
+$avatarPath = $defaultAvatar;
+
+if (!empty($user['avatar'])) {
+    $fullPath = __DIR__ . "/../" . ltrim($user['avatar'], "/");
+
+    if (file_exists($fullPath)) {
+        $avatarPath = "../" . ltrim($user['avatar'], "/");
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -53,6 +61,6 @@ $avatarPath = (!empty($user['avatar']))
 
     <a href="../index.php">Back to Home</a>
     <a href="setting.php">Edit Profile</a>
-    <a href="change_password.php">Password</a>`
+    <a href="change_password.php">Password</a>
 </body>
 </html>
