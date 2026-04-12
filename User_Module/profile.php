@@ -10,29 +10,19 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
-$sql = "SELECT email, display_name, avatar, is_verified, created_at, theme_mode, font_size, font_style FROM users WHERE id = ?";
-$stmt = $conn->prepare($sql);
+$stmt = $conn->prepare("
+    SELECT email, display_name, avatar, is_verified, created_at
+    FROM users
+    WHERE id = ?
+");
+
 $stmt->bind_param("i", $userId);
 $stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
+$user = $stmt->get_result()->fetch_assoc();
 
-if (!$user) {
-    header("Location: ../Auth_Module/login.php");
-    exit();
-}
+$pref = getPreferences($conn, $userId);
 
-$defaultAvatar = "../Assets/images/avatar/sbcf-default-avatar.png";
-
-$avatarPath = $defaultAvatar;
-
-if (!empty($user['avatar'])) {
-    $fullPath = __DIR__ . "/../" . ltrim($user['avatar'], "/");
-
-    if (file_exists($fullPath)) {
-        $avatarPath = "../" . ltrim($user['avatar'], "/");
-    }
-}
+$avatar = $user['avatar'] ?: 'uploads/avatars/default.png';
 ?>
 
 <!DOCTYPE html>
@@ -40,29 +30,34 @@ if (!empty($user['avatar'])) {
 <head>
     <title>User Profile</title>
     <link rel="stylesheet" href="../Assets/css/theme.css">
-
 </head>
-<body class="<?= htmlspecialchars($user['theme_mode'] ?? 'light') ?>"
-      style="font-size: <?= (int)($user['font_size'] ?? 16) ?>px;
-             font-family: '<?= htmlspecialchars($user['font_style'] ?? 'Sans-serif') ?>', sans-serif;">
+
+<body class="<?= $pref['theme_mode'] ?>"
+      style="font-size: <?= $pref['font_size'] ?>px;
+             font-family: <?= $pref['font_style'] ?>;">
+
+<?php include "sidebar.php"; ?>
+
+<div class="content">
 
     <h2>User Profile</h2>
 
     <div>
-        <img src="<?php echo $avatarPath; ?>" width="120" height="120" alt="Avatar">
+        <img src="../<?= $avatar ?>" width="120" height="120">
     </div>
 
     <div>
-        <p>Display Name: <?php echo $user['display_name']; ?></p>
-        <p>Email: <?php echo $user['email']; ?></p>
-        <p>Status: <?php echo $user['is_verified'] ? 'Verified' : 'Unverified'; ?></p>
-        <p>Member Since: <?php echo $user['created_at']; ?></p>
+        <p>Display Name: <?= htmlspecialchars($user['display_name']) ?></p>
+        <p>Email: <?= htmlspecialchars($user['email']) ?></p>
+        <p>Status: <?= $user['is_verified'] ? 'Verified' : 'Unverified' ?></p>
+        <p>Member Since: <?= $user['created_at'] ?></p>
     </div>
 
     <br>
 
-    <a href="../index.php">Back to Home</a>
-    <a href="setting.php">Edit Profile</a>
-    <a href="change_password.php">Password</a>
+    <a href="../index.php">Back to home</a>
+
+</div>
+
 </body>
 </html>

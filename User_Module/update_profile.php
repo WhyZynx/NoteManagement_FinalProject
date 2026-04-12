@@ -7,41 +7,35 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$userId = $_SESSION['user_id'];
-
-$sql = "SELECT avatar FROM users WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $userId);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
-
-if (!$user) {
-    header("Location: ../Auth_Module/login.php");
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    header("Location: profile.php");
     exit();
 }
 
-$displayName = trim($_POST['display_name']);
-$avatarPath = $user['avatar'];
+$userId = $_SESSION['user_id'];
+$name = trim($_POST['display_name'] ?? '');
 
-if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === 0) {
+$stmt = $conn->prepare("SELECT avatar FROM users WHERE id = ?");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$user = $stmt->get_result()->fetch_assoc();
 
-    $fileName = time() . '_' . basename($_FILES['avatar']['name']);
-    $uploadDir = __DIR__ . '/../uploads/avatars/';
-    $uploadPath = $uploadDir . $fileName;
+$avatar = $user['avatar'];
 
-    if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
-    }
+if (!empty($_FILES['avatar']['name'])) {
 
-    move_uploaded_file($_FILES['avatar']['tmp_name'], $uploadPath);
+    $file = time() . '_' . basename($_FILES['avatar']['name']);
+    $path = __DIR__ . '/../uploads/avatars/';
 
-    $avatarPath = 'uploads/avatars/' . $fileName;
+    if (!is_dir($path)) mkdir($path, 0777, true);
+
+    move_uploaded_file($_FILES['avatar']['tmp_name'], $path . $file);
+
+    $avatar = '/uploads/avatars/' . $file;
 }
 
-$sql = "UPDATE users SET display_name = ?, avatar = ? WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("ssi", $displayName, $avatarPath, $userId);
+$stmt = $conn->prepare("UPDATE users SET display_name=?, avatar=? WHERE id=?");
+$stmt->bind_param("ssi", $name, $avatar, $userId);
 $stmt->execute();
 
 header("Location: profile.php");

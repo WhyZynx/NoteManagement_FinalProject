@@ -1,16 +1,20 @@
 <?php
-$userId = $_SESSION['user_id'];
+function getPreferences($conn, $userId) {
 
-$stmt = $conn->prepare("
-    SELECT theme_mode, font_size, font_style
-    FROM users
-    WHERE id = ?
-");
-$stmt->bind_param("i", $userId);
-$stmt->execute();
-$preferences = $stmt->get_result()->fetch_assoc();
+    $stmt = $conn->prepare("
+        SELECT theme_mode, font_size, font_style
+        FROM users
+        WHERE id = ?
+    ");
 
-$themeMode = $preferences['theme_mode'] ?? 'light';
-$fontSize = $preferences['font_size'] ?? 16;
-$fontStyle = $preferences['font_style'] ?? 'Sans-serif';
-?>
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+
+    $res = $stmt->get_result()->fetch_assoc();
+
+    return [
+        'theme_mode' => $res['theme_mode'] ?? 'light',
+        'font_size' => (int)($res['font_size'] ?? 16),
+        'font_style' => $res['font_style'] ?? 'Sans-serif'
+    ];
+}

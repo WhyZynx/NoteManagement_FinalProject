@@ -9,70 +9,56 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $userId = $_SESSION['user_id'];
-
-$sql = "SELECT display_name, avatar, theme_mode, font_size, font_style FROM users WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $userId);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
+$pref = getPreferences($conn, $userId);
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Settings</title>
+    <title>Setting</title>
     <link rel="stylesheet" href="../Assets/css/theme.css">
-
 </head>
-<body class="<?= htmlspecialchars($user['theme_mode'] ?? 'light') ?>"
-      style="font-size: <?= (int)($user['font_size'] ?? 16) ?>px;
-             font-family: '<?= htmlspecialchars($user['font_style'] ?? 'Sans-serif') ?>', sans-serif;">
-             
-    <h2>Edit Profile</h2>
 
-    <form action="update_profile.php" method="POST" enctype="multipart/form-data">
-        <label>Display Name</label><br>
-        <input type="text" name="display_name" value="<?php echo htmlspecialchars($user['display_name']); ?>" required>
+<body class="<?= $pref['theme_mode'] ?>"
+      style="font-size: <?= $pref['font_size'] ?>px;
+             font-family: <?= $pref['font_style'] ?>;">
 
-        <br><br>
+<?php include "sidebar.php"; ?>
 
-        <label>Avatar</label><br>
-        <input type="file" name="avatar">
+<div class="content">
 
-        <br><br>
+<h2>Settings</h2>
 
-        <button type="submit">Update Profile</button>
-    </form>
+<form action="save_preferences.php" method="POST">
 
-    <hr>
+    <label>Theme</label><br>
+    <select name="theme_mode">
+        <option value="light" <?= $pref['theme_mode']=='light'?'selected':'' ?>>Light</option>
+        <option value="dark" <?= $pref['theme_mode']=='dark'?'selected':'' ?>>Dark</option>
+    </select>
 
-    <h2>User Preferences</h2>
-    <form action="save_preferences.php" method="POST">
-        <label>Theme</label><br>
-        <select name="theme_mode">
-            <option value="light" <?php echo $user['theme_mode'] == 'light' ? 'selected' : ''; ?>>Light</option>
-            <option value="dark" <?php echo $user['theme_mode'] == 'dark' ? 'selected' : ''; ?>>Dark</option>
-        </select>
+    <br><br>
 
-        <br><br>
+    <label>Font Size</label><br>
+    <input type="number" name="font_size"
+           min="12" max="30"
+           value="<?= $pref['font_size'] ?>">
 
-        <label>Font Size</label><br>
-        <input type="number" name="font_size" min="12" max="30"
-            value="<?php echo $user['font_size'] ?? 16; ?>">
+    <br><br>
+    <label>Font Style</label><br>
+    <select name="font_style">
+        <option value="Sans-serif" <?= $pref['font_style']=='Sans-serif'?'selected':'' ?>>Sans-serif</option>
+        <option value="Serif" <?= $pref['font_style']=='Serif'?'selected':'' ?>>Serif</option>
+        <option value="Monospace" <?= $pref['font_style']=='Monospace'?'selected':'' ?>>Monospace</option>
+    </select>
 
-        <br><br>
+    <br><br>
 
-        <label>Font Style</label><br>
-        <select name="font_style">
-            <option value="Sans-serif" <?php echo ($user['font_style'] ?? '') == 'Sans-serif' ? 'selected' : ''; ?>>Sans-serif</option>
-            <option value="Serif" <?php echo ($user['font_style'] ?? '') == 'Serif' ? 'selected' : ''; ?>>Serif</option>
-            <option value="Monospace" <?php echo ($user['font_style'] ?? '') == 'Monospace' ? 'selected' : ''; ?>>Monospace</option>
-        </select>
-        <br><br>
-        <button type="submit">Save Preferences</button>
-    </form>
-    <br>
-    <a href="../index.php">Back</a>
+    <button type="submit">Save Preferences</button>
+</form>
+<a href="profile.php">Back</a>
+
+</div>
+
 </body>
 </html>
