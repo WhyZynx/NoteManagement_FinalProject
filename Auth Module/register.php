@@ -5,25 +5,32 @@ include __DIR__ . '/../Utils/email.php';
 
 $error = "";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $email = trim(strtolower($_POST["email"]));
-    $display_name = trim($_POST["display_name"]);
-    $password = trim($_POST["password"]);
-    $confirm_password = trim($_POST["confirm_password"]);
+    $email = trim(strtolower($_POST["email"] ?? ""));
+    $display_name = trim($_POST["display_name"] ?? "");
+    $password = trim($_POST["password"] ?? "");
+    $confirm_password = trim($_POST["confirm_password"] ?? "");
 
-    if ($password !== $confirm_password) {
+    $passwordPattern = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/";
+
+    if ($email === "" || $display_name === "" || $password === "" || $confirm_password === "") {
+        $error = "Please fill in all fields";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Invalid email format";
+    } elseif (!preg_match($passwordPattern, $password)) {
+        $error = "Password must be at least 8 characters and include uppercase, lowercase, and a number";
+    } elseif ($password !== $confirm_password) {
         $error = "Passwords do not match";
     } else {
-
-        $password_hash = password_hash($password, PASSWORD_BCRYPT);
-        $verify_token = bin2hex(random_bytes(32));
 
         $check_sql = "SELECT id, display_name, is_verified FROM users WHERE email = ?";
         $check_stmt = $conn->prepare($check_sql);
         $check_stmt->bind_param("s", $email);
         $check_stmt->execute();
         $result = $check_stmt->get_result();
+
+        $verify_token = bin2hex(random_bytes(32));
 
         if ($result->num_rows > 0) {
             $user = $result->fetch_assoc();
@@ -35,35 +42,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $update_stmt->execute();
 
                 sendVerificationEmail($email, $verify_token);
+
+                $_SESSION["user_id"] = $user["id"];
+                $_SESSION["display_name"] = $user["display_name"];
+                $_SESSION["is_verified"] = 0;
+
+                header("Location: ../index.php");
+                exit();
+            } else {
+                $error = "Email already exists";
             }
-
-            $_SESSION["user_id"] = $user["id"];
-            $_SESSION["display_name"] = $user["display_name"];
-            $_SESSION["is_verified"] = $user["is_verified"];
-
-            header("Location: ../index.php");
-            exit();
-        }
-
-        $sql = "INSERT INTO users (email, display_name, password_hash, verify_token, is_verified)
-                VALUES (?, ?, ?, ?, 0)";
-
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssss", $email, $display_name, $password_hash, $verify_token);
-
-        if ($stmt->execute()) {
-
-            $_SESSION["user_id"] = $stmt->insert_id;
-            $_SESSION["display_name"] = $display_name;
-            $_SESSION["is_verified"] = 0;
-
-            sendVerificationEmail($email, $verify_token);
-
-            header("Location: ../index.php");
-            exit();
-
         } else {
-            $error = "Registration failed";
+
+            $password_hash = password_hash($password, PASSWORD_BCRYPT);
+
+            $sql = "INSERT INTO users (email, display_name, password_hash, verify_token, is_verified)
+                    VALUES (?, ?, ?, ?, 0)";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ssss", $email, $display_name, $password_hash, $verify_token);
+
+            if ($stmt->execute()) {
+
+                $_SESSION["user_id"] = $stmt->insert_id;
+                $_SESSION["display_name"] = $display_name;
+                $_SESSION["is_verified"] = 0;
+
+                sendVerificationEmail($email, $verify_token);
+
+                header("Location: ../index.php");
+                exit();
+            } else {
+                $error = "Registration failed";
+            }
         }
     }
 }
@@ -108,12 +119,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 <form method="POST" class="login-form" id="registerForm">
                     <div class="input-wrapper">
-                        <input type="email" name="email" id="email" class="input-field" placeholder="Email address">
+                        <input type="email" name="email" id="email" class="input-field" placeholder="Email address"  value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
                         <span class="error-message" id="emailError"></span>
                     </div>
 
                     <div class="input-wrapper">
-                        <input type="text" name="display_name" id="name" class="input-field" placeholder="Display Name">
+                        <input type="text" name="display_name" id="name" class="input-field" placeholder="Display Name"  value="<?= htmlspecialchars($_POST['display_name'] ?? '') ?>">
                         <span class="error-message" id="nameError"></span>
                     </div>
 
@@ -140,7 +151,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     Already have an account? <a href="login.php">Login</a>
                 </div>
 
-                <p><?= $error ?></p>
+               <?php if (!empty($error)): ?>
+                    <div class="alert alert-danger mt-3">
+                        <?= htmlspecialchars($error) ?>
+                    </div>
+                <?php endif; ?>
         </div>
     </div>
 </main>
@@ -154,6 +169,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </ul>
         </div>
     </footer>
-    <script src="../Assets/js/app.js"></script>
+    <script src="/Assets/js/app.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

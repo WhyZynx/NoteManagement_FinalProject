@@ -15,66 +15,81 @@ document.addEventListener("DOMContentLoaded", function () {
             clearError("passwordError");
             clearError("repasswordError");
 
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
-            if (!emailRegex.test(email.value.trim())) {
-                showError(email, "emailError", "Invalid email format");
-                isValid = false;
+        if (email.value.trim() === "") {
+            showError(email, "emailError", "Email address is required");
+            isValid = false;
+        } else if (!emailRegex.test(email.value.trim())) {
+            showError(email, "emailError", "Invalid email format");
+            isValid = false;
+        }
+
+        if (name.value.trim() === "") {
+            showError(name, "nameError", "Display name is required");
+            isValid = false;
+        }
+
+        if (password.value.trim() === "") {
+            showError(password, "passwordError", "Password is required");
+            isValid = false;
+        } else if (!passwordRegex.test(password.value.trim())) {
+            showError(
+                password,
+                "passwordError",
+                "Password must be at least 8 characters and include uppercase, lowercase, and a number"
+            );
+            isValid = false;
+        }
+
+        if (repassword.value.trim() === "") {
+            showError(
+                repassword,
+                "repasswordError",
+                "Confirm password is required"
+            );
+            isValid = false;
+        } else if (repassword.value !== password.value) {
+            showError(
+                repassword,
+                "repasswordError",
+                "Passwords do not match"
+            );
+                        isValid = false;
+                    }
+
+                    if (!isValid) {
+                        e.preventDefault();
+                    }
+                });
             }
 
-            if (name.value.trim() === "") {
-                showError(name, "nameError", "Display name is required");
-                isValid = false;
+            const toggles = document.querySelectorAll(".toggle-password");
+
+            toggles.forEach(toggle => {
+                toggle.addEventListener("click", function () {
+                    const input = this.previousElementSibling;
+
+                    input.type =
+                        input.type === "password" ? "text" : "password";
+
+                    this.classList.toggle("fa-eye");
+                    this.classList.toggle("fa-eye-slash");
+                });
+            });
+
+            function showError(input, id, message) {
+                input.classList.add("is-invalid");
+                const el = document.getElementById(id);
+                el.innerText = message;
+                el.classList.add("show");
             }
 
-            if (password.value.trim() === "") {
-                showError(password, "passwordError", "Password is required");
-                isValid = false;
-            }
-
-            if (
-                repassword.value.trim() === "" ||
-                repassword.value !== password.value
-            ) {
-                showError(
-                    repassword,
-                    "repasswordError",
-                    "Passwords do not match"
-                );
-                isValid = false;
-            }
-
-            if (!isValid) {
-                e.preventDefault();
-            }
-        });
-    }
-
-    const toggles = document.querySelectorAll(".toggle-password");
-
-    toggles.forEach(toggle => {
-        toggle.addEventListener("click", function () {
-            const input = this.previousElementSibling;
-
-            input.type =
-                input.type === "password" ? "text" : "password";
-
-            this.classList.toggle("fa-eye");
-            this.classList.toggle("fa-eye-slash");
-        });
-    });
-
-    function showError(input, id, message) {
-        input.classList.add("is-invalid");
-        const el = document.getElementById(id);
-        el.innerText = message;
-        el.classList.add("show");
-    }
-
-    function clearError(id, input) {
-        const el = document.getElementById(id);
-        el.innerText = "";
-        el.classList.remove("show");
+            function clearError(id, input) {
+                const el = document.getElementById(id);
+                el.innerText = "";
+                el.classList.remove("show");
 
         if (input) input.classList.remove("is-invalid");
     }
