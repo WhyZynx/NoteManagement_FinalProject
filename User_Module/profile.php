@@ -22,7 +22,7 @@ $user = $stmt->get_result()->fetch_assoc();
 
 $pref = getPreferences($conn, $userId);
 
-$avatar = !empty($user['avatar']) ? $user['avatar'] : 'Assets/images/default.png';
+$avatar = !empty($user['avatar']) ? $user['avatar'] : '../Assets/images/avater/default.png';
 ?>
 
 <!DOCTYPE html>
