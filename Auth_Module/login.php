@@ -93,7 +93,7 @@ if (isset($_POST['btnLogin'])) {
                     <div class="input-wrapper">
                         <div class="input-group-custom">
                             <input type="password" name="password" id="password" class="input-field" placeholder="Password" value="<?= htmlspecialchars($_POST['password'] ?? '') ?>">
-                            <i class="fa-regular fa-eye-slash toggle-password" id="togglePassword"></i>
+                            <i class="fa-regular fa-eye-slash toggle-password" id="toggle-password"></i>
                         </div>
                         <span class="error-message" id="passwordError"></span>
                     </div>
@@ -128,6 +128,6 @@ if (isset($_POST['btnLogin'])) {
             </ul>
         </div>
     </footer>
-    <script src="/Assets/js/login.js?v=<?php echo time(); ?>"></script>
+    <script src="../Assets/js/login.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>
