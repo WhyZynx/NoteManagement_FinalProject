@@ -10,17 +10,24 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
-/* Load user data (single source of truth = DB) */
 $stmt = $conn->prepare("
     SELECT display_name, is_verified
     FROM users
     WHERE id = ?
 ");
+
 $stmt->bind_param("i", $userId);
 $stmt->execute();
-$user = $stmt->get_result()->fetch_assoc();
 
-/* Load preferences */
+$result = $stmt->get_result();
+$user = $result ? $result->fetch_assoc() : null;
+
+if (!$user) {
+    session_destroy();
+    header("Location: Auth_Module/login.php");
+    exit();
+}
+
 $pref = getPreferences($conn, $userId);
 ?>
 
@@ -31,11 +38,12 @@ $pref = getPreferences($conn, $userId);
     <link rel="stylesheet" href="Assets/css/theme.css">
 </head>
 
-<body class="<?= $pref['theme_mode'] ?>"
-      style="font-size: <?= $pref['font_size'] ?>px;
-             font-family: <?= $pref['font_style'] ?>;">
+<body class="<?= $pref['theme_mode'] ?? 'light' ?>"
+      style="font-size: <?= $pref['font_size'] ?? 14 ?>px;
+             font-family: <?= $pref['font_style'] ?? 'Arial' ?>;">
 
 <div class="content">
+
     <?php if (isset($_SESSION["success_message"])): ?>
         <div class="alert-success">
             <?= htmlspecialchars($_SESSION["success_message"]); ?>
@@ -43,13 +51,17 @@ $pref = getPreferences($conn, $userId);
         <?php unset($_SESSION["success_message"]); ?>
     <?php endif; ?>
 
-    <?php if (!empty($user['is_verified']) && $user['is_verified'] == 0): ?>
+    <?php
+    $isVerified = (int)($user['is_verified'] ?? 0);
+    ?>
+
+    <?php if ($isVerified === 0): ?>
         <div class="alert-warning">
             Your account is not activated yet. Please check your email to verify.
         </div>
     <?php endif; ?>
-    
-    <h1>Welcome, <?= htmlspecialchars($user['display_name']); ?> 👋</h1>
+
+    <h1>Welcome, <?= htmlspecialchars($user['display_name'] ?? 'User'); ?> 👋</h1>
 
     <nav>
         <a href="User_Module/profile.php">Profile</a> |
