@@ -2,59 +2,41 @@
 session_start();
 include __DIR__ . '/../db.php';
 include __DIR__ . '/../Utils/email.php';
+include __DIR__ . '/../Utils/validation.php';
+include __DIR__ . '/../Utils/security.php';
+
+if (isset($_SESSION['user_id'])) {
+    header("Location: ../index.php");
+    exit();
+}
 
 $error = "";
 
+$email = trim(strtolower($_POST["email"] ?? ""));
+$display_name = trim($_POST["display_name"] ?? "");
+$password = trim($_POST["password"] ?? "");
+$confirm_password = trim($_POST["confirm_password"] ?? "");
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $email = trim(strtolower($_POST["email"] ?? ""));
-    $display_name = trim($_POST["display_name"] ?? "");
-    $password = trim($_POST["password"] ?? "");
-    $confirm_password = trim($_POST["confirm_password"] ?? "");
+    $error = validateRequired([$email, $display_name, $password, $confirm_password])
+        ?? validateEmail($email)
+        ?? validatePasswordStrength($password)
+        ?? validateConfirmPassword($password, $confirm_password);
 
-    $passwordPattern = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/";
+    if (!$error) {
 
-    if ($email === "" || $display_name === "" || $password === "" || $confirm_password === "") {
-        $error = "Please fill in all fields";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = "Invalid email format";
-    } elseif (!preg_match($passwordPattern, $password)) {
-        $error = "Password must be at least 8 characters and include uppercase, lowercase, and a number";
-    } elseif ($password !== $confirm_password) {
-        $error = "Passwords do not match";
-    } else {
+        $check = $conn->prepare("SELECT id FROM users WHERE email = ?");
+        $check->bind_param("s", $email);
+        $check->execute();
+        $checkResult = $check->get_result();
 
-        $check_sql = "SELECT id, display_name, is_verified FROM users WHERE email = ?";
-        $check_stmt = $conn->prepare($check_sql);
-        $check_stmt->bind_param("s", $email);
-        $check_stmt->execute();
-        $result = $check_stmt->get_result();
-
-        $verify_token = bin2hex(random_bytes(32));
-
-        if ($result->num_rows > 0) {
-            $user = $result->fetch_assoc();
-
-            if ($user["is_verified"] == 0) {
-                $update_sql = "UPDATE users SET verify_token = ? WHERE id = ?";
-                $update_stmt = $conn->prepare($update_sql);
-                $update_stmt->bind_param("si", $verify_token, $user["id"]);
-                $update_stmt->execute();
-
-                sendVerificationEmail($email, $verify_token);
-
-                $_SESSION["user_id"] = $user["id"];
-                $_SESSION["display_name"] = $user["display_name"];
-                $_SESSION["is_verified"] = 0;
-
-                header("Location: ../index.php");
-                exit();
-            } else {
-                $error = "Email already exists";
-            }
+        if ($checkResult->num_rows > 0) {
+            $error = "Email already exists";
         } else {
 
-            $password_hash = password_hash($password, PASSWORD_BCRYPT);
+            $password_hash = hashPassword($password);
+            $verify_token = generateToken();
 
             $sql = "INSERT INTO users (email, display_name, password_hash, verify_token, is_verified)
                     VALUES (?, ?, ?, ?, 0)";
@@ -65,6 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if ($stmt->execute()) {
 
                 $_SESSION["user_id"] = $stmt->insert_id;
+                $_SESSION["email"] = $email;
                 $_SESSION["display_name"] = $display_name;
                 $_SESSION["is_verified"] = 0;
 
@@ -72,6 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 header("Location: ../index.php");
                 exit();
+
             } else {
                 $error = "Registration failed";
             }

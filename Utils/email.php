@@ -31,7 +31,7 @@ function sendVerificationEmail($email, $token)
         $mail = createMailer();
         $mail->addAddress($email);
 
-        $verifyLink = "http://localhost/Auth%20Module/verify_email.php?token=" . urlencode($token);
+        $verifyLink = "http://localhost/Auth_Module/verify_email.php?token=" . urlencode($token);
 
         $mail->Subject = "Verify your account";
         $mail->Body = "

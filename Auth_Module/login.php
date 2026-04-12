@@ -2,31 +2,43 @@
 session_start();
 include __DIR__ . '/../db.php';
 
+if (isset($_SESSION['user_id'])) {
+    header("Location: ../index.php");
+    exit();
+}
+
 $error = "";
 
 if (isset($_POST['btnLogin'])) {
+
     $email = trim(strtolower($_POST['email'] ?? ''));
     $pass = trim($_POST['password'] ?? '');
 
     if ($email === "" || $pass === "") {
         $error = "Please fill in all fields";
     } else {
+
         $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($user = $result->fetch_assoc()) {
+
             if (password_verify($pass, $user['password_hash'])) {
+
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['display_name'] = $user['display_name'];
+                $_SESSION['is_verified'] = $user['is_verified'];
 
                 header("Location: ../index.php");
                 exit();
+
             } else {
                 $error = "Invalid email or password";
             }
+
         } else {
             $error = "Invalid email or password";
         }
@@ -74,13 +86,13 @@ if (isset($_POST['btnLogin'])) {
 
                 <form action="login.php" method="POST" class="login-form" id="loginForm">
                     <div class="input-wrapper">
-                        <input type="text" name="email" id="email" placeholder="Email address or Username" class="input-field">
+                        <input type="text" name="email" id="email" placeholder="Email address" class="input-field" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
                         <span class="error-message" id="emailError"></span>
                     </div>
 
                     <div class="input-wrapper">
                         <div class="input-group-custom">
-                            <input type="password" name="password" id="password" class="input-field" placeholder="Password">
+                            <input type="password" name="password" id="password" class="input-field" placeholder="Password" value="<?= htmlspecialchars($_POST['password'] ?? '') ?>">
                             <i class="fa-regular fa-eye-slash toggle-password" id="togglePassword"></i>
                         </div>
                         <span class="error-message" id="passwordError"></span>

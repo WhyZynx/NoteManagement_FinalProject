@@ -4,7 +4,7 @@ include __DIR__ . '/../db.php';
 include __DIR__ . '/../Utils/preferences.php';
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../Auth Module/login.php");
+    header("Location: ../Auth_Module/login.php");
     exit();
 }
 
@@ -25,8 +25,10 @@ $user = $result->fetch_assoc();
     <link rel="stylesheet" href="../Assets/css/theme.css">
 
 </head>
-<body class="<?= htmlspecialchars($themeMode) ?>"
-        style="font-size: <?= (int)$fontSize ?>px; font-family: '<?= htmlspecialchars($fontStyle) ?>', sans-serif;">
+<body class="<?= htmlspecialchars($user['theme_mode'] ?? 'light') ?>"
+      style="font-size: <?= (int)($user['font_size'] ?? 16) ?>px;
+             font-family: '<?= htmlspecialchars($user['font_style'] ?? 'Sans-serif') ?>', sans-serif;">
+             
     <h2>Edit Profile</h2>
 
     <form action="update_profile.php" method="POST" enctype="multipart/form-data">

@@ -3,7 +3,7 @@ session_start();
 include __DIR__ . '/../db.php';
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../Auth Module/login.php");
+    header("Location: ../Auth_Module/login.php");
     exit();
 }
 
@@ -17,7 +17,7 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
 if (!$user) {
-    header("Location: ../Auth Module/login.php");
+    header("Location: ../Auth_Module/login.php");
     exit();
 }
 

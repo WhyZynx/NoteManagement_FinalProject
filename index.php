@@ -3,7 +3,7 @@ include 'db.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: Auth Module/login.php");
+    header("Location: Auth_Module/login.php");
     exit();
 }
 
@@ -49,9 +49,9 @@ $fontStyle = $preferences['font_style'] ?? 'Sans-serif';
     <h1>Welcome, <?= htmlspecialchars($_SESSION['display_name']); ?>!</h1>
 
     <nav>
-        <a href="User Module/profile.php">View Profile</a> |
-        <a href="User Module/setting.php">Settings</a> |
-        <a href="Auth Module/logout.php">Logout</a>
+        <a href="User_Module/profile.php">View Profile</a> |
+        <a href="User_Module/setting.php">Settings</a> |
+        <a href="Auth_Module/logout.php">Logout</a>
     </nav>
 
     <hr>

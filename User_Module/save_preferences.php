@@ -3,7 +3,7 @@ session_start();
 require_once("../db.php");
 
 if (!isset($_SESSION["user_id"])) {
-    header("Location: ../Auth Module/login.php");
+    header("Location: ../Auth_Module/login.php");
     exit();
 }
 
@@ -19,6 +19,10 @@ $stmt = $conn->prepare("
 
 $stmt->bind_param("sisi", $theme, $font_size, $font_style, $_SESSION["user_id"]);
 $stmt->execute();
+
+$_SESSION["theme_mode"] = $theme;
+$_SESSION["font_size"] = $font_size;
+$_SESSION["font_style"] = $font_style;
 
 header("Location: setting.php");
 exit();

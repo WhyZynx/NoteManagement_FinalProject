@@ -1,5 +1,6 @@
 <?php
 include __DIR__ . '/../db.php';
+include __DIR__ . '/../Utils/security.php';
 
 $email = $_GET['email'] ?? '';
 $message = "";

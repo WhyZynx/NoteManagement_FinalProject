@@ -5,34 +5,41 @@ require __DIR__ . '/../Utils/email.php';
 $message = "";
 $error = "";
 
-if (isset($_POST['email'])) {
-    $email = trim(strtolower($_POST['email']));
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $email = trim(strtolower($_POST['email'] ?? ''));
 
-    if ($user = $result->fetch_assoc()) {
-        $otp = str_pad(rand(0, 999999), 6, "0", STR_PAD_LEFT);
-        $expires = date("Y-m-d H:i:s", strtotime("+5 minutes"));
-
-        $stmt = $conn->prepare("
-            UPDATE users
-            SET reset_otp = ?, otp_expires = ?
-            WHERE email = ?
-        ");
-        $stmt->bind_param("sss", $otp, $expires, $email);
-        $stmt->execute();
-
-        if (sendOtpEmail($email, $otp)) {
-            header("Location: verify_otp.php?email=" . urlencode($email));
-            exit;
-        } else {
-            $error = "Failed to send OTP email.";
-        }
+    if ($email === '') {
+        $error = "Email is required";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Invalid email format";
     } else {
-        $error = "Email not found.";
+
+        $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($user = $result->fetch_assoc()) {
+
+            $otp = str_pad(rand(0, 999999), 6, "0", STR_PAD_LEFT);
+            $expires = date("Y-m-d H:i:s", strtotime("+5 minutes"));
+
+            $stmt = $conn->prepare("
+                UPDATE users
+                SET reset_otp = ?, otp_expires = ?
+                WHERE email = ?
+            ");
+            $stmt->bind_param("sss", $otp, $expires, $email);
+            $stmt->execute();
+
+            sendOtpEmail($email, $otp);
+
+            header("Location: verify_otp.php?email=" . urlencode($email));
+            exit();
+        }
+
+        $message = "If email exists, OTP has been sent";
     }
 }
 ?>
