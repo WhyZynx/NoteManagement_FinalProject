@@ -22,7 +22,7 @@ $user = $stmt->get_result()->fetch_assoc();
 
 $pref = getPreferences($conn, $userId);
 
-$avatar = $user['avatar'] ?: 'uploads/avatars/default.png';
+$avatar = !empty($user['avatar']) ? $user['avatar'] : 'Assets/images/default.png';
 ?>
 
 <!DOCTYPE html>
@@ -43,7 +43,7 @@ $avatar = $user['avatar'] ?: 'uploads/avatars/default.png';
     <h2>User Profile</h2>
 
     <div>
-        <img src="../<?= $avatar ?>" width="120" height="120">
+        <img src="../<?= htmlspecialchars($avatar) ?>" width="120" height="120">
     </div>
 
     <div>
