@@ -153,6 +153,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </ul>
         </div>
     </footer>
-    <script src="/Assets/js/app.js?v=<?php echo time(); ?>"></script>
+    <script src="../Assets/js/app.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>
