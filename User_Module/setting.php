@@ -15,50 +15,58 @@ $pref = getPreferences($conn, $userId);
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Setting</title>
+    <title>Settings - MindFlow</title>
     <link rel="stylesheet" href="../Assets/css/theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
 </head>
 
 <body class="<?= $pref['theme_mode'] ?>"
       style="font-size: <?= $pref['font_size'] ?>px;
              font-family: <?= $pref['font_style'] ?>;">
 
-<?php include "sidebar.php"; ?>
+    <div class="main-wrapper">
+        <button class="menu-toggle" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <?php include "sidebar.php"; ?>
 
-<div class="content">
+        <div class="content">
+            <h2 class="page-title">User Preferences</h2>
+            <p class="page-subtitle">Explore the depths of your mind, one setting at a time.</p>
 
-<h2>Settings</h2>
+            <div class="setting-card">
+                <form action="save_preferences.php" method="POST">
+                    
+                    <div class="setting-group">
+                        <label><i class="fas fa-palette"></i> Appearance Theme</label>
+                        <select name="theme_mode">
+                            <option value="light" <?= $pref['theme_mode']=='light'?'selected':'' ?>>Light Mode (Healing)</option>
+                            <option value="dark" <?= $pref['theme_mode']=='dark'?'selected':'' ?>>Dark Mode (Deep)</option>
+                        </select>
+                    </div>
 
-<form action="save_preferences.php" method="POST">
+                    <div class="setting-group">
+                        <label><i class="fas fa-text-height"></i> Font Size (px)</label>
+                        <input type="number" name="font_size" min="12" max="30" value="<?= $pref['font_size'] ?>">
+                    </div>
 
-    <label>Theme</label><br>
-    <select name="theme_mode">
-        <option value="light" <?= $pref['theme_mode']=='light'?'selected':'' ?>>Light</option>
-        <option value="dark" <?= $pref['theme_mode']=='dark'?'selected':'' ?>>Dark</option>
-    </select>
+                    <div class="setting-group">
+                        <label><i class="fas fa-font"></i> Typography Style</label>
+                        <select name="font_style">
+                            <option value="'Inter', sans-serif" <?= $pref['font_style']=="'Inter', sans-serif"?'selected':'' ?>>Sans-serif (Modern)</option>
+                            <option value="'Georgia', serif" <?= $pref['font_style']=="'Georgia', serif"?'selected':'' ?>>Serif (Classic)</option>
+                            <option value="'Courier New', monospace" <?= $pref['font_style']=="'Courier New', monospace"?'selected':'' ?>>Monospace (Code)</option>
+                        </select>
+                    </div>
 
-    <br><br>
+                    <button type="submit" class="btn-save">Save Changes</button>
+                </form>
+            </div>
 
-    <label>Font Size</label><br>
-    <input type="number" name="font_size"
-           min="12" max="30"
-           value="<?= $pref['font_size'] ?>">
-
-    <br><br>
-    <label>Font Style</label><br>
-    <select name="font_style">
-        <option value="Sans-serif" <?= $pref['font_style']=='Sans-serif'?'selected':'' ?>>Sans-serif</option>
-        <option value="Serif" <?= $pref['font_style']=='Serif'?'selected':'' ?>>Serif</option>
-        <option value="Monospace" <?= $pref['font_style']=='Monospace'?'selected':'' ?>>Monospace</option>
-    </select>
-
-    <br><br>
-
-    <button type="submit">Save Preferences</button>
-</form>
-<a href="profile.php">Back</a>
-
-</div>
-
+            <img src="../Assets/images/web_img/ocean.png" alt="ocean" class="ocean-bg">
+        </div>
+    </div>
+    <script src="../Assets/js/sidebar.js"></script>
 </body>
 </html>

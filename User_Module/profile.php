@@ -22,42 +22,67 @@ $user = $stmt->get_result()->fetch_assoc();
 
 $pref = getPreferences($conn, $userId);
 
-$avatar = !empty($user['avatar']) ? $user['avatar'] : '../Assets/images/avater/default.png';
+
+$avatar = !empty($user['avatar']) ? $user['avatar'] : '../Assets/images/avatar/default.png';
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>User Profile</title>
+    <meta charset="UTF-8">
+    <title>User Information | MindFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../Assets/css/theme.css">
 </head>
+<body class="<?= $pref['theme_mode'] ?>" style="font-size: <?= $pref['font_size'] ?>px; font-family: <?= $pref['font_style'] ?>;">
 
-<body class="<?= $pref['theme_mode'] ?>"
-      style="font-size: <?= $pref['font_size'] ?>px;
-             font-family: <?= $pref['font_style'] ?>;">
+    <div class="main-wrapper">
+        <button class="menu-toggle" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
 
-<?php include "sidebar.php"; ?>
+        <?php include "sidebar.php"; ?>
 
-<div class="content">
+        <div class="content">
+            <h1 class="page-title">User Information</h1>
 
-    <h2>User Profile</h2>
+            <div class="welcome-card">
+                <div class="welcome-text">
+                    <h2>Hi, <?= htmlspecialchars($user['display_name']) ?>!</h2>
+                    <p>Capture the essence of your ideas. Seamlessly organized, naturally mindful.</p>
+                </div>
+                <img src="../<?= $avatar ?>" alt="Avatar" class="avatar-wrapper">
+            </div>
 
-    <div>
-        <img src="../<?= htmlspecialchars($avatar) ?>" width="120" height="120">
+            <div class="details-section">
+                <div class="section-header">
+                    <h3>Personal Details</h3>
+                    <a href="edit_profile.php" class="edit-link">Edit Info</a>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-group">
+                        <label>Name:</label>
+                        <span><?= htmlspecialchars($user['display_name']) ?></span>
+                    </div>
+                    <div class="info-group">
+                        <label>Email:</label>
+                        <span><?= htmlspecialchars($user['email']) ?></span>
+                    </div>
+                    <div class="info-group">
+                        <label>Status:</label>
+                        <span class="status-tag"><?= $user['is_verified'] ? 'Verified' : 'Unverified' ?></span>
+                    </div>
+                    <div class="info-group">
+                        <label>Member Since:</label>
+                        <span><?= date('d/m/Y', strtotime($user['created_at'])) ?></span>
+                    </div>
+                </div>
+            </div>
+            <img src="../Assets/images/web_img/ocean.png" alt="ocean" class="ocean-bg">
+        </div>
     </div>
 
-    <div>
-        <p>Display Name: <?= htmlspecialchars($user['display_name']) ?></p>
-        <p>Email: <?= htmlspecialchars($user['email']) ?></p>
-        <p>Status: <?= $user['is_verified'] ? 'Verified' : 'Unverified' ?></p>
-        <p>Member Since: <?= $user['created_at'] ?></p>
-    </div>
-
-    <br>
-
-    <a href="../index.php">Back to home</a>
-
-</div>
-
+    <script src="../Assets/js/sidebar.js"></script>
 </body>
 </html>

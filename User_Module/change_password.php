@@ -15,6 +15,7 @@ $pref = getPreferences($conn, $_SESSION['user_id']);
 <html>
 <head>
     <title>Change Password</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../Assets/css/theme.css">
 </head>
 
@@ -53,6 +54,6 @@ $pref = getPreferences($conn, $_SESSION['user_id']);
 <a href="profile.php">Back</a>
 
 </div>
-
+<script src="../Assets/js/sidebar.js"></script>
 </body>
 </html>
