@@ -28,12 +28,14 @@ $avatar = !empty($user['avatar']) ? $user['avatar'] : '../Assets/images/avatar/d
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>User Information | MindFlow</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../Assets/css/theme.css">
 </head>
+
 <body class="<?= $pref['theme_mode'] ?>" style="font-size: <?= $pref['font_size'] ?>px; font-family: <?= $pref['font_style'] ?>;">
 
     <div class="main-wrapper">
@@ -59,7 +61,7 @@ $avatar = !empty($user['avatar']) ? $user['avatar'] : '../Assets/images/avatar/d
                     <h3>Personal Details</h3>
                     <a href="edit_profile.php" class="edit-link">Edit Info</a>
                 </div>
-                
+
                 <div class="info-card">
                     <div class="info-group">
                         <label>Name:</label>
@@ -85,4 +87,5 @@ $avatar = !empty($user['avatar']) ? $user['avatar'] : '../Assets/images/avatar/d
 
     <script src="../Assets/js/sidebar.js"></script>
 </body>
+
 </html>
