@@ -1,6 +1,8 @@
 body.light {
     background-color: #F6FAFF;
-    color: #000000;
+    background-image: 
+        radial-gradient(at 10% 10%, #fff1fd 0%, transparent 60%),
+        radial-gradient(at 90% 90%, #fff3fe 0%, transparent 50%);
 }
 
 body.dark {
@@ -33,8 +35,6 @@ a {
 body {
     margin: 0;
     font-family: 'Inter', 'Segoe UI', sans-serif;
-    background-color: var(--bg-light);
-    color: var(--text-dark);
 }
 
 .main-wrapper {
@@ -159,7 +159,7 @@ body {
 .welcome-text p {
     color: var(--text-muted);
     font-size: 20px;
-    max-width: 500px;
+    max-width: 540px;
     line-height: 1.5;
     margin: 0; 
 }
@@ -307,7 +307,7 @@ body {
 
 .setting-group select:focus, 
 .setting-group input:focus {
-    border-color: #5385c7;
+    border-color: #b997db;
     background: #fff;
 }
 
@@ -334,4 +334,114 @@ body {
     margin-top: 20px;
     color: var(--text-muted);
     font-size: 14px;
+}
+
+
+.edit-container-card {
+    background: #ffffff;
+    border-radius: 25px; 
+    padding: 35px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    margin-top: 20px;
+    max-width: 800px;
+}
+
+.edit-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 20px;
+}
+
+.edit-label {
+    min-width: 100px;
+    color: #757e7f; 
+    font-weight: 500;
+    font-size: 15px;
+}
+
+
+.edit-input-text {
+    flex: 1;
+    padding: 12px 25px;
+    border-radius: 30px;
+    border: 1px solid #f1f1f1;
+    background: #fdfdfd;
+    outline: none;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.edit-input-text:focus {
+    border-color: #d1b0f1;
+    background: #fff;
+    box-shadow: 0 0 8px rgba(45, 93, 177, 0.1);
+}
+
+.custom-file-upload {
+    display: inline-block;
+    padding: 8px 18px;
+    cursor: pointer;
+    background: #8e8e8e; 
+    color: white;
+    border-radius: 10px;
+    font-size: 13px;
+    transition: 0.3s;
+}
+
+.custom-file-upload:hover {
+    background: #666;
+}
+
+.file-name-display {
+    color: #999;
+    font-size: 14px;
+    font-style: italic;
+}
+
+.edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 25px;
+    margin-top: 40px;
+}
+
+.btn-cancel {
+    color: #999;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.btn-cancel:hover {
+    color: #333;
+}
+
+.btn-confirm-save {
+    background: #b997db;
+    color: white;
+    padding: 12px 45px;
+    border-radius: 25px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(45, 93, 177, 0.2);
+    transition: all 0.3s ease;
+}
+
+.btn-confirm-save:hover {
+    background: #a376d0;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .edit-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .edit-input-text {
+        width: 100%;
+    }
 }
