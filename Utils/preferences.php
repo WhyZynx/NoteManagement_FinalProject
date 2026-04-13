@@ -1,3 +1,4 @@
+
 <?php
 function getPreferences($conn, $userId) {
 
@@ -18,3 +19,4 @@ function getPreferences($conn, $userId) {
         'font_style' => $res['font_style'] ?? 'Sans-serif'
     ];
 }
+?>

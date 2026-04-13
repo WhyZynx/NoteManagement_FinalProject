@@ -10,38 +10,56 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
-$stmt = $conn->prepare("
-    SELECT display_name, is_verified
-    FROM users
-    WHERE id = ?
-");
-
+$stmt = $conn->prepare("SELECT display_name, is_verified, theme_mode, font_size, font_style
+                          FROM users WHERE id = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
-
-$result = $stmt->get_result();
-$user = $result ? $result->fetch_assoc() : null;
-
-if (!$user) {
-    session_destroy();
-    header("Location: Auth_Module/login.php");
-    exit();
-}
-
-$pref = getPreferences($conn, $userId);
+$user = $stmt->get_result()->fetch_assoc();
+$pref = [
+    "theme_mode" => $user["theme_mode"] ?? "light",
+    "font_size" => $user["font_size"] ?? 16,
+    "font_style" => $user["font_style"] ?? "Arial"
+];
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Home</title>
+    <title>Notes Test</title>
     <link rel="stylesheet" href="Assets/css/theme.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        #notes-list.grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        #notes-list.list {
+            display: block;
+        }
+
+        .note-card {
+            padding: 16px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+        }
+
+        .note-toolbar {
+            margin-bottom: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+        }
+    </style>
 </head>
 
-<body class="<?= $pref['theme_mode'] ?? 'light' ?>"
-      style="font-size: <?= $pref['font_size'] ?? 14 ?>px;
-             font-family: <?= $pref['font_style'] ?? 'Arial' ?>;">
-
+<body class="<?= $pref['theme_mode'] ?? 'light' ?>">
 <div class="content">
 
     <?php if (isset($_SESSION["success_message"])): ?>
@@ -73,7 +91,16 @@ $pref = getPreferences($conn, $userId);
 
     <h3>Your Notes List</h3>
 
-</div>
+    <hr>
 
+    <button onclick="createNoteCard()">Add Note</button>
+    <button onclick="setViewMode('grid')">Grid View</button>
+    <button onclick="setViewMode('list')">List View</button>
+
+    <hr>
+
+    <div id="notes-list" class="grid"></div>
+
+    <script src="Assets/js/notes.js"></script>
 </body>
 </html>

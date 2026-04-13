@@ -45,21 +45,6 @@ $pref = getPreferences($conn, $userId);
                             <option value="dark" <?= $pref['theme_mode']=='dark'?'selected':'' ?>>Dark Mode (Deep)</option>
                         </select>
                     </div>
-
-                    <div class="setting-group">
-                        <label><i class="fas fa-text-height"></i> Font Size (px)</label>
-                        <input type="number" name="font_size" min="12" max="30" value="<?= $pref['font_size'] ?>">
-                    </div>
-
-                    <div class="setting-group">
-                        <label><i class="fas fa-font"></i> Typography Style</label>
-                        <select name="font_style">
-                            <option value="'Inter', sans-serif" <?= $pref['font_style']=="'Inter', sans-serif"?'selected':'' ?>>Sans-serif (Modern)</option>
-                            <option value="'Georgia', serif" <?= $pref['font_style']=="'Georgia', serif"?'selected':'' ?>>Serif (Classic)</option>
-                            <option value="'Courier New', monospace" <?= $pref['font_style']=="'Courier New', monospace"?'selected':'' ?>>Monospace (Code)</option>
-                        </select>
-                    </div>
-
                     <button type="submit" class="btn-save">Save Changes</button>
                 </form>
             </div>
