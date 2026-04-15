@@ -16,6 +16,24 @@ async function fetchJson(url, options = {}) {
 window.onload = async function () {
     await loadPreferences();
     await loadNotes();
+
+    const searchInput = document.getElementById("searchInput");
+
+    if (searchInput) {
+        searchInput.addEventListener("input", function () {
+            clearTimeout(searchTimer);
+
+            searchTimer = setTimeout(() => {
+                const keyword = this.value.trim();
+
+                if (keyword === "") {
+                    loadNotes();
+                } else {
+                    searchNotes(keyword);
+                }
+            }, 300);
+        });
+    }
 };
 
 async function loadPreferences() {
@@ -42,6 +60,9 @@ function setViewMode(mode) {
 async function savePreference(key, value) {
     await fetchJson("User_Module/save_preferences.php", {
         method: "POST",
+        headers: {
+            "X-Requested-With": "XMLHttpRequest"
+        },
         body: new URLSearchParams({ key, value })
     });
 }
@@ -182,6 +203,25 @@ function renderNoteCard(note) {
     </div>`;
 }
 
+async function renderNotes(notes) {
+    const container = document.getElementById("notes-list");
+    if (!container) return;
+
+    container.className = currentView;
+    container.innerHTML = "";
+
+    for (const note of notes) {
+        container.innerHTML += renderNoteCard(note);
+
+        const imgs = await loadNoteImages(note.id);
+        const box = document.getElementById(`images-${note.id}`);
+
+        if (box) box.innerHTML = imgs;
+    }
+
+    attachAutoSaveEvents();
+}
+
 function attachAutoSaveEvents() {
     document.querySelectorAll(".note-title, .note-content, .font-size, .font-style, .note-color")
         .forEach(el => {
@@ -278,3 +318,13 @@ window.setViewMode = setViewMode;
 window.deleteNote = deleteNote;
 window.saveNote = saveNote;
 window.loadNotes = loadNotes;
+
+let searchTimer;
+
+async function searchNotes(keyword) {
+    const res = await fetchJson(
+        `API/api_search.php?keyword=${encodeURIComponent(keyword)}`
+    );
+
+    renderNotes(res);
+}

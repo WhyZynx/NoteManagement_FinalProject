@@ -1,6 +1,15 @@
+<h3>Your Notes List</h3>
+
+<div class="toolbar">
+    <input type="text" id="searchInput" placeholder="Search notes...">
+</div>
+
+<hr>
+
 <button onclick="createNoteCard()">Add Note</button>
+<button onclick="setViewMode('grid')">Grid View</button>
+<button onclick="setViewMode('list')">List View</button>
 
-<button onclick="setViewMode('grid')">Grid</button>
-<button onclick="setViewMode('list')">List</button>
+<hr>
 
-<div id="notes-list"></div>
+<div id="notes-list" class="grid"></div>

@@ -84,6 +84,18 @@ $pref = [
             background: #d4edda;
             color: #155724;
         }
+
+        .toolbar {
+            margin: 12px 0;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
     </style>
 </head>
 
@@ -116,17 +128,7 @@ $pref = [
 
     <hr>
 
-    <h3>Your Notes List</h3>
-
-    <hr>
-
-    <button onclick="createNoteCard()">Add Note</button>
-    <button onclick="setViewMode('grid')">Grid View</button>
-    <button onclick="setViewMode('list')">List View</button>
-
-    <hr>
-
-    <div id="notes-list" class="grid"></div>
+    <?php include __DIR__ . '/Note_Module/notes.php'; ?>
 </div>
 
 <script src="Assets/js/notes.js"></script>
