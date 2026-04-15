@@ -2,6 +2,7 @@
 session_start();
 include __DIR__ . '/../db.php';
 include __DIR__ . '/../Utils/security.php';
+include __DIR__ . '/../Utils/validation.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Auth_Module/login.php");
@@ -31,6 +32,13 @@ if (!$user || !verifyPassword($old, $user['password_hash'])) {
 
 if ($new !== $confirm) {
     header("Location: change_password.php?error=confirm");
+    exit();
+}
+
+$strengthError = validatePasswordStrength($new);
+
+if ($strengthError) {
+    header("Location: change_password.php?error=weak");
     exit();
 }
 

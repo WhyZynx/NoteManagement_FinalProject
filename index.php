@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 include __DIR__ . '/db.php';
 include __DIR__ . '/Utils/preferences.php';
 
@@ -10,11 +11,17 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
-$stmt = $conn->prepare("SELECT display_name, is_verified, theme_mode, font_size, font_style
-                          FROM users WHERE id = ?");
+$stmt = $conn->prepare("
+    SELECT display_name, is_verified, theme_mode, font_size, font_style
+    FROM users
+    WHERE id = ?
+");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
+
+$_SESSION["is_verified"] = $user["is_verified"] ?? 0;
+
 $pref = [
     "theme_mode" => $user["theme_mode"] ?? "light",
     "font_size" => $user["font_size"] ?? 16,
@@ -25,7 +32,9 @@ $pref = [
 <html>
 <head>
     <title>Notes Test</title>
+
     <link rel="stylesheet" href="Assets/css/theme.css">
+    <link rel="stylesheet" href="Assets/css/style.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,30 +65,48 @@ $pref = [
             width: 100%;
             min-height: 120px;
         }
+
+        .warning-banner,
+        .success-banner {
+            margin: 16px 0;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: opacity 0.5s ease;
+        }
+
+        .warning-banner {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .success-banner {
+            background: #d4edda;
+            color: #155724;
+        }
     </style>
 </head>
 
-<body class="<?= $pref['theme_mode'] ?? 'light' ?>">
+<body class="<?= htmlspecialchars($pref['theme_mode']) ?>">
+
 <div class="content">
 
     <?php if (isset($_SESSION["success_message"])): ?>
-        <div class="alert-success">
-            <?= htmlspecialchars($_SESSION["success_message"]); ?>
+        <div id="verify-message" class="success-banner">
+            <?php
+                echo htmlspecialchars($_SESSION["success_message"]);
+                unset($_SESSION["success_message"]);
+            ?>
         </div>
-        <?php unset($_SESSION["success_message"]); ?>
-    <?php endif; ?>
-
-    <?php
-    $isVerified = (int)($user['is_verified'] ?? 0);
-    ?>
-
-    <?php if ($isVerified === 0): ?>
-        <div class="alert-warning">
-            Your account is not activated yet. Please check your email to verify.
+    <?php elseif (!($_SESSION["is_verified"] ?? 0)): ?>
+        <div id="verify-message" class="warning-banner">
+            Your account is not activated. Please verify your email.
         </div>
     <?php endif; ?>
 
-    <h1>Welcome, <?= htmlspecialchars($user['display_name'] ?? 'User'); ?> 👋</h1>
+    <h1>
+        Welcome, <?= htmlspecialchars($user['display_name'] ?? 'User'); ?> 👋
+    </h1>
 
     <nav>
         <a href="User_Module/profile.php">Profile</a> |
@@ -100,7 +127,47 @@ $pref = [
     <hr>
 
     <div id="notes-list" class="grid"></div>
+</div>
 
-    <script src="Assets/js/notes.js"></script>
+<script src="Assets/js/notes.js"></script>
+
+<script>
+window.addEventListener("storage", function (event) {
+    if (event.key === "verify_success" && event.newValue === "1") {
+        const banner = document.getElementById("verify-message");
+
+        if (banner) {
+            banner.className = "success-banner";
+            banner.innerText = "Account verified successfully";
+        } else {
+            const newBanner = document.createElement("div");
+            newBanner.id = "verify-message";
+            newBanner.className = "success-banner";
+            newBanner.innerText = "Account verified successfully";
+            document.querySelector(".content").prepend(newBanner);
+        }
+
+        setTimeout(() => {
+            const msg = document.getElementById("verify-message");
+            if (msg) {
+                msg.style.opacity = "0";
+                setTimeout(() => msg.remove(), 500);
+            }
+        }, 5000);
+
+        localStorage.removeItem("verify_success");
+    }
+});
+
+window.addEventListener("load", function () {
+    if (localStorage.getItem("verify_success") === "1") {
+        window.dispatchEvent(new StorageEvent("storage", {
+            key: "verify_success",
+            newValue: "1"
+        }));
+    }
+});
+</script>
+
 </body>
 </html>

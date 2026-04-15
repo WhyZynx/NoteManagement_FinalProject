@@ -37,8 +37,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $otp = trim($_POST['otp'] ?? '');
         $now = date("Y-m-d H:i:s");
 
+        $stmtOld = $conn->prepare("SELECT password_hash FROM users WHERE email = ?");
+        $stmtOld->bind_param("s", $email);
+        $stmtOld->execute();
+        $oldUser = $stmtOld->get_result()->fetch_assoc();
+
         $error = validatePasswordStrength($password)
-            ?? validateConfirmPassword($password, $confirm);
+            ?? validateConfirmPassword($password, $confirm)
+            ?? validateDifferentFromOldPassword($password, $oldUser["password_hash"]);
 
         if (!$error) {
             $stmt = $conn->prepare("SELECT id FROM users WHERE email = ? AND reset_otp = ? AND otp_expires >= ?");

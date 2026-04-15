@@ -45,4 +45,12 @@ function validateEmail($email)
     }
     return null;
 }
+
+function validateDifferentFromOldPassword($newPassword, $oldHash)
+{
+    if (password_verify($newPassword, $oldHash)) {
+        return "New password must be different from old password";
+    }
+    return null;
+}
 ?>

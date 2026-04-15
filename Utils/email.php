@@ -31,7 +31,14 @@ function sendVerificationEmail($email, $token)
         $mail = createMailer();
         $mail->addAddress($email);
 
-        $verifyLink = "http://localhost/Auth_Module/verify_email.php?token=" . urlencode($token);
+        //$verifyLink = "http://localhost/Auth_Module/verify_email.php?token=" . urlencode($token);
+        //Subfolder, xóa sau khi hoàn thành dự án,đổi thành cái trên
+        $verifyLink =
+    (isset($_SERVER['HTTPS']) ? 'https' : 'http') .
+    '://' .
+    $_SERVER['HTTP_HOST'] .
+    dirname($_SERVER['PHP_SELF']) .
+    '/../Auth_Module/verify_email.php?token=' . urlencode($token);
 
         $mail->Subject = "Verify your account";
         $mail->Body = "

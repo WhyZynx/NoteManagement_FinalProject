@@ -9,6 +9,8 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $pref = getPreferences($conn, $_SESSION['user_id']);
+$error = $_GET['error'] ?? '';
+$success = $_GET['success'] ?? '';
 ?>
 
 <!DOCTYPE html>
@@ -19,41 +21,45 @@ $pref = getPreferences($conn, $_SESSION['user_id']);
     <link rel="stylesheet" href="../Assets/css/theme.css">
 </head>
 
-<body class="<?= $pref['theme_mode'] ?>"
-      style="font-size: <?= $pref['font_size'] ?>px;
-             font-family: <?= $pref['font_style'] ?>;">
+<body class="<?= htmlspecialchars($pref['theme_mode']) ?>"
+      style="font-size: <?= (int)$pref['font_size'] ?>px;
+             font-family: <?= htmlspecialchars($pref['font_style']) ?>;">
 
 <?php include "sidebar.php"; ?>
 
 <div class="content">
 
-<h2>Change Password</h2>
+    <h2>Change Password</h2>
 
-<?php if (isset($_GET['error'])): ?>
-    <p style="color:red">
-        <?php
-        if ($_GET['error'] == 'wrong_old') echo "Wrong old password";
-        if ($_GET['error'] == 'confirm') echo "Confirm not match";
-        if ($_GET['error'] == 'same') echo "New password must be different";
-        if ($_GET['error'] == 'weak') echo "Weak password";
-        ?>
-    </p>
-<?php endif; ?>
+    <?php if ($error): ?>
+        <p style="color:red">
+            <?php
+            if ($error == 'wrong_old') echo "Wrong old password";
+            if ($error == 'confirm') echo "Confirm password does not match";
+            if ($error == 'same') echo "New password must be different from old password";
+            if ($error == 'weak') echo "Password must be at least 8 characters and include uppercase, lowercase, and number";
+            ?>
+        </p>
+    <?php endif; ?>
 
-<form action="update_password.php" method="POST">
+    <?php if ($success): ?>
+        <p style="color:green">Password changed successfully</p>
+    <?php endif; ?>
 
-    <input type="password" name="old_password" placeholder="Old Password"><br><br>
-    <input type="password" name="new_password" placeholder="New Password"><br><br>
-    <input type="password" name="confirm_password" placeholder="Confirm Password"><br><br>
+    <form action="update_password.php" method="POST">
+        <input type="password" name="old_password" placeholder="Old Password" required><br><br>
+        <input type="password" name="new_password" placeholder="New Password" required><br><br>
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required><br><br>
 
-    <button type="submit">Change Password</button>
-</form>
+        <button type="submit">Change Password</button>
+    </form>
 
-<br>
+    <br>
 
-<a href="profile.php">Back</a>
+    <a href="profile.php">Back</a>
 
 </div>
+
 <script src="../Assets/js/sidebar.js"></script>
 </body>
 </html>
