@@ -91,13 +91,24 @@ async function loadNotes() {
         return;
     }
 
+    let html = "";
+
     for (const note of res.data) {
-        container.innerHTML += renderNoteCard(note);
+        html += renderNoteCard(note);
+    }
 
+    container.innerHTML = html;
+
+    for (const note of res.data) {
         const imgs = await loadNoteImages(note.id);
-        const box = document.getElementById(`images-${note.id}`);
+        const boxImg = document.getElementById(`images-${note.id}`);
+        if (boxImg) boxImg.innerHTML = imgs;
 
-        if (box) box.innerHTML = imgs;
+        const labels = await loadNoteLabels(note.id);
+        const boxLabel = document.getElementById(`labels-${note.id}`);
+        if (boxLabel) boxLabel.innerHTML = labels;
+
+         await renderLabelSelector(note.id);
     }
 
     attachAutoSaveEvents();
@@ -178,6 +189,12 @@ function renderNoteCard(note) {
             value="${note.title || ""}"
             style="font-size:${size}px;font-family:${style};" />
 
+        <div class="note-labels" id="labels-${note.id}"></div>
+
+<div class="label-selector" data-id="${note.id}">
+    <div class="label-box"></div>
+</div>
+
         <textarea class="note-content" data-id="${note.id}"
             style="font-size:${size}px;font-family:${style};">${note.content || ""}</textarea>
 
@@ -212,11 +229,20 @@ async function renderNotes(notes) {
 
     for (const note of notes) {
         container.innerHTML += renderNoteCard(note);
+    }
 
-        const imgs = await loadNoteImages(note.id);
-        const box = document.getElementById(`images-${note.id}`);
+    for (const note of notes) {
+        const noteId = note.id;
 
-        if (box) box.innerHTML = imgs;
+        const imgs = await loadNoteImages(noteId);
+        const boxImg = document.getElementById(`images-${noteId}`);
+        if (boxImg) boxImg.innerHTML = imgs;
+
+        const labels = await loadNoteLabels(noteId);
+        const boxLabel = document.getElementById(`labels-${noteId}`);
+        if (boxLabel) boxLabel.innerHTML = labels;
+
+        await renderLabelSelector(noteId);
     }
 
     attachAutoSaveEvents();
@@ -285,6 +311,11 @@ function syncNoteStyle(noteId) {
 
 async function saveNote(noteId) {
     const form = new FormData();
+    const labelIds = Array.from(
+    document.querySelectorAll(`.label-selector[data-id="${noteId}"] input:checked`)
+).map(cb => cb.value);
+
+form.append("labels", JSON.stringify(labelIds));
 
     form.append("note_id", noteId);
     form.append("title", document.querySelector(`.note-title[data-id="${noteId}"]`)?.value || "");
@@ -326,5 +357,77 @@ async function searchNotes(keyword) {
         `API/api_search.php?keyword=${encodeURIComponent(keyword)}`
     );
 
-    renderNotes(res);
+    const notes = res.data || res;
+
+    renderNotes(notes);
 }
+
+async function loadNoteLabels(noteId) {
+    const res = await fetchJson(`Note_Module/get_note_labels.php?note_id=${noteId}`);
+
+    if (!res.data) return "";
+
+    return res.data.map(l => `
+        <span class="label-badge">${l.label_name}</span>
+    `).join("");
+}
+async function getAllLabels() {
+    const res = await fetch("../API/api_labels.php?action=list");
+    return await res.json();
+}
+
+async function getNoteLabelIds(noteId) {
+    const res = await fetchJson(`Note_Module/get_note_labels.php?note_id=${noteId}`);
+
+    if (!res.data) return [];
+
+    return res.data.map(l => parseInt(l.id));
+}
+
+async function renderLabelSelector(noteId) {
+    const labels = await getAllLabels();
+    const selectedIds = await getNoteLabelIds(noteId);
+
+    const box = document.querySelector(`.label-selector[data-id="${noteId}"] .label-box`);
+    if (!box) return;
+
+    box.innerHTML = labels.map(l => `
+        <label>
+            <input type="checkbox"
+                   value="${l.id}"
+                   data-note="${noteId}"
+                   ${selectedIds.includes(parseInt(l.id)) ? "checked" : ""}>
+            ${l.label_name}
+        </label>
+    `).join("");
+
+    box.querySelectorAll("input").forEach(cb => {
+        cb.addEventListener("change", function () {
+            saveNote(noteId);
+        });
+    });
+}
+
+window.addEventListener("labelsUpdated", async function () {
+    const notes = document.querySelectorAll(".note-card");
+
+    for (const note of notes) {
+        const noteId = note.dataset.id;
+        await renderLabelSelector(noteId);
+    }
+});
+
+window.addEventListener("labelsChanged", async function () {
+    const notes = document.querySelectorAll(".note-card");
+
+    for (const note of notes) {
+        const noteId = note.dataset.id;
+
+        const boxLabel = document.getElementById(`labels-${noteId}`);
+        if (boxLabel) {
+            boxLabel.innerHTML = await loadNoteLabels(noteId);
+        }
+
+        await renderLabelSelector(noteId);
+    }
+});

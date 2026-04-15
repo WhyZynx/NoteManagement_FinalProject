@@ -48,6 +48,7 @@ async function createLabel() {
     if (result.success) {
         input.value = "";
         loadLabels();
+        window.dispatchEvent(new Event("labelsChanged"));
     } else {
         alert(result.message || "Create failed");
     }
@@ -72,6 +73,7 @@ async function renameLabel(id) {
 
     if (result.success) {
         loadLabels();
+        window.dispatchEvent(new Event("labelsChanged"));
     } else {
         alert(result.message || "Update failed");
     }
@@ -93,6 +95,7 @@ async function deleteLabel(id) {
 
     if (result.success) {
         loadLabels();
+        window.dispatchEvent(new Event("labelsChanged"));
     } else {
         alert(result.message || "Delete failed");
     }

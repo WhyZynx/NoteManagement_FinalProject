@@ -43,7 +43,22 @@ $stmt->bind_param(
     $noteId,
     $userId
 );
+$labels = json_decode($_POST["labels"] ?? "[]", true);
 
+$conn->query("DELETE FROM note_labels WHERE note_id = $noteId");
+
+if (!empty($labels) && is_array($labels)) {
+    $stmtLabel = $conn->prepare("
+        INSERT INTO note_labels (note_id, label_id)
+        VALUES (?, ?)
+    ");
+
+    foreach ($labels as $labelId) {
+        $labelId = (int)$labelId;
+        $stmtLabel->bind_param("ii", $noteId, $labelId);
+        $stmtLabel->execute();
+    }
+}
 if ($stmt->execute()) {
     response("success", "Note saved successfully");
 }

@@ -56,14 +56,21 @@ switch ($action) {
         break;
 
     case 'delete':
-        $labelId = intval($_POST['label_id'] ?? 0);
+    $labelId = intval($_POST['label_id'] ?? 0);
 
-        $success = deleteLabel($conn, $userId, $labelId);
+    $stmt = $conn->prepare("DELETE FROM note_labels WHERE label_id = ?");
+    $stmt->bind_param("i", $labelId);
+    $stmt->execute();
 
-        echo json_encode([
-            'success' => $success
-        ]);
-        break;
+    $stmt = $conn->prepare("DELETE FROM labels WHERE id = ? AND user_id = ?");
+    $stmt->bind_param("ii", $labelId, $userId);
+
+    $success = $stmt->execute();
+
+    echo json_encode([
+        'success' => $success
+    ]);
+    exit();
 
     default:
         echo json_encode([
