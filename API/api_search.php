@@ -9,16 +9,30 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 $keyword = trim($_GET['keyword'] ?? '');
-
-$sql = "SELECT * FROM notes 
-        WHERE user_id = ? 
-        AND (title LIKE ? OR content LIKE ?)
-        ORDER BY updated_at DESC";
+$labelId = $_GET['label_id'] ?? null;
 
 $searchValue = "%$keyword%";
 
+$sql = "
+SELECT DISTINCT n.*
+FROM notes n
+LEFT JOIN note_labels nl ON n.id = nl.note_id
+WHERE n.user_id = ?
+AND (n.title LIKE ? OR n.content LIKE ?)
+";
+
+if ($labelId) {
+    $sql .= " AND nl.label_id = ? ";
+}
+
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("iss", $userId, $searchValue, $searchValue);
+
+if ($labelId) {
+    $stmt->bind_param("issi", $userId, $searchValue, $searchValue, $labelId);
+} else {
+    $stmt->bind_param("iss", $userId, $searchValue, $searchValue);
+}
+
 $stmt->execute();
 
 $result = $stmt->get_result();

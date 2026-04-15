@@ -6,5 +6,7 @@
         <button id="addLabelBtn">Add</button>
     </div>
 
+    <button onclick="filterByLabel(null)">All</button>
+
     <div id="labelList"></div>
 </div>

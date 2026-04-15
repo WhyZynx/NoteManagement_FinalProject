@@ -1,5 +1,6 @@
 let currentView = "grid";
 let autoSaveTimers = {};
+let searchTimer;
 
 async function fetchJson(url, options = {}) {
     const res = await fetch(url, options);
@@ -13,6 +14,42 @@ async function fetchJson(url, options = {}) {
     }
 }
 
+async function renderNotes(notes) {
+    const container = document.getElementById("notes-list");
+    if (!container) return;
+
+    container.className = currentView;
+    container.innerHTML = "";
+
+    if (!notes || notes.length === 0) {
+        container.innerHTML = "<p>No notes</p>";
+        return;
+    }
+
+    container.innerHTML = notes.map(renderNoteCard).join("");
+
+    await hydrateNotes(notes);
+
+    attachAutoSaveEvents();
+}
+
+async function hydrateNotes(notes) {
+    for (const note of notes) {
+        const [imgs, labels] = await Promise.all([
+            loadNoteImages(note.id),
+            loadNoteLabels(note.id)
+        ]);
+
+        const imgBox = document.getElementById(`images-${note.id}`);
+        if (imgBox) imgBox.innerHTML = imgs;
+
+        const labelBox = document.getElementById(`labels-${note.id}`);
+        if (labelBox) labelBox.innerHTML = labels;
+
+        await renderLabelSelector(note.id);
+    }
+}
+
 window.onload = async function () {
     await loadPreferences();
     await loadNotes();
@@ -23,11 +60,13 @@ window.onload = async function () {
         searchInput.addEventListener("input", function () {
             clearTimeout(searchTimer);
 
-            searchTimer = setTimeout(() => {
+            searchTimer = window.setTimeout(() => {
                 const keyword = this.value.trim();
 
                 if (keyword === "") {
+                    searchTimer = null;
                     loadNotes();
+                    return;
                 } else {
                     searchNotes(keyword);
                 }
@@ -79,39 +118,7 @@ async function createNoteCard() {
 
 async function loadNotes() {
     const res = await fetchJson("Note_Module/get_note.php");
-
-    const container = document.getElementById("notes-list");
-    if (!container) return;
-
-    container.className = currentView;
-    container.innerHTML = "";
-
-    if (!res.data || res.data.length === 0) {
-        container.innerHTML = "<p>No notes</p>";
-        return;
-    }
-
-    let html = "";
-
-    for (const note of res.data) {
-        html += renderNoteCard(note);
-    }
-
-    container.innerHTML = html;
-
-    for (const note of res.data) {
-        const imgs = await loadNoteImages(note.id);
-        const boxImg = document.getElementById(`images-${note.id}`);
-        if (boxImg) boxImg.innerHTML = imgs;
-
-        const labels = await loadNoteLabels(note.id);
-        const boxLabel = document.getElementById(`labels-${note.id}`);
-        if (boxLabel) boxLabel.innerHTML = labels;
-
-         await renderLabelSelector(note.id);
-    }
-
-    attachAutoSaveEvents();
+    await renderNotes(res.data || []);
 }
 
 async function loadNoteImages(noteId) {
@@ -220,34 +227,6 @@ function renderNoteCard(note) {
     </div>`;
 }
 
-async function renderNotes(notes) {
-    const container = document.getElementById("notes-list");
-    if (!container) return;
-
-    container.className = currentView;
-    container.innerHTML = "";
-
-    for (const note of notes) {
-        container.innerHTML += renderNoteCard(note);
-    }
-
-    for (const note of notes) {
-        const noteId = note.id;
-
-        const imgs = await loadNoteImages(noteId);
-        const boxImg = document.getElementById(`images-${noteId}`);
-        if (boxImg) boxImg.innerHTML = imgs;
-
-        const labels = await loadNoteLabels(noteId);
-        const boxLabel = document.getElementById(`labels-${noteId}`);
-        if (boxLabel) boxLabel.innerHTML = labels;
-
-        await renderLabelSelector(noteId);
-    }
-
-    attachAutoSaveEvents();
-}
-
 function attachAutoSaveEvents() {
     document.querySelectorAll(".note-title, .note-content, .font-size, .font-style, .note-color")
         .forEach(el => {
@@ -344,22 +323,17 @@ async function deleteNote(id) {
     loadNotes();
 }
 
-window.createNoteCard = createNoteCard;
-window.setViewMode = setViewMode;
-window.deleteNote = deleteNote;
-window.saveNote = saveNote;
-window.loadNotes = loadNotes;
-
-let searchTimer;
-
 async function searchNotes(keyword) {
     const res = await fetchJson(
         `API/api_search.php?keyword=${encodeURIComponent(keyword)}`
     );
 
-    const notes = res.data || res;
+    const notes =
+        Array.isArray(res) ? res :
+        Array.isArray(res?.data) ? res.data :
+        [];
 
-    renderNotes(notes);
+    await renderNotes(notes);
 }
 
 async function loadNoteLabels(noteId) {
@@ -431,3 +405,10 @@ window.addEventListener("labelsChanged", async function () {
         await renderLabelSelector(noteId);
     }
 });
+
+window.createNoteCard = createNoteCard;
+window.setViewMode = setViewMode;
+window.deleteNote = deleteNote;
+window.saveNote = saveNote;
+window.loadNotes = loadNotes;
+

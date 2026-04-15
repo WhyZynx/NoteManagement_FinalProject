@@ -15,7 +15,11 @@ async function loadLabels() {
     labels.forEach(label => {
         html += `
             <div class="label-item">
-                <span>${escapeHtml(label.label_name)}</span>
+                <span style="cursor:pointer"
+                    onclick="filterByLabel(${label.id})">
+                    ${escapeHtml(label.label_name)}
+                </span>
+
                 <button onclick="renameLabel(${label.id})">Rename</button>
                 <button onclick="deleteLabel(${label.id})">Delete</button>
             </div>
@@ -106,3 +110,14 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
+
+async function filterByLabel(labelId) {
+    const url = labelId
+        ? `API/api_search.php?label_id=${labelId}`
+        : `Note_Module/get_note.php`;
+
+    const res = await fetchJson(url);
+    renderNotes(res.data || res);
+}
+
+window.filterByLabel = filterByLabel;
