@@ -129,9 +129,11 @@ $pref = [
     <hr>
 
     <?php include __DIR__ . '/Note_Module/notes.php'; ?>
+    <?php include __DIR__ . '/Label_Module/labels.php'; ?>
 </div>
 
 <script src="Assets/js/notes.js"></script>
+<script src="Assets/js/labels.js"></script>
 
 <script>
 window.addEventListener("storage", function (event) {
