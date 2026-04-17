@@ -1,11 +1,6 @@
 <?php
-$docRoot = $_SERVER['DOCUMENT_ROOT'];
-$currentDir = __DIR__;
-$levelsUp = substr_count($currentDir, '/') - substr_count($docRoot, '/');
-$basePath = str_repeat('../', $levelsUp);
-
-require_once $basePath . 'db.php';
-require_once $basePath . 'Label_Module/label_controller.php';
+require_once __DIR__ . '/../db.php';
+require_once __DIR__ . '/../Label_Module/label_controller.php';
 
 session_start();
 

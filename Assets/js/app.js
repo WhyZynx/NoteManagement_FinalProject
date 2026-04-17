@@ -1,3 +1,18 @@
+const pathParts = window.location.pathname.split('/').filter(Boolean);
+const folderDepth = pathParts.length - 1;
+
+window.API_BASE = folderDepth > 0
+    ? '../API/'
+    : 'API/';
+
+window.NOTE_BASE = folderDepth > 0
+    ? '../Note_Module/'
+    : 'Note_Module/';
+
+window.USER_BASE = folderDepth > 0
+? '../User_Module/'
+: 'User_Module/';
+
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("registerForm");
 

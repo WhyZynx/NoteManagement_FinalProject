@@ -1,10 +1,5 @@
 <?php
-$docRoot = $_SERVER['DOCUMENT_ROOT'];
-$currentDir = __DIR__;
-$levelsUp = substr_count($currentDir, '/') - substr_count($docRoot, '/');
-$basePath = str_repeat('../', $levelsUp);
-
-require_once $basePath . 'db.php';
+require_once __DIR__ . '/../db.php';
 
 session_start();
 

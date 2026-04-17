@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 async function loadLabels() {
-    const response = await fetch("../API/api_labels.php?action=list");
+    const response = await fetch(`${API_BASE}api_labels.php?action=list`);
     const labels = await response.json();
 
     let html = "";
@@ -42,7 +42,7 @@ async function createLabel() {
     formData.append("action", "create");
     formData.append("label_name", labelName);
 
-    const response = await fetch("../API/api_labels.php", {
+    const response = await fetch(`${API_BASE}api_labels.php`, {
         method: "POST",
         body: formData
     });
@@ -68,7 +68,7 @@ async function renameLabel(id) {
     formData.append("label_id", id);
     formData.append("new_name", newName.trim());
 
-    const response = await fetch("../API/api_labels.php", {
+    const response = await fetch(`${API_BASE}api_labels.php`, {
         method: "POST",
         body: formData
     });
@@ -90,7 +90,7 @@ async function deleteLabel(id) {
     formData.append("action", "delete");
     formData.append("label_id", id);
 
-    const response = await fetch("../API/api_labels.php", {
+    const response = await fetch(`${API_BASE}api_labels.php`, {
         method: "POST",
         body: formData
     });
@@ -113,8 +113,8 @@ function escapeHtml(text) {
 
 async function filterByLabel(labelId) {
     const url = labelId
-        ? `API/api_search.php?label_id=${labelId}`
-        : `Note_Module/get_note.php`;
+        ? `${API_BASE}api_search.php?label_id=${labelId}`
+        : `${NOTE_BASE}get_note.php`;
 
     const res = await fetchJson(url);
     renderNotes(res.data || res);

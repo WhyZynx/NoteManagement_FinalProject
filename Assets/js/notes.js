@@ -76,7 +76,7 @@ window.onload = async function () {
 };
 
 async function loadPreferences() {
-    const res = await fetchJson("User_Module/get_preferences.php");
+    const res = await fetchJson(`${USER_BASE}get_preferences.php`);
 
     if (!res.data) return;
 
@@ -97,7 +97,7 @@ function setViewMode(mode) {
 }
 
 async function savePreference(key, value) {
-    await fetchJson("User_Module/save_preferences.php", {
+    await fetchJson(`${USER_BASE}save_preferences.php`, {
         method: "POST",
         headers: {
             "X-Requested-With": "XMLHttpRequest"
@@ -107,7 +107,7 @@ async function savePreference(key, value) {
 }
 
 async function createNoteCard() {
-    const res = await fetchJson("Note_Module/create_note.php", {
+    const res = await fetchJson(`${NOTE_BASE}create_note.php`, {
         method: "POST"
     });
 
@@ -117,12 +117,12 @@ async function createNoteCard() {
 }
 
 async function loadNotes() {
-    const res = await fetchJson("Note_Module/get_note.php");
+    const res = await fetchJson(`${NOTE_BASE}get_note.php`);
     await renderNotes(res.data || []);
 }
 
 async function loadNoteImages(noteId) {
-    const res = await fetchJson(`Note_Module/get_note_images.php?note_id=${noteId}`);
+    const res = await fetchJson(`${NOTE_BASE}get_note_images.php?note_id=${noteId}`);
 
     if (!res.data) return "";
 
@@ -145,7 +145,7 @@ async function uploadImage(noteId) {
     form.append("note_id", noteId);
     form.append("image", input.files[0]);
 
-    const res = await fetchJson("Note_Module/upload_image.php", {
+    const res = await fetchJson(`${NOTE_BASE}upload_image.php`, {
         method: "POST",
         body: form
     });
@@ -166,7 +166,7 @@ async function deleteImage(imageId, noteId) {
     const form = new FormData();
     form.append("image_id", imageId);
 
-    const res = await fetchJson("Note_Module/delete_image.php", {
+    const res = await fetchJson(`${NOTE_BASE}delete_image.php`, {
         method: "POST",
         body: form
     });
@@ -303,7 +303,7 @@ form.append("labels", JSON.stringify(labelIds));
     form.append("font_style", document.querySelector(`.font-style[data-id="${noteId}"]`)?.value || "Arial");
     form.append("note_color", document.querySelector(`.note-color[data-id="${noteId}"]`)?.value || "#ffffff");
 
-    await fetchJson("Note_Module/save_note.php", {
+    await fetchJson(`${NOTE_BASE}save_note.php`, {
         method: "POST",
         body: form
     });
@@ -315,7 +315,7 @@ async function deleteNote(id) {
     const form = new FormData();
     form.append("note_id", id);
 
-    await fetchJson("Note_Module/delete_note.php", {
+    await fetchJson(`${NOTE_BASE}delete_note.php`, {
         method: "POST",
         body: form
     });
@@ -325,7 +325,7 @@ async function deleteNote(id) {
 
 async function searchNotes(keyword) {
     const res = await fetchJson(
-        `API/api_search.php?keyword=${encodeURIComponent(keyword)}`
+        `${API_BASE}api_search.php?keyword=${encodeURIComponent(keyword)}`
     );
 
     const notes =
@@ -337,7 +337,7 @@ async function searchNotes(keyword) {
 }
 
 async function loadNoteLabels(noteId) {
-    const res = await fetchJson(`Note_Module/get_note_labels.php?note_id=${noteId}`);
+    const res = await fetchJson(`${NOTE_BASE}get_note_labels.php?note_id=${noteId}`);
 
     if (!res.data) return "";
 
@@ -346,12 +346,12 @@ async function loadNoteLabels(noteId) {
     `).join("");
 }
 async function getAllLabels() {
-    const res = await fetch("../API/api_labels.php?action=list");
+    const res = await fetch(`${API_BASE}api_labels.php?action=list`);
     return await res.json();
 }
 
 async function getNoteLabelIds(noteId) {
-    const res = await fetchJson(`Note_Module/get_note_labels.php?note_id=${noteId}`);
+    const res = await fetchJson(`${NOTE_BASE}get_note_labels.php?note_id=${noteId}`);
 
     if (!res.data) return [];
 
