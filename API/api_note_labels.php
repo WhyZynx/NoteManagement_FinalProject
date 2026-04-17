@@ -1,6 +1,12 @@
 <?php
-require_once __DIR__ . '/../db.php';
-require_once __DIR__ . '/../Note_Module/note_label_controller.php';
+$docRoot = $_SERVER['DOCUMENT_ROOT'];
+$currentDir = __DIR__;
+$levelsUp = substr_count($currentDir, '/') - substr_count($docRoot, '/');
+$basePath = str_repeat('../', $levelsUp);
+
+require_once $basePath . 'db.php';                                    
+require_once $basePath . 'Note_Module/note_label_controller.php';
+
 session_start();
 
 header('Content-Type: application/json');
