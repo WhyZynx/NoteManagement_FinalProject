@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 $userId = $_SESSION['user_id'];
 
 if (isset($_POST['key']) && isset($_POST['value'])) {
-    $allowedKeys = ['theme_mode', 'font_size', 'font_style', 'note_color', 'view_mode'];
+    $allowedKeys = ['theme_mode', 'theme_color', 'font_size', 'font_style', 'note_color', 'view_mode'];
 
     $key = $_POST['key'];
     $value = $_POST['value'];
@@ -39,6 +39,12 @@ if (isset($_POST['key']) && isset($_POST['value'])) {
             "message" => "Invalid key"
         ]);
         exit();
+    }
+
+    if ($key === 'theme_mode') {
+         if (!in_array($value, ['light', 'dark', 'hologram', 'custom', 'gradient'])) {
+             $value = 'light';
+         }
     }
 
     $sql = "UPDATE users SET $key = ? WHERE id = ?";
@@ -54,18 +60,21 @@ if (isset($_POST['key']) && isset($_POST['value'])) {
 }
 
 $theme = $_POST['theme_mode'] ?? 'light';
+$themeColor = $_POST['theme_color'] ?? '#5385c7'; 
+$fontSize = (int)($_POST['font_size'] ?? 16);
+$fontStyle = $_POST['font_style'] ?? "'Inter', sans-serif";
 
-if (!in_array($theme, ['light', 'dark'])) {
+if (!in_array($theme, ['light', 'dark', 'hologram', 'custom', 'gradient'])) {
     $theme = 'light';
 }
 
 $stmt = $conn->prepare("
-    UPDATE users
-    SET theme_mode = ?
-    WHERE id = ?
+    UPDATE users 
+    SET theme_mode=?, theme_color=?, font_size=?, font_style=? 
+    WHERE id=?
 ");
 
-$stmt->bind_param("si", $theme, $userId);
+$stmt->bind_param("ssisi", $theme, $themeColor, $fontSize, $fontStyle, $userId);
 $stmt->execute();
 
 header("Location: setting.php?success=1");

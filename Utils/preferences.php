@@ -1,9 +1,7 @@
-
 <?php
 function getPreferences($conn, $userId) {
-
     $stmt = $conn->prepare("
-        SELECT theme_mode, font_size, font_style
+        SELECT theme_mode, theme_color, font_size, font_style
         FROM users
         WHERE id = ?
     ");
@@ -15,8 +13,9 @@ function getPreferences($conn, $userId) {
 
     return [
         'theme_mode' => $res['theme_mode'] ?? 'light',
+        'theme_color' => $res['theme_color'] ?? '#5385c7', 
         'font_size' => (int)($res['font_size'] ?? 16),
-        'font_style' => $res['font_style'] ?? 'Sans-serif'
+        'font_style' => $res['font_style'] ?? "'Inter', sans-serif"
     ];
 }
 ?>

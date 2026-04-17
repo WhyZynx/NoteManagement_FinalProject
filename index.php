@@ -97,9 +97,34 @@ $pref = [
             font-size: 16px;
         }
     </style>
-</head>
 
-<body class="<?= htmlspecialchars($pref['theme_mode']) ?>">
+    <?php
+        $myThemeColor = '#5385c7';
+        if(isset($conn)) {
+            $t_stmt = $conn->prepare("SELECT theme_color FROM users WHERE id = ?");
+            $t_stmt->bind_param("i", $userId);
+            $t_stmt->execute();
+            $t_res = $t_stmt->get_result()->fetch_assoc();
+            if($t_res) {
+                $myThemeColor = $t_res['theme_color'] ?? '#5385c7';
+            }
+        }
+        $t_colors = explode('|', $myThemeColor);
+        $tc1 = $t_colors[0];
+        $tc2 = $t_colors[1] ?? $tc1;
+    ?>
+    <style>
+        :root {
+            --user-color: <?= htmlspecialchars($tc1) ?>;
+            --user-color-2: <?= htmlspecialchars($tc2) ?>;
+        }
+        body.hologram { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%) !important; background-attachment: fixed !important; }
+        body.custom { background-color: color-mix(in srgb, var(--user-color) 12%, #ffffff) !important; }
+        body.gradient { background: linear-gradient(135deg, var(--user-color) 0%, var(--user-color-2) 100%) !important; background-attachment: fixed !important; }
+    </style>
+    </head>
+
+<body class="<?= htmlspecialchars($pref['theme_mode'] ?? 'light') ?>">
 
 <div class="content">
 
@@ -134,7 +159,6 @@ $pref = [
 
 <script src="Assets/js/labels.js"></script>
 <script src="Assets/js/notes.js"></script>
-
 
 <script>
 window.addEventListener("storage", function (event) {
