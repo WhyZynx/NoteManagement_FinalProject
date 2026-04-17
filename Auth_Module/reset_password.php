@@ -42,9 +42,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmtOld->execute();
         $oldUser = $stmtOld->get_result()->fetch_assoc();
 
-        $error = validatePasswordStrength($password)
-            ?? validateConfirmPassword($password, $confirm)
-            ?? validateDifferentFromOldPassword($password, $oldUser["password_hash"]);
+        if (strlen($password) < 8 || !preg_match("/[A-Za-z]/", $password) || !preg_match("/[0-9]/", $password)) {
+            $error = "Password must be at least 8 characters and contain both letters and numbers.";
+        } elseif ($password !== $confirm) {
+            $error = "Passwords do not match.";
+        } elseif ($oldUser && password_verify($password, $oldUser['password_hash'])) {
+            $error = "New password cannot be the same as your old password.";
+        }
 
         if (!$error) {
             $stmt = $conn->prepare("SELECT id FROM users WHERE email = ? AND reset_otp = ? AND otp_expires >= ?");
@@ -106,11 +110,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <input type="hidden" name="email" value="<?= htmlspecialchars($email_param) ?>">
 
                     <div class="input-wrapper">
-                        <input type="password" name="password" placeholder="New password" class="input-field" required>
+                        <div class="input-group-custom">
+                            <input type="password" name="password" placeholder="New password" class="input-field" required>
+                            <i class="fa-regular fa-eye-slash toggle-password" style="cursor: pointer;"></i>
+                        </div>
                     </div>
 
                     <div class="input-wrapper">
-                        <input type="password" name="confirm" placeholder="Confirm password" class="input-field" required>
+                         <div class="input-group-custom">
+                            <input type="password" name="confirm" placeholder="Confirm password" class="input-field" required>
+                            <i class="fa-regular fa-eye-slash toggle-password" style="cursor: pointer;"></i>
+                        </div>
                     </div>
 
                     <div class="input-wrapper">
@@ -141,5 +151,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </ul>
         </div>
     </footer>
+
+    <script>
+        document.querySelectorAll('.toggle-password').forEach(function(icon) {
+            icon.addEventListener('click', function() {
+                let input = this.previousElementSibling;
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    this.classList.remove('fa-eye-slash');
+                    this.classList.add('fa-eye');
+                } else {
+                    input.type = 'password';
+                    this.classList.remove('fa-eye');
+                    this.classList.add('fa-eye-slash');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
