@@ -11,3 +11,7 @@ ALTER TABLE labels
     ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
+-- Themes
+ALTER TABLE `users` 
+  MODIFY `theme_mode` enum('light','dark','hologram','custom','gradient') DEFAULT 'light',
+  ADD `theme_color` VARCHAR(50) DEFAULT '#5385c7';
