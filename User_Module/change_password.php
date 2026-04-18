@@ -25,39 +25,62 @@ $success = $_GET['success'] ?? '';
       style="font-size: <?= (int)$pref['font_size'] ?>px;
              font-family: <?= htmlspecialchars($pref['font_style']) ?>;">
 
-<?php include "sidebar.php"; ?>
+<div class="main-wrapper">
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars"></i>
+    </button>
 
-<div class="content">
+    <?php include "sidebar.php"; ?>
 
-    <h2>Change Password</h2>
+    <div class="content">
+        <h1 class="page-title">Security</h1>
 
-    <?php if ($error): ?>
-        <p style="color:red">
-            <?php
-            if ($error == 'wrong_old') echo "Wrong old password";
-            if ($error == 'confirm') echo "Confirm password does not match";
-            if ($error == 'same') echo "New password must be different from old password";
-            if ($error == 'weak') echo "Password must be at least 8 characters and include uppercase, lowercase, and number";
-            ?>
-        </p>
-    <?php endif; ?>
+        <div class="password-card">
+            <div class="password-form-side">
+                <h2 class="password-title">Update Password</h2>
 
-    <?php if ($success): ?>
-        <p style="color:green">Password changed successfully</p>
-    <?php endif; ?>
+                <form action="update_password.php" method="POST">
+                    <div class="password-input-group">
+                        <label class="password-input-label">Old Password</label>
+                        <input type="password" name="old_password" class="edit-input-text" placeholder="••••••••" required style="width: 100%;">
+                    </div>
 
-    <form action="update_password.php" method="POST">
-        <input type="password" name="old_password" placeholder="Old Password" required><br><br>
-        <input type="password" name="new_password" placeholder="New Password" required><br><br>
-        <input type="password" name="confirm_password" placeholder="Confirm Password" required><br><br>
+                    <div class="password-input-group">
+                        <label class="password-input-label">New Password</label>
+                        <input type="password" name="new_password" class="edit-input-text" placeholder="Enter new password" required style="width: 100%;">
+                    </div>
 
-        <button type="submit">Change Password</button>
-    </form>
+                    <div class="password-input-group">
+                        <label class="password-input-label">Confirm New Password</label>
+                        <input type="password" name="confirm_password" class="edit-input-text" placeholder="Repeat new password" required style="width: 100%;">
+                    </div>
+                    
+                    <?php if ($error): ?>
+                        <div class="password-alert password-alert-error">
+                            <i class="fas fa-exclamation-circle"></i> 
+                            <?php
+                                if ($error == 'wrong_old') echo "Old password is incorrect";
+                                elseif ($error == 'confirm') echo "Confirm password doesn't match";
+                                elseif ($error == 'same') echo "Must be a new password";
+                                elseif ($error == 'weak') echo "Password is too simple";
+                            ?>
+                        </div>
+                    <?php endif; ?>
 
-    <br>
+                    <?php if ($success): ?>
+                        <div class="password-alert password-alert-success">
+                            <i class="fas fa-check-circle"></i> Password changed successfully!
+                        </div>
+                    <?php endif; ?>
 
-    <a href="profile.php">Back</a>
-
+                    <div class="password-footer">
+                        <button type="submit" class="password-btn-submit">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <img src="../Assets/images/web_img/ocean.png" alt="ocean" class="ocean-bg">
+    </div>
 </div>
 
 <script src="../Assets/js/sidebar.js"></script>

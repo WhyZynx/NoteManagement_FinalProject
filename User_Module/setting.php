@@ -25,8 +25,6 @@ $c2 = $colors[1] ?? $c1;
     <link rel="stylesheet" href="../Assets/css/theme.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-
-        .content { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 50px; }
         
         .settings-layout { display: flex; width: 100%; max-width: 650px; justify-content: center; z-index: 2; position: relative;}
         .settings-col { flex: 1; width: 100%; }
@@ -111,7 +109,7 @@ $c2 = $colors[1] ?? $c1;
         <?php include "sidebar.php"; ?>
 
         <div class="content">
-            <h2 class="page-title" style="margin-bottom: 30px; text-align: center; z-index: 2;">Themes Settings</h2>
+            <h1 class="page-title">Themes Settings</h1>
 
             <form action="save_preferences.php" method="POST" style="width: 100%; display: flex; justify-content: center;">
                 <input type="hidden" name="font_size" value="<?= htmlspecialchars($pref['font_size'] ?? 16) ?>">
