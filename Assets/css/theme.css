@@ -482,6 +482,7 @@ body {
 
 .password-input-group {
     margin-bottom: 28px;
+    position: relative;
 }
 
 .password-input-label {
@@ -490,8 +491,22 @@ body {
     color: #9ea8b9;
     margin-left: 20px;
     margin-bottom: 10px;
-    text-transform: uppercase;
     letter-spacing: 1px;
+}
+
+.edit-input-text {
+    width: 100%;
+    padding-right: 50px !important;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 20px;
+    bottom: 13px;
+    color: #9ea8b9;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    z-index: 10;
 }
 
 .password-btn-submit {

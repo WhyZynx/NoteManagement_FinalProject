@@ -43,16 +43,19 @@ $success = $_GET['success'] ?? '';
                     <div class="password-input-group">
                         <label class="password-input-label">Old Password</label>
                         <input type="password" name="old_password" class="edit-input-text" placeholder="••••••••" required style="width: 100%;">
+                        <i class="fa-regular fa-eye-slash toggle-password" style="cursor: pointer;"></i>
                     </div>
 
                     <div class="password-input-group">
                         <label class="password-input-label">New Password</label>
                         <input type="password" name="new_password" class="edit-input-text" placeholder="Enter new password" required style="width: 100%;">
+                        <i class="fa-regular fa-eye-slash toggle-password" style="cursor: pointer;"></i>
                     </div>
 
                     <div class="password-input-group">
                         <label class="password-input-label">Confirm New Password</label>
                         <input type="password" name="confirm_password" class="edit-input-text" placeholder="Repeat new password" required style="width: 100%;">
+                        <i class="fa-regular fa-eye-slash toggle-password" style="cursor: pointer;"></i>
                     </div>
                     
                     <?php if ($error): ?>
@@ -83,6 +86,23 @@ $success = $_GET['success'] ?? '';
     </div>
 </div>
 
+<script>
+    document.querySelectorAll('.toggle-password').forEach(function(icon) {
+        icon.addEventListener('click', function() {
+            let input = this.previousElementSibling;
+            if (input.type === 'password') {
+                input.type = 'text';
+                this.classList.remove('fa-eye-slash');
+                this.classList.add('fa-eye');
+            } else {
+                input.type = 'password';
+                this.classList.remove('fa-eye');
+                this.classList.add('fa-eye-slash');
+            }
+        });
+    });
+</script>
 <script src="../Assets/js/sidebar.js"></script>
+
 </body>
 </html>
