@@ -118,11 +118,62 @@ $pref = [
             --user-color: <?= htmlspecialchars($tc1) ?>;
             --user-color-2: <?= htmlspecialchars($tc2) ?>;
         }
-        body.hologram { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%) !important; background-attachment: fixed !important; }
-        body.custom { background-color: color-mix(in srgb, var(--user-color) 12%, #ffffff) !important; }
-        body.gradient { background: linear-gradient(135deg, var(--user-color) 0%, var(--user-color-2) 100%) !important; background-attachment: fixed !important; }
+
+
+        body.hologram, body.hologram .content {
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%) !important;
+            background-attachment: fixed !important;
+        }
+
+
+        body.custom, body.custom .content {
+            background-color: color-mix(in srgb, var(--user-color) 12%, #ffffff) !important;
+            background-image: none !important;
+            min-height: 100vh;
+        }
+        body.custom h1, body.custom h2, body.custom h3 {
+            color: color-mix(in srgb, var(--user-color) 60%, #333333) !important;
+        }
+        body.custom a {
+            color: var(--user-color) !important;
+        }
+
+ 
+        body.gradient, body.gradient .content {
+            background: linear-gradient(135deg, var(--user-color) 0%, var(--user-color-2) 100%) !important;
+            background-attachment: fixed !important;
+        }
+
+
+        body.dark, body.dark .content {
+            background: #1e2233 !important;
+            color: #ffffff !important;
+        }
+        body.dark h1, body.dark h3, body.dark span {
+            color: #ffffff !important;
+        }
+        body.dark .note-card {
+            background-color: #272d40 !important;
+            border-color: #3f4760 !important;
+        }
+        body.dark textarea, body.dark input {
+            background-color: #1e2233 !important;
+            color: #ffffff !important;
+            border-color: #3f4760 !important;
+        }
+        body.dark a {
+            color: #3b82f6 !important;
+        }
+        body.dark .success-banner {
+            background: #1f3b2b !important;
+            color: #75b798 !important;
+        }
+        body.dark .warning-banner {
+            background: #403417 !important;
+            color: #ffda6a !important;
+        }
     </style>
-    </head>
+</head>
 
 <body class="<?= htmlspecialchars($pref['theme_mode'] ?? 'light') ?>">
 
@@ -153,10 +204,10 @@ $pref = [
 
     <hr>
 
-        
     <?php include __DIR__ . '/Note_Module/notes.php'; ?>
     <?php include __DIR__ . '/Label_Module/labels.php'; ?>
 </div>
+
 <script src="Assets/js/app.js"></script>
 <script src="Assets/js/notes.js"></script>
 <script src="Assets/js/labels.js"></script>
