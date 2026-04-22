@@ -135,7 +135,9 @@ $menus = [
         --card-shadow: 0 8px 25px rgba(0,0,0,0.2) !important; 
     }
     body.dark .sidebar { background: #22273b !important; border-right: 1px solid #363d54 !important; }
-    body.dark .setting-card, body.dark .info-card, body.dark .welcome-card, body.dark .edit-container-card { border: 1px solid #363d54 !important; }
+    
+    /* TUI CHỈ THÊM ĐÚNG BACKGROUND-COLOR VÀO DÒNG NÀY ĐỂ FIX NỀN TÀNG HÌNH */
+    body.dark .setting-card, body.dark .info-card, body.dark .welcome-card, body.dark .edit-container-card { background-color: #272d40 !important; border: 1px solid #363d54 !important; }
     
     body.dark input:not(.val-badge-input), body.dark select, body.dark .edit-input-text { 
         background: #1e2233 !important; 
