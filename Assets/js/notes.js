@@ -1,6 +1,8 @@
 let currentView = "grid";
 let autoSaveTimers = {};
 let searchTimer;
+const socket = io("http://localhost:3001");
+let isRemoteUpdate = false;
 
 async function fetchJson(url, options = {}) {
     const res = await fetch(url, options);
@@ -27,6 +29,9 @@ async function renderNotes(notes) {
     }
 
     container.innerHTML = notes.map(renderNoteCard).join("");
+    notes.forEach(n => {
+        socket.emit("join_note", n.id);
+    });
 
     await hydrateNotes(notes);
 
@@ -238,7 +243,16 @@ function attachAutoSaveEvents() {
                 const id = this.dataset.id;
 
                 syncNoteStyle(id);
-
+                if (!isRemoteUpdate) {
+                    socket.emit("edit_note", {
+                        noteId: id,
+                        title: document.querySelector(`.note-title[data-id="${id}"]`)?.value || "",
+                        content: document.querySelector(`.note-content[data-id="${id}"]`)?.value || "",
+                        font_size: document.querySelector(`.font-size[data-id="${id}"]`)?.value,
+                        font_style: document.querySelector(`.font-style[data-id="${id}"]`)?.value,
+                        note_color: document.querySelector(`.note-color[data-id="${id}"]`)?.value
+                    });
+                }
                 clearTimeout(autoSaveTimers[id]);
 
                 autoSaveTimers[id] = setTimeout(() => {
@@ -575,3 +589,27 @@ window.deleteNote = deleteNote;
 window.saveNote = saveNote;
 window.loadNotes = loadNotes;
 
+socket.on("note_updated", (data) => {
+
+    isRemoteUpdate = true;
+
+    const id = data.noteId;
+
+    const title = document.querySelector(`.note-title[data-id="${id}"]`);
+    const content = document.querySelector(`.note-content[data-id="${id}"]`);
+    const size = document.querySelector(`.font-size[data-id="${id}"]`);
+    const style = document.querySelector(`.font-style[data-id="${id}"]`);
+    const color = document.querySelector(`.note-color[data-id="${id}"]`);
+
+    if (title) title.value = data.title;
+    if (content) content.value = data.content;
+    if (size && data.font_size) size.value = data.font_size;
+    if (style && data.font_style) style.value = data.font_style;
+    if (color && data.note_color) color.value = data.note_color;
+
+    syncNoteStyle(id);
+
+    setTimeout(() => {
+        isRemoteUpdate = false;
+    }, 50);
+});
