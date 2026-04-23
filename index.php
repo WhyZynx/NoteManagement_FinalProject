@@ -206,6 +206,8 @@ $pref = [
 
     <?php include __DIR__ . '/Note_Module/notes.php'; ?>
     <?php include __DIR__ . '/Label_Module/labels.php'; ?>
+    <?php include __DIR__ . '/Note_Module/share_note.php'; ?>
+    <?php include __DIR__ . '/Note_Module/shared_notes_view.php'; ?>
 </div>
 
 <script src="Assets/js/app.js"></script>

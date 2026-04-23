@@ -73,4 +73,24 @@ function sendOtpEmail($email, $otp)
         return false;
     }
 }
+
+function sendShareEmail($toEmail, $noteId, $permission) {
+    $mail = createMailer();
+
+    try {
+        $mail->addAddress($toEmail);
+
+        $mail->Subject = "A note has been shared with you";
+
+        $mail->Body = "
+            <h3>You received a shared note</h3>
+            <p>Permission: <b>$permission</b></p>
+            <p>Please login to view it.</p>
+        ";
+
+        return $mail->send();
+    } catch (Exception $e) {
+        return false;
+    }
+}
 ?>

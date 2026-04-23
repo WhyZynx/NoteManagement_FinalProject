@@ -224,6 +224,7 @@ function renderNoteCard(note) {
         <input type="file" class="upload-image" data-id="${note.id}">
         <button onclick="uploadImage(${note.id})">Upload</button>
         <button onclick="deleteNote(${note.id})">Delete</button>
+        <button onclick="openShareModal(${note.id})">Share</button>
     </div>`;
 }
 
@@ -404,6 +405,168 @@ window.addEventListener("labelsChanged", async function () {
 
         await renderLabelSelector(noteId);
     }
+});
+
+let currentShareNoteId = null;
+
+// OPEN SHARE MODAL
+window.openShareModal = function(noteId) {
+    currentShareNoteId = noteId;
+
+    const modal = document.getElementById("shareModal");
+    const emailInput = document.getElementById("shareEmail");
+
+    if (emailInput) emailInput.value = "";
+
+    if (modal) modal.style.display = "block";
+};
+
+// CLOSE SHARE MODAL
+window.closeShareModal = function() {
+    const modal = document.getElementById("shareModal");
+    if (modal) modal.style.display = "none";
+};
+
+// HANDLE SHARE CLICK
+document.addEventListener("click", async function(e) {
+
+    if (e.target.id === "confirmShare") {
+
+        if (!currentShareNoteId) {
+            alert("No note selected");
+            return;
+        }
+
+        const email = document.getElementById("shareEmail").value.trim();
+        const permission = document.getElementById("sharePermission").value;
+
+        if (!email) {
+            alert("Please enter email");
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_BASE}api_sharing.php`, {
+                method: "POST",
+                body: new URLSearchParams({
+                    action: "share_note",
+                    note_id: currentShareNoteId,
+                    email: email,
+                    permission: permission
+                })
+            });
+
+           const text = await res.text();
+console.log("API RESPONSE:", text);
+
+let data;
+try {
+    data = JSON.parse(text);
+} catch (e) {
+    alert("API is not returning JSON");
+    return;
+}
+            
+
+            if (data.status === "success") {
+                alert("Shared successfully");
+                closeShareModal();
+            } else {
+                alert(data.message || "Share failed");
+            }
+
+        } catch (err) {
+            console.error(err);
+            alert("Network error");
+        }
+    }
+
+    // CLOSE MODAL WHEN CLICK OUTSIDE (optional)
+    if (e.target.id === "shareModal") {
+        closeShareModal();
+    }
+});
+
+async function loadSharedNotes() {
+    try {
+        const res = await fetch(`${NOTE_BASE}shared_notes.php`);
+        const text = await res.text();
+        console.log("SHARED API:", text);
+
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error("Invalid JSON:", text);
+            return;
+        }
+
+        const container = document.getElementById("shared-notes"); // ✅ THÊM DÒNG NÀY
+        if (!container) return;
+
+        if (data.status !== "success" || data.data.length === 0) {
+            container.innerHTML = "<p>No shared notes</p>";
+            return;
+        }
+
+        container.innerHTML = data.data.map(n => {
+
+            if (n.permission === "edit") {
+                return `
+                    <div class="note-card" data-id="${n.id}" 
+                        style="background-color: ${n.note_color}; font-size: ${n.font_size}px; font-family: ${n.font_style};">
+
+                        <input 
+                            class="note-title" 
+                            data-id="${n.id}" 
+                            value="${n.title}" 
+                            style="font-size: ${n.font_size}px; font-family: ${n.font_style};" />
+
+                        <textarea 
+                            class="note-content" 
+                            data-id="${n.id}"
+                            style="font-size: ${n.font_size}px; font-family: ${n.font_style};">
+            ${n.content}</textarea>
+
+                        <input type="color" class="note-color" data-id="${n.id}" value="${n.note_color}" />
+
+                        <select class="font-size" data-id="${n.id}">
+                            <option value="16" ${n.font_size == 16 ? "selected" : ""}>16</option>
+                            <option value="18" ${n.font_size == 18 ? "selected" : ""}>18</option>
+                            <option value="20" ${n.font_size == 20 ? "selected" : ""}>20</option>
+                        </select>
+
+                        <select class="font-style" data-id="${n.id}">
+                            <option value="Arial" ${n.font_style == "Arial" ? "selected" : ""}>Arial</option>
+                            <option value="Montserrat" ${n.font_style == "Montserrat" ? "selected" : ""}>Montserrat</option>
+                        </select>
+
+                        <small>From: ${n.owner_email}</small><br>
+                        <small>Permission: ${n.permission}</small>
+                    </div>
+                `;
+            }
+
+                        return `
+                            <div class="note-card" style="opacity:0.6">
+                                <h3>${n.title}</h3>
+                                <p>${n.content}</p>
+
+                                <small>From: ${n.owner_email}</small><br>
+                                <small>Permission: ${n.permission}</small>
+                            </div>
+                        `;
+                    }).join("");
+                    attachAutoSaveEvents();
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+
+window.addEventListener("load", function () {
+    loadSharedNotes();
 });
 
 window.createNoteCard = createNoteCard;

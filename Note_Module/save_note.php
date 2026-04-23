@@ -18,8 +18,50 @@ $title = trim($_POST["title"] ?? "");
 $content = trim($_POST["content"] ?? "");
 
 $fontSize = (int)($_POST["font_size"] ?? 16);
-$fontStyle = trim($_POST["font_style"] ?? "Inter");
+$fontStyle = trim($_POST["font_style"] ?? "Arial");
 $noteColor = trim($_POST["note_color"] ?? "#ffffff");
+
+
+// ===== CHECK PERMISSION =====
+
+// get owner of note
+$stmt = $conn->prepare("SELECT user_id FROM notes WHERE id = ?");
+$stmt->bind_param("i", $noteId);
+$stmt->execute();
+$note = $stmt->get_result()->fetch_assoc();
+
+if (!$note) {
+    response("error", "Note not found");
+}
+
+$ownerId = $note["user_id"];
+
+$canEdit = false;
+
+// owner
+if ($ownerId == $userId) {
+    $canEdit = true;
+} else {
+    // check shared permission
+    $stmt = $conn->prepare("
+        SELECT permission FROM shared_notes 
+        WHERE note_id = ? AND shared_with = ?
+    ");
+    $stmt->bind_param("ii", $noteId, $userId);
+    $stmt->execute();
+    $res = $stmt->get_result()->fetch_assoc();
+
+    if ($res && $res["permission"] === "edit") {
+        $canEdit = true;
+    }
+}
+
+if (!$canEdit) {
+    response("error", "No permission to edit this note");
+}
+
+
+// ===== UPDATE NOTE =====
 
 $stmt = $conn->prepare("
     UPDATE notes
@@ -30,35 +72,38 @@ $stmt = $conn->prepare("
         font_style = ?,
         note_color = ?,
         updated_at = NOW()
-    WHERE id = ? AND user_id = ?
+    WHERE id = ?
 ");
 
 $stmt->bind_param(
-    "ssissii",
+    "ssissi",
     $title,
     $content,
     $fontSize,
     $fontStyle,
     $noteColor,
-    $noteId,
-    $userId
+    $noteId
 );
+
 $labels = json_decode($_POST["labels"] ?? "[]", true);
+if ($ownerId == $userId) {
 
-$conn->query("DELETE FROM note_labels WHERE note_id = $noteId");
+    $conn->query("DELETE FROM note_labels WHERE note_id = $noteId");
 
-if (!empty($labels) && is_array($labels)) {
-    $stmtLabel = $conn->prepare("
-        INSERT INTO note_labels (note_id, label_id)
-        VALUES (?, ?)
-    ");
+    if (!empty($labels) && is_array($labels)) {
+        $stmtLabel = $conn->prepare("
+            INSERT INTO note_labels (note_id, label_id)
+            VALUES (?, ?)
+        ");
 
-    foreach ($labels as $labelId) {
-        $labelId = (int)$labelId;
-        $stmtLabel->bind_param("ii", $noteId, $labelId);
-        $stmtLabel->execute();
+        foreach ($labels as $labelId) {
+            $labelId = (int)$labelId;
+            $stmtLabel->bind_param("ii", $noteId, $labelId);
+            $stmtLabel->execute();
+        }
     }
 }
+
 if ($stmt->execute()) {
     response("success", "Note saved successfully");
 }
