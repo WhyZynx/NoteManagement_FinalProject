@@ -34,70 +34,12 @@ $pref = [
     <title>Notes Test</title>
 
     <link rel="stylesheet" href="Assets/css/theme.css">
-    <link rel="stylesheet" href="Assets/css/style.css">
+    <link rel="stylesheet" href="Assets/css/home.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-
-    <style>
-        #notes-list.grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-
-        #notes-list.list {
-            display: block;
-        }
-
-        .note-card {
-            padding: 16px;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-        }
-
-        .note-toolbar {
-            margin-bottom: 8px;
-        }
-
-        textarea {
-            width: 100%;
-            min-height: 120px;
-        }
-
-        .warning-banner,
-        .success-banner {
-            margin: 16px 0;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: opacity 0.5s ease;
-        }
-
-        .warning-banner {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .success-banner {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .toolbar {
-            margin: 12px 0;
-        }
-
-        #searchInput {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-    </style>
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <?php
         $myThemeColor = '#5385c7';
         if(isset($conn)) {
@@ -113,102 +55,95 @@ $pref = [
         $tc1 = $t_colors[0];
         $tc2 = $t_colors[1] ?? $tc1;
     ?>
-    <style>
-        :root {
-            --user-color: <?= htmlspecialchars($tc1) ?>;
-            --user-color-2: <?= htmlspecialchars($tc2) ?>;
-        }
-
-
-        body.hologram, body.hologram .content {
-            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%) !important;
-            background-attachment: fixed !important;
-        }
-
-
-        body.custom, body.custom .content {
-            background-color: color-mix(in srgb, var(--user-color) 12%, #ffffff) !important;
-            background-image: none !important;
-            min-height: 100vh;
-        }
-        body.custom h1, body.custom h2, body.custom h3 {
-            color: color-mix(in srgb, var(--user-color) 60%, #333333) !important;
-        }
-        body.custom a {
-            color: var(--user-color) !important;
-        }
-
- 
-        body.gradient, body.gradient .content {
-            background: linear-gradient(135deg, var(--user-color) 0%, var(--user-color-2) 100%) !important;
-            background-attachment: fixed !important;
-        }
-
-
-        body.dark, body.dark .content {
-            background: #1e2233 !important;
-            color: #ffffff !important;
-        }
-        body.dark h1, body.dark h3, body.dark span {
-            color: #ffffff !important;
-        }
-        body.dark .note-card {
-            background-color: #272d40 !important;
-            border-color: #3f4760 !important;
-        }
-        body.dark textarea, body.dark input {
-            background-color: #1e2233 !important;
-            color: #ffffff !important;
-            border-color: #3f4760 !important;
-        }
-        body.dark a {
-            color: #3b82f6 !important;
-        }
-        body.dark .success-banner {
-            background: #1f3b2b !important;
-            color: #75b798 !important;
-        }
-        body.dark .warning-banner {
-            background: #403417 !important;
-            color: #ffda6a !important;
-        }
-    </style>
 </head>
 
 <body class="<?= htmlspecialchars($pref['theme_mode'] ?? 'light') ?>">
 
-<div class="content">
+<div class="app-container">
 
-    <?php if (isset($_SESSION["success_message"])): ?>
-        <div id="verify-message" class="success-banner">
-            <?php
-                echo htmlspecialchars($_SESSION["success_message"]);
-                unset($_SESSION["success_message"]);
-            ?>
+    <aside class="sidebar">
+
+        <!-- TOP -->
+        <div class="sidebar-top">
+            <div class="sidebar-header">
+                <h2 class="logo">
+                    MindFlow
+                </h2>
+            </div>
+
+            <div class="profile-box">
+                <a href="User_Module/profile.php" class="profile-link">
+                    <div class="profile-avatar">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    <span class="profile-name">
+                        <?= htmlspecialchars($user['display_name'] ?? 'User'); ?>
+                    </span>
+                </a>
+            </div>
+
+            <div class="verify-box">
+                <?php if (isset($_SESSION["success_message"])): ?>
+                    <div id="verify-message" class="success-banner">
+                        <?php
+                            echo htmlspecialchars($_SESSION["success_message"]);
+                            unset($_SESSION["success_message"]);
+                        ?>
+                    </div>
+                <?php elseif (!($_SESSION["is_verified"] ?? 0)): ?>
+                    <div id="verify-message" class="warning-banner">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        Your account is not activated.
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <div class="label-section">
+                <h3>
+                    <i class="bi bi-tags-fill"></i> Labels
+                </h3>
+                <?php include __DIR__ . '/Label_Module/labels.php'; ?>
+            </div>
         </div>
-    <?php elseif (!($_SESSION["is_verified"] ?? 0)): ?>
-        <div id="verify-message" class="warning-banner">
-            Your account is not activated. Please verify your email.
+
+        <!-- BOTTOM -->
+        <div class="sidebar-bottom">
+            <nav class="sidebar-nav">
+
+                <a href="User_Module/setting.php">
+                    <i class="bi bi-gear-fill"></i> Settings
+                </a>
+
+                <a href="Auth_Module/logout.php">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+
+            </nav>
         </div>
-    <?php endif; ?>
 
-    <h1>
-        Welcome, <?= htmlspecialchars($user['display_name'] ?? 'User'); ?> 👋
-    </h1>
+    </aside>
 
-    <nav>
-        <a href="User_Module/profile.php">Profile</a> |
-        <a href="User_Module/setting.php">Settings</a> |
-        <a href="Auth_Module/logout.php">Logout</a>
-    </nav>
+    <main class="main-content">
 
-    <hr>
+        <h1>
+            Welcome, <?= htmlspecialchars($user['display_name'] ?? 'User'); ?> 👋
+        </h1>
 
-    <?php include __DIR__ . '/Note_Module/notes.php'; ?>
-    <?php include __DIR__ . '/Label_Module/labels.php'; ?>
-    <?php include __DIR__ . '/Note_Module/share_note.php'; ?>
-    <?php include __DIR__ . '/Note_Module/shared_notes_view.php'; ?>
+        <hr>
+
+        <?php include __DIR__ . '/Note_Module/notes.php'; ?>
+        <?php include __DIR__ . '/Note_Module/share_note.php'; ?>
+        <?php include __DIR__ . '/Note_Module/shared_notes_view.php'; ?>
+
+    </main>
+
 </div>
+
+<script>
+    const NOTE_BASE = "Note_Module/";
+    const USER_BASE = "User_Module/";
+    const API_BASE = "API/";
+</script>
 
 <script src="Assets/js/app.js"></script>
 <script src="Assets/js/notes.js"></script>

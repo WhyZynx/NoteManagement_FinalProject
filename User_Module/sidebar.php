@@ -136,9 +136,21 @@ $menus = [
     }
     body.dark .sidebar { background: #22273b !important; border-right: 1px solid #363d54 !important; }
     
-    /* TUI CHỈ THÊM ĐÚNG BACKGROUND-COLOR VÀO DÒNG NÀY ĐỂ FIX NỀN TÀNG HÌNH */
     body.dark .setting-card, body.dark .info-card, body.dark .welcome-card, body.dark .edit-container-card { background-color: #272d40 !important; border: 1px solid #363d54 !important; }
-    
+
+    body.dark .password-card, body.dark .password-form-side, body.dark .password-alert { background-color: #272d40 !important; border: 1px solid #363d54 !important; }
+    body.dark .password-btn-submit {
+        background-color: #3b82f6 !important;
+        color: #ffffff !important;
+        border: none !important;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        transition: 0.3s ease;
+    }
+
+    body.dark .password-btn-submit:hover {
+        background-color: #2563eb !important;
+        transform: translateY(-1px);
+    }
     body.dark input:not(.val-badge-input), body.dark select, body.dark .edit-input-text { 
         background: #1e2233 !important; 
         color: #fff !important; 
