@@ -203,9 +203,9 @@ function renderNoteCard(note) {
 
         <div class="note-labels" id="labels-${note.id}"></div>
 
-<div class="label-selector" data-id="${note.id}">
-    <div class="label-box"></div>
-</div>
+        <div class="label-selector" data-id="${note.id}">
+            <div class="label-box"></div>
+        </div>
 
         <textarea class="note-content" data-id="${note.id}"
             style="font-size:${size}px;font-family:${style};">${note.content || ""}</textarea>

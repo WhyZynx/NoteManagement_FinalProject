@@ -15,13 +15,21 @@ async function loadLabels() {
     labels.forEach(label => {
         html += `
             <div class="label-item">
-                <span style="cursor:pointer"
+                <span
+                    class="label-name"
                     onclick="filterByLabel(${label.id})">
                     ${escapeHtml(label.label_name)}
                 </span>
 
-                <button onclick="renameLabel(${label.id})">Rename</button>
-                <button onclick="deleteLabel(${label.id})">Delete</button>
+                <div class="label-actions">
+                    <button onclick="renameLabel(${label.id})" title="Rename">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+
+                    <button onclick="deleteLabel(${label.id})" title="Delete">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
             </div>
         `;
     });

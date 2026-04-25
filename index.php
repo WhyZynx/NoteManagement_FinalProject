@@ -35,11 +35,15 @@ $pref = [
 
     <link rel="stylesheet" href="Assets/css/theme.css">
     <link rel="stylesheet" href="Assets/css/home.css">
+    <link rel="stylesheet" href="Assets/css/label.css">
+    <link rel="stylesheet" href="Assets/css/note.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <?php
         $myThemeColor = '#5385c7';
         if(isset($conn)) {
@@ -61,13 +65,18 @@ $pref = [
 
 <div class="app-container">
 
+    <!-- SIDEBAR -->
     <aside class="sidebar">
-
-        <!-- TOP -->
+        <button class="menu-toggle" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        
         <div class="sidebar-top">
+
             <div class="sidebar-header">
                 <h2 class="logo">
-                    MindFlow
+                    <span class="logo-bold">Mind</span>
+                    <span class="logo-light">Flow</span>
                 </h2>
             </div>
 
@@ -90,6 +99,7 @@ $pref = [
                             unset($_SESSION["success_message"]);
                         ?>
                     </div>
+
                 <?php elseif (!($_SESSION["is_verified"] ?? 0)): ?>
                     <div id="verify-message" class="warning-banner">
                         <i class="bi bi-exclamation-triangle-fill"></i>
@@ -97,25 +107,40 @@ $pref = [
                     </div>
                 <?php endif; ?>
             </div>
+            <nav class="main-menu">
+                <a href="?page=notes"
+                   class="menu-item <?= (!isset($_GET['page']) || $_GET['page'] === 'notes') ? 'active' : '' ?>">
+                    <i class="bi bi-lightbulb-fill"></i>
+                    <span>Notes</span>
+                </a>
+
+                <?php include __DIR__ . '/Note_Module/share_note.php'; ?>
+                <?php include __DIR__ . '/Note_Module/shared_notes_view.php'; ?>
+            </nav>
+
 
             <div class="label-section">
-                <h3>
-                    <i class="bi bi-tags-fill"></i> Labels
-                </h3>
                 <?php include __DIR__ . '/Label_Module/labels.php'; ?>
             </div>
+
         </div>
 
-        <!-- BOTTOM -->
         <div class="sidebar-bottom">
             <nav class="sidebar-nav">
 
+                <a href="#">
+                    <i class="bi bi-trash"></i>
+                    <span>Trash</span>
+                </a>
+
                 <a href="User_Module/setting.php">
-                    <i class="bi bi-gear-fill"></i> Settings
+                    <i class="bi bi-gear-fill"></i>
+                    <span>Settings</span>
                 </a>
 
                 <a href="Auth_Module/logout.php">
-                    <i class="bi bi-box-arrow-right"></i> Logout
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
                 </a>
 
             </nav>
@@ -124,16 +149,11 @@ $pref = [
     </aside>
 
     <main class="main-content">
+        <div class="content-area">
 
-        <h1>
-            Welcome, <?= htmlspecialchars($user['display_name'] ?? 'User'); ?> 👋
-        </h1>
+            <?php include __DIR__ . '/Note_Module/notes.php'; ?>
 
-        <hr>
-
-        <?php include __DIR__ . '/Note_Module/notes.php'; ?>
-        <?php include __DIR__ . '/Note_Module/share_note.php'; ?>
-        <?php include __DIR__ . '/Note_Module/shared_notes_view.php'; ?>
+        </div>
 
     </main>
 
@@ -183,6 +203,23 @@ window.addEventListener("load", function () {
             key: "verify_success",
             newValue: "1"
         }));
+    }
+});
+</script>
+
+<script>
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.toggle('active');
+}
+
+document.addEventListener('click', function(event) {
+    const sidebar = document.querySelector('.sidebar');
+    const toggleBtn = document.querySelector('.menu-toggle');
+    if (window.innerWidth <= 768) {
+        if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target)) {
+            sidebar.classList.remove('active');
+        }
     }
 });
 </script>

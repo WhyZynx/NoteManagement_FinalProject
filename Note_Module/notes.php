@@ -1,8 +1,11 @@
-<h3>Your Notes List</h3>
-
 <div class="toolbar">
-    <input type="text" id="searchInput" placeholder="Search notes...">
+    <div class="search-box">
+        <i class="bi bi-search"></i>
+        <input type="text" id="searchInput" placeholder="Search your thoughts...">
+    </div>
 </div>
+
+<h3>Your Notes List</h3>
 
 <div class="note-actions">
     <button onclick="createNoteCard()" title="Add Note">

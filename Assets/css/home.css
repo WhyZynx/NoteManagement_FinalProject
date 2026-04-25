@@ -59,270 +59,186 @@ body.dark .warning-banner {
 
 
 
-.app-container {
-    display: flex;
-    min-height: 100vh;
-}
+/* SIDEBAR */
 
 .sidebar {
-    width: 300px;
-    padding: 24px;
-    border-right: 1px solid #e5e7eb;
+    width: 280px;
     background: #ffffff;
-    position: sticky;
+    border-right: 1px solid #f0f0f0;
+
+    position: fixed;
     top: 0;
+    left: 0;
     height: 100vh;
-    overflow-y: auto;
+    z-index: 1000;
 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
+    padding: 30px 0;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 32px;
+    box-sizing: border-box;
+    min-width: 0;
+    
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar-top {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 18px;
 }
 
 .sidebar-bottom {
-    padding-top: 20px;
-    border-top: 1px solid #e5e7eb;
+    margin-top: auto;
+    padding-bottom: 10px;
 }
 
-.main-content {
-    flex: 1;
-    padding: 32px;
-}
+
+/* LOGO */
 
 .sidebar-header {
-    margin-bottom: 28px;
+    padding: 0 30px;
 }
 
 .logo {
-    font-size: 28px;
-    font-weight: 700;
-    margin: 0;
+    margin: 0 0 30px;
+    font-size: 36px;
+    font-weight: 600;
+    line-height: 1.1;
+
+    display: flex;
+    align-items: center;
+    gap: 0;
+    letter-spacing: -1.5px;
 }
 
+.logo-bold {
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+    padding: 0;
+}
+
+.logo-light {
+    font-weight: 300;
+    color: #374151;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* PROFILE */
+
 .profile-box {
-    margin-bottom: 24px;
+    padding: 0 20px;
 }
 
 .profile-link {
     display: flex;
     align-items: center;
     gap: 14px;
+
+    background: #f8fafc;
+    border-radius: 18px;
+    padding: 14px 16px;
+
     text-decoration: none;
-    color: #222;
+    transition: 0.2s;
+}
+
+.profile-link:hover {
+    background: #f1f5f9;
 }
 
 .profile-avatar {
-    font-size: 42px;
+    font-size: 38px;
     line-height: 1;
 }
 
 .profile-name {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
+    color: #1f2937;
 }
+
+
+/* VERIFY */
 
 .verify-box {
-    margin-bottom: 24px;
+    padding: 0 20px;
 }
-
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.sidebar-nav a {
-    text-decoration: none;
-    color: #333;
-    padding: 12px 14px;
-    border-radius: 10px;
-    transition: 0.2s;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.sidebar-nav a:hover {
-    background: #f5f7fa;
-}
-
-.label-section h3 {
-    margin-bottom: 16px;
-    font-size: 18px;
-}
-
-
-#notes-list.grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-}
-
-#notes-list.list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.note-card {
-    padding: 18px;
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
-    background: #ffffff;
-    transition: 0.2s;
-    box-sizing: border-box;
-    overflow: hidden;
-}
-
-.note-card * {
-    box-sizing: border-box;
-}
-
-.note-title,
-.note-content,
-.font-size,
-.font-style,
-.note-color,
-.upload-image {
-    width: 100%;
-    max-width: 100%;
-    margin-bottom: 12px;
-}
-
-.note-title {
-    padding: 10px 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-weight: 600;
-    display: block;
-}
-
-textarea.note-content {
-    min-height: 120px;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    resize: vertical;
-    display: block;
-}
-
-.font-size,
-.font-style {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #fff;
-}
-
-.note-color {
-    height: 42px;
-    padding: 4px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-}
-
-.upload-image {
-    display: block;
-}
-
-.note-card button {
-    margin-top: 6px;
-    margin-right: 6px;
-}
-
-textarea {
-    width: 100%;
-    min-height: 120px;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    resize: vertical;
-}
-
-.toolbar {
-    margin: 18px 0;
-}
-
-#searchInput {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    font-size: 15px;
-    outline: none;
-}
-
-button {
-    padding: 10px 16px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 600;
-    margin-right: 8px;
-}
-
-button:hover {
-    opacity: 0.9;
-}
-
 
 .warning-banner,
 .success-banner {
-    margin: 16px 0;
     padding: 14px 16px;
-    border-radius: 10px;
-    font-weight: 600;
-    transition: opacity 0.5s ease;
+    border-radius: 14px;
     font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
 }
 
 .warning-banner {
-    background: #fff3cd;
-    color: #856404;
+    background: #fff8e1;
+    color: #8a6d3b;
 }
 
 .success-banner {
-    background: #d4edda;
-    color: #155724;
+    background: #e8f7ea;
+    color: #1e7e34;
 }
 
+/* MENU */
 
-.note-actions {
-    position: fixed;
-    right: 24px;
-    bottom: 24px;
+.main-menu,
+.sidebar-nav {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    z-index: 999;
+    gap: 6px;
 }
 
-.note-actions button {
-    width: 56px;
-    height: 56px;
-    border: none;
-    border-radius: 50%;
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    cursor: pointer;
-    font-size: 20px;
-
+.menu-item,
+.sidebar-nav a {
     display: flex;
     align-items: center;
-    justify-content: center;
 
-    transition: 0.2s;
+    padding: 13px 30px;
+    margin: 2px 15px;
+
+    text-decoration: none;
+    color: #475569;
+    font-size: 15px;
+    font-weight: 500;
+
+    border-radius: 18px;
+    transition: 0.2s ease;
 }
 
-.note-actions button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+.menu-item i,
+.sidebar-nav a i {
+    margin-right: 14px;
+    font-size: 18px;
+    width: 22px;
+    text-align: center;
+}
+
+.menu-item:hover,
+.sidebar-nav a:hover {
+    background: #f8fafc;
+}
+
+.menu-item.active {
+    background: #edf6ff;
+    color: #2563eb;
+    font-weight: 600;
 }

@@ -1,0 +1,173 @@
+.labels-control-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 18px;
+    margin-bottom: 18px;
+}
+
+.label-add-box {
+    display: flex;
+    align-items: center;
+    flex: 1;
+
+    background: #f8fafc;
+    border: 1px solid #edf2f7;
+    border-radius: 18px;
+
+    padding: 5px 5px 5px 14px;
+    transition: 0.2s;
+}
+
+.label-add-box:focus-within {
+    border-color: #bfdbfe;
+    box-shadow: 0 0 0 4px rgba(59,130,246,0.05);
+}
+
+#labelInput {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
+}
+
+#labelInput::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+#addLabelBtn {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+
+    background: #ffffff;
+    color: #64748b;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    font-size: 14px;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: 0.2s;
+}
+
+#addLabelBtn:hover {
+    background: #2563eb;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.btn-all {
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #64748b;
+
+    padding: 8px 14px;
+    border-radius: 18px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+    white-space: nowrap;
+    transition: 0.2s;
+}
+
+.btn-all:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #1e293b;
+}
+
+.label-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    width: calc(100% - 24px);
+    margin: 4px 12px;
+    padding: 10px 14px;
+
+    border-radius: 14px;
+    background: transparent;
+
+    transition: 0.2s ease;
+}
+
+.label-item:hover {
+    background: #f8fafc;
+}
+
+.label-name {
+    flex: 1;
+
+    display: flex;
+    align-items: center;
+
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.label-name i {
+    font-size: 14px;
+    margin-right: 10px;
+    opacity: 0.7;
+    color: #94a3b8;
+}
+
+.label-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    opacity: 0;
+    transition: 0.2s ease;
+}
+
+.label-item:hover .label-actions {
+    opacity: 1;
+}
+
+.label-actions button {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 10px;
+
+    background: transparent;
+    color: #94a3b8;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.2s;
+}
+
+.label-actions button:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.label-actions .delete-btn:hover {
+    background: #fee2e2;
+    color: #ef4444;
+}
