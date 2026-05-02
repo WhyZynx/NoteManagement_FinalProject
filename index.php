@@ -65,7 +65,6 @@ $pref = [
 
 <div class="app-container">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
         <button class="menu-toggle" onclick="toggleSidebar()">
             <i class="fa-solid fa-bars"></i>
@@ -210,7 +209,14 @@ window.addEventListener("load", function () {
 <script>
 function toggleSidebar() {
     const sidebar = document.querySelector('.sidebar');
-    sidebar.classList.toggle('active');
+    const mainContent = document.querySelector('.main-content');
+    
+    if (window.innerWidth > 768) {
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('expanded');
+    } else {
+        sidebar.classList.toggle('active');
+    }
 }
 
 document.addEventListener('click', function(event) {

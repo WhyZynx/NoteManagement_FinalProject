@@ -2,8 +2,8 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 0 18px;
-    margin-bottom: 18px;
+    padding: 0 16px;
+    margin-bottom: 16px;
 }
 
 .label-add-box {
@@ -26,6 +26,7 @@
 
 #labelInput {
     flex: 1;
+    min-width: 0;
     border: none;
     background: transparent;
     outline: none;
@@ -58,34 +59,29 @@
 
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     transition: 0.2s;
+    flex-shrink: 0;
 }
 
 #addLabelBtn:hover {
-    background: #2563eb;
+    background: #b6d3f8;
     color: #ffffff;
     transform: translateY(-1px);
 }
 
-.btn-all {
-    border: 1px solid #e2e8f0;
-    background: #ffffff;
-    color: #64748b;
-
-    padding: 8px 14px;
-    border-radius: 18px;
-
-    font-size: 13px;
-    font-weight: 600;
-
+.btn-all-icon {
+    font-size: 20px;
+    color: #94a3b8;
     cursor: pointer;
-    white-space: nowrap;
-    transition: 0.2s;
+
+    transition: all 0.2s ease;
+    padding: 6px;
+    border-radius: 8px;
 }
 
-.btn-all:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
-    color: #1e293b;
+.btn-all-icon:hover {
+    color: #70a2e0;
+    background: #ecf1f6;
+    transform: scale(1.08);
 }
 
 .label-item {
@@ -93,12 +89,15 @@
     align-items: center;
     justify-content: space-between;
 
-    width: calc(100% - 24px);
-    margin: 4px 12px;
-    padding: 10px 14px;
+    width: 100%;
+    margin: 2px 0;
+    padding: 10px 16px;
 
     border-radius: 14px;
     background: transparent;
+
+    box-sizing: border-box;
+    overflow: hidden;
 
     transition: 0.2s ease;
 }
@@ -109,6 +108,7 @@
 
 .label-name {
     flex: 1;
+    min-width: 0;
 
     display: flex;
     align-items: center;
@@ -135,6 +135,8 @@
     display: flex;
     align-items: center;
     gap: 6px;
+
+    flex-shrink: 0;
 
     opacity: 0;
     transition: 0.2s ease;

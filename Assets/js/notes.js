@@ -136,7 +136,27 @@ async function loadNoteImages(noteId) {
             <img src="${img.image_path}"
                 style="width:90px;height:90px;object-fit:cover;border-radius:8px;" />
             <button onclick="deleteImage(${img.id}, ${noteId})"
-                style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;border:none;background:red;color:white;cursor:pointer;">×</button>
+                style="
+                    position: absolute;
+                    top: 0px;
+                    right: 0px;
+                    background: none;
+                    border: none;
+                    color: #e46e70;
+                    font-size: 20px;
+                    font-weight: bold;
+                    line-height: 1;
+                    cursor: pointer;
+                    padding: 0;
+                    transition: all 0.2s;
+                    z-index: 10;
+                    text-shadow: 0 0 3px rgba(255,255,255,0.8);
+                "
+                onmouseover="this.style.color='#ff7875'; this.style.transform='scale(1.2)';"
+                onmouseout="this.style.color='#e46e70'; this.style.transform='scale(1)';"
+            >
+                ×
+            </button>
         </div>
     `).join("");
 }
@@ -193,45 +213,67 @@ function renderNoteCard(note) {
 
     return `
     <div class="note-card" data-id="${note.id}"
-        style="font-size:${size}px;font-family:${style};background:${color};padding:16px;border-radius:12px;border:1px solid #ddd;">
+        style="font-size:${size}px;font-family:${style};background:${color};">
 
-        <div class="note-images" id="images-${note.id}"></div>
+        <div class="note-left">
+            <div class="note-images" id="images-${note.id}"></div>
 
-        <input class="note-title" data-id="${note.id}"
-            value="${note.title || ""}"
-            style="font-size:${size}px;font-family:${style};" />
+            <input class="note-title" data-id="${note.id}"
+                value="${note.title || ""}" />
 
-        <div class="note-labels" id="labels-${note.id}"></div>
+            <div class="note-labels" id="labels-${note.id}"></div>
 
-        <div class="label-selector" data-id="${note.id}">
-            <div class="label-box"></div>
+            <div class="label-selector" data-id="${note.id}">
+                <div class="label-box"></div>
+            </div>
+
+            <textarea class="note-content" data-id="${note.id}">${note.content || ""}</textarea>
         </div>
 
-        <textarea class="note-content" data-id="${note.id}"
-            style="font-size:${size}px;font-family:${style};">${note.content || ""}</textarea>
+        <div class="note-right">
+            <div class="note-controls">
+                <select class="font-size" data-id="${note.id}">
+                    <option value="14" ${size == 14 ? "selected" : ""}>14</option>
+                    <option value="16" ${size == 16 ? "selected" : ""}>16</option>
+                    <option value="18" ${size == 18 ? "selected" : ""}>18</option>
+                    <option value="20" ${size == 20 ? "selected" : ""}>20</option>
+                </select>
 
-        <select class="font-size" data-id="${note.id}">
-            <option value="14" ${size == 14 ? "selected" : ""}>14</option>
-            <option value="16" ${size == 16 ? "selected" : ""}>16</option>
-            <option value="18" ${size == 18 ? "selected" : ""}>18</option>
-            <option value="20" ${size == 20 ? "selected" : ""}>20</option>
-        </select>
+                <select class="font-style" data-id="${note.id}">
+                    <option value="Arial" ${style === "Arial" ? "selected" : ""}>Arial</option>
+                    <option value="serif" ${style === "serif" ? "selected" : ""}>Serif</option>
+                    <option value="sans-serif" ${style === "sans-serif" ? "selected" : ""}>Sans-serif</option>
+                    <option value="Montserrat" ${style === "Montserrat" ? "selected" : ""}>Montserrat</option>
+                </select>
 
-        <select class="font-style" data-id="${note.id}">
-            <option value="Arial" ${style === "Arial" ? "selected" : ""}>Arial</option>
-            <option value="serif" ${style === "serif" ? "selected" : ""}>Serif</option>
-            <option value="sans-serif" ${style === "sans-serif" ? "selected" : ""}>Sans-serif</option>
-            <option value="Montserrat" ${style === "Montserrat" ? "selected" : ""}>Montserrat</option>
-        </select>
+                <input type="color" class="note-color" data-id="${note.id}" value="${color}">
+            </div>
 
-        <input type="color" class="note-color" data-id="${note.id}" value="${color}">
+            <input type="file" class="upload-image" data-id="${note.id}" style="display:none;">
+            <div class="note-action">
+                <i class="bi bi-cloud-arrow-up action-icon" onclick="triggerFile(${note.id})"></i>
+                <i class="bi bi-send action-icon" onclick="openShareModal(${note.id})"></i>
+                <i class="bi bi-x-circle action-icon delete" onclick="deleteNote(${note.id})"></i>
+            </div>
+        </div>
 
-        <input type="file" class="upload-image" data-id="${note.id}">
-        <button onclick="uploadImage(${note.id})">Upload</button>
-        <button onclick="deleteNote(${note.id})">Delete</button>
-        <button onclick="openShareModal(${note.id})">Share</button>
     </div>`;
 }
+
+// UPLOAD IMAGE
+function triggerFile(noteId) {
+    const input = document.querySelector(`.upload-image[data-id="${noteId}"]`);
+    if (input) input.click();
+}
+
+document.addEventListener("change", function(e) {
+    if (e.target.classList.contains("upload-image")) {
+        const noteId = e.target.dataset.id;
+        uploadImage(noteId);
+        e.target.value = "";
+    }
+});
+
 
 function attachAutoSaveEvents() {
     document.querySelectorAll(".note-title, .note-content, .font-size, .font-style, .note-color")
