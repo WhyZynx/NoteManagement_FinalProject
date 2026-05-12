@@ -15,3 +15,6 @@ ALTER TABLE labels
 ALTER TABLE `users` 
   MODIFY `theme_mode` enum('light','dark','hologram','custom','gradient') DEFAULT 'light',
   ADD `theme_color` VARCHAR(50) DEFAULT '#5385c7';
+
+-- Lock
+ALTER TABLE notes ADD COLUMN is_locked TINYINT(1) DEFAULT 0;
