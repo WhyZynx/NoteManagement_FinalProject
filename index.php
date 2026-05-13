@@ -93,8 +93,7 @@ $pref = [
                     <span>Notes</span>
                 </a>
 
-                <?php include __DIR__ . '/Note_Module/share_note.php'; ?>
-                <?php include __DIR__ . '/Note_Module/shared_notes_view.php'; ?>
+                
             </nav>
 
             <div class="verify-box">
@@ -121,10 +120,6 @@ $pref = [
 
         <div class="sidebar-bottom">
             <nav class="sidebar-nav">
-                <a href="#">
-                    <i class="bi bi-trash"></i>
-                    <span>Trash</span>
-                </a>
                 <a href="User_Module/setting.php">
                     <i class="bi bi-gear-fill"></i>
                     <span>Settings</span>
@@ -141,7 +136,8 @@ $pref = [
         <div class="content-area">
 
             <?php include __DIR__ . '/Note_Module/notes.php'; ?>
-
+            <?php include __DIR__ . '/Note_Module/share_note.php'; ?>
+            <?php include __DIR__ . '/Note_Module/shared_notes_view.php'; ?>
         </div>
 
     </main>
@@ -221,6 +217,5 @@ document.addEventListener('click', function(event) {
     }
 });
 </script>
-
 </body>
 </html>

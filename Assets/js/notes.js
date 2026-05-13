@@ -518,7 +518,7 @@ window.openShareModal = function (noteId) {
 
     if (emailInput) emailInput.value = "";
 
-    if (modal) modal.style.display = "block";
+    if (modal) modal.style.display = "flex"; 
 };
 
 window.closeShareModal = function () {
@@ -587,8 +587,6 @@ async function loadSharedNotes() {
     try {
         const res = await fetch(`${NOTE_BASE}shared_notes.php`);
         const text = await res.text();
-        console.log("SHARED API:", text);
-
         let data;
         try {
             data = JSON.parse(text);
@@ -600,63 +598,61 @@ async function loadSharedNotes() {
         const container = document.getElementById("shared-notes");
         if (!container) return;
 
-        if (data.status !== "success" || data.data.length === 0) {
-            container.innerHTML = "<p>No shared notes</p>";
+        if (data.status !== "success" || !data.data || data.data.length === 0) {
+            container.innerHTML = `
+                <p style="color: #9aa4b2; font-size: 13px; text-align: center; margin: 20px 0; font-style: italic;">
+                    No shared notes
+                </p>`;
             return;
         }
 
         container.innerHTML = data.data.map(n => {
+            const color = n.note_color || "#ffffff";
+            const textColor = getTextColorForBg(color);
+            const canEdit = (n.permission === "edit");
 
-            if (n.permission === "edit") {
-                return `
-                    <div class="note-card" data-id="${n.id}"
-                        style="background-color: ${n.note_color}; font-size: ${n.font_size}px; font-family: ${n.font_style};">
-
-                        <input
-                            class="note-title"
-                            data-id="${n.id}"
-                            value="${n.title}"
-                            style="font-size: ${n.font_size}px; font-family: ${n.font_style};" />
-
-                        <textarea
-                            class="note-content"
-                            data-id="${n.id}"
-                            style="font-size: ${n.font_size}px; font-family: ${n.font_style};">
-            ${n.content}</textarea>
-
-                        <input type="color" class="note-color" data-id="${n.id}" value="${n.note_color}" />
-
-                        <select class="font-size" data-id="${n.id}">
-                            <option value="16" ${n.font_size == 16 ? "selected" : ""}>16</option>
-                            <option value="18" ${n.font_size == 18 ? "selected" : ""}>18</option>
-                            <option value="20" ${n.font_size == 20 ? "selected" : ""}>20</option>
-                        </select>
-
-                        <select class="font-style" data-id="${n.id}">
-                            <option value="Arial" ${n.font_style == "Arial" ? "selected" : ""}>Arial</option>
-                            <option value="Montserrat" ${n.font_style == "Montserrat" ? "selected" : ""}>Montserrat</option>
-                        </select>
-
-                        <small>From: ${n.owner_email}</small><br>
-                        <small>Permission: ${n.permission}</small>
-                    </div>
-                `;
-            }
 
             return `
-                <div class="note-card" style="opacity:0.6">
-                    <h3>${n.title}</h3>
-                    <p>${n.content}</p>
+                <div class="note-card shared-card" 
+                     data-id="${n.id}"
+                     style="background: ${color}; color: ${textColor}; border-radius: 20px; padding: 20px; 
+                            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.03);
+                            position: relative; transition: transform 0.2s;">
+                    
+                    <div class="note-card-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                        ${canEdit ? 
+                            `<input class="note-title" data-id="${n.id}" value="${escHtmlCard(n.title)}" 
+                                    style="font-size: 18px; font-weight: 700; border: none; background: transparent; color: inherit; width: 90%; outline: none;" />` :
+                            `<h3 style="font-size: 18px; font-weight: 700; margin: 0; color: inherit;">${escHtmlCard(n.title) || "Untitled"}</h3>`
+                        }
+                        <i class="bi bi-people-fill" style="color: #5385c7; font-size: 14px;" title="Shared Note"></i>
+                    </div>
 
-                    <small>From: ${n.owner_email}</small><br>
-                    <small>Permission: ${n.permission}</small>
+                    ${canEdit ? 
+                        `<textarea class="note-content" data-id="${n.id}" 
+                                   style="font-size: 15px; border: none; background: transparent; color: inherit; width: 100%; min-height: 50px; outline: none; resize: none; line-height: 1.5;">${n.content}</textarea>` :
+                        `<p style="font-size: 15px; color: inherit; line-height: 1.5; margin-bottom: 15px; opacity: 0.9;">${n.content}</p>`
+                    }
+
+                    <div class="shared-meta" style="margin-top: 15px; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 4px;">
+                        <div style="font-size: 12px; color: #9aa4b2; display: flex; align-items: center; gap: 5px;">
+                            <i class="bi bi-person-circle"></i> 
+                            <span>From: <strong>${n.owner_email}</strong></span>
+                        </div>
+                        <div style="font-size: 11px; display: inline-block; padding: 2px 8px; border-radius: 10px; background: rgba(83, 133, 199, 0.1); color: #5385c7; align-self: flex-start; font-weight: 600; text-transform: uppercase;">
+                            ${n.permission}
+                        </div>
+                    </div>
                 </div>
             `;
         }).join("");
-        attachAutoSaveEvents();
+
+        if (typeof attachAutoSaveEvents === "function") {
+            attachAutoSaveEvents();
+        }
 
     } catch (err) {
-        console.error(err);
+        console.error("Load shared error:", err);
     }
 }
 
