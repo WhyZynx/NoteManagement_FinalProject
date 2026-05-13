@@ -308,6 +308,9 @@ function renderNoteCard(note) {
     const isLocked = note.is_locked == 1;
     const isShared = note.is_shared == 1;
     const timeAgo = formatTimeAgo(note.updated_at);
+    
+    const displayTitle = isLocked ? "Locked Note" : (escHtmlCard(note.title) || "<span class='note-empty-title'>Untitled</span>");
+    const displayContent = isLocked ? "<i>This content is password protected</i>" : escHtmlCard(note.content);
 
     const statusIcons = `
         ${isLocked ? `<i class="bi bi-lock-fill status-icon" title="Locked"></i>` : ""}
@@ -319,11 +322,11 @@ function renderNoteCard(note) {
         style="background:${color}; --note-text-color:${textColor};"
         onclick="openNoteModal(${note.id})">
 
-       <div class="note-preview-images" id="preview-images-${note.id}"></div>
+       <div class="note-preview-images" id="preview-images-${note.id}" style="${isLocked ? 'display:none' : ''}"></div>
 
         <div class="note-card-body">
-            <div class="note-preview-title">${escHtmlCard(note.title) || "<span class='note-empty-title'>Untitled</span>"}</div>
-            <div class="note-preview-content">${escHtmlCard(note.content)}</div>
+            <div class="note-preview-title">${displayTitle}</div>
+            <div class="note-preview-content">${displayContent}</div>
             <div class="note-preview-labels" id="preview-labels-${note.id}"></div>
         </div>
 
