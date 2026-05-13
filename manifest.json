@@ -1,0 +1,22 @@
+{
+    "name": "MindFlow Notes",
+    "short_name": "MindFlow",
+    "description": "A smart note management app",
+    "start_url": "/index.php",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#6366f1",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "Assets/images/web_img/rose.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "Assets/images/web_img/rose.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

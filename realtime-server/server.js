@@ -7,24 +7,50 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: "*"
+        origin: "*", 
+        methods: ["GET", "POST"]
     }
 });
 
-io.on("connection", (socket) => {
+const PORT = 3001;
+const noteRooms = {};
 
-    socket.on("join_note", (noteId) => {
-        socket.join("note_" + noteId);
+io.on("connection", function(socket) {
+    console.log("[Socket] Connected:", socket.id);
+    socket.on("join_note", function(noteId) {
+        const room = `note_${noteId}`;
+        socket.join(room);
+
+        if (!noteRooms[noteId]) noteRooms[noteId] = new Set();
+        noteRooms[noteId].add(socket.id);
+
+        console.log(`[Socket] ${socket.id} joined note ${noteId}`);
     });
+    socket.on("leave_note", function(noteId) {
+        const room = `note_${noteId}`;
+        socket.leave(room);
 
-    socket.on("edit_note", (data) => {
-
-        socket.to("note_" + data.noteId)
-              .emit("note_updated", data);
+        if (noteRooms[noteId]) {
+            noteRooms[noteId].delete(socket.id);
+        }
     });
+    socket.on("edit_note", function(data) {
+        const room = `note_${data.noteId}`;
+        socket.to(room).emit("note_updated", data);
 
+        console.log(`[Socket] Note ${data.noteId} updated by ${socket.id}`);
+    });
+    socket.on("disconnect", function() {
+        console.log("[Socket] Disconnected:", socket.id);
+        for (const noteId in noteRooms) {
+            noteRooms[noteId].delete(socket.id);
+        }
+    });
+});
+app.get("/health", function(req, res) {
+    res.json({ status: "ok", connections: io.engine.clientsCount });
 });
 
-server.listen(3001, () => {
-    console.log("WebSocket running on http://localhost:3001");
+server.listen(PORT, function() {
+    console.log(`[MindFlow] Realtime server running on port ${PORT}`);
 });

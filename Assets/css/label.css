@@ -1,145 +1,194 @@
-.labels-control-wrapper {
+.label-sidebar {
+    padding: 0 8px;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.label-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 8px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+    user-select: none;
+}
+
+.label-header:hover,
+.label-item:hover,
+.label-all-item:hover {
+    background: #f8fafc;
+}
+
+.label-header-title {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 0 16px;
-    margin-bottom: 16px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #8b99ad;
 }
 
-.label-add-box {
+.label-header-title i {
+    font-size: 14px;
+}
+
+.label-header-actions {
     display: flex;
     align-items: center;
-    flex: 1;
+    gap: 6px;
+}
 
-    background: #f8fafc;
-    border: 1px solid #edf2f7;
-    border-radius: 18px;
-
-    padding: 5px 5px 5px 14px;
+.label-add-icon {
+    font-size: 16px;
+    color: #94a3b8;
+    padding: 4px;
+    border-radius: 6px;
     transition: 0.2s;
 }
 
-.label-add-box:focus-within {
-    border-color: #bfdbfe;
-    box-shadow: 0 0 0 4px rgba(59,130,246,0.05);
+.label-add-icon:hover {
+    color: #2563eb;
+    background: #eff6ff;
 }
 
-#labelInput {
-    flex: 1;
-    min-width: 0;
-    border: none;
-    background: transparent;
-    outline: none;
-
-    font-size: 14px;
-    font-weight: 500;
-    color: #475569;
-}
-
-#labelInput::placeholder {
+.label-chevron {
+    font-size: 12px;
     color: #94a3b8;
-    font-weight: 400;
+    transition: transform 0.25s ease;
 }
 
-#addLabelBtn {
-    width: 34px;
-    height: 34px;
-    border: none;
-    border-radius: 50%;
+.label-chevron.rotated {
+    transform: rotate(180deg);
+}
 
+.label-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.label-panel.open {
+    max-height: 240px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.label-panel.open::-webkit-scrollbar {
+    width: 4px;
+}
+
+.label-panel.open::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 4px;
+}
+
+.label-add-popup {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
     background: #ffffff;
-    color: #64748b;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 14px;
+    margin: 6px 0;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
 
+.label-add-popup.show {
     display: flex;
-    align-items: center;
-    justify-content: center;
+}
 
-    cursor: pointer;
+.label-add-popup input {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 8px 12px;
     font-size: 14px;
-
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    outline: none;
     transition: 0.2s;
-    flex-shrink: 0;
 }
 
-#addLabelBtn:hover {
-    background: #b6d3f8;
-    color: #ffffff;
-    transform: translateY(-1px);
+.label-add-popup input:focus {
+    border-color: #93c5fd;
 }
 
-.btn-all-icon {
-    font-size: 20px;
-    color: #94a3b8;
+.label-popup-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.label-popup-actions button {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
-
-    transition: all 0.2s ease;
-    padding: 6px;
-    border-radius: 8px;
+    background: #f1f5f9;
+    color: #64748b;
+    transition: 0.2s;
 }
 
-.btn-all-icon:hover {
-    color: #70a2e0;
-    background: #ecf1f6;
-    transform: scale(1.08);
+.label-popup-actions button.confirm {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+.label-popup-actions button:hover {
+    filter: brightness(95%);
 }
 
 .label-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    width: 100%;
-    margin: 2px 0;
-    padding: 10px 16px;
-
-    border-radius: 14px;
-    background: transparent;
-
-    box-sizing: border-box;
-    overflow: hidden;
-
+    padding: 9px 10px;
+    border-radius: 12px;
     transition: 0.2s ease;
+    cursor: pointer;
 }
 
-.label-item:hover {
-    background: #f8fafc;
+.label-item.active {
+    background: #edf6ff;
+}
+
+.label-item.active .label-name {
+    color: #2563eb;
+    font-weight: 600;
 }
 
 .label-name {
     flex: 1;
     min-width: 0;
-
     display: flex;
     align-items: center;
-
+    gap: 8px;
     font-size: 14px;
     font-weight: 500;
     color: #475569;
-
-    cursor: pointer;
-
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .label-name i {
-    font-size: 14px;
-    margin-right: 10px;
-    opacity: 0.7;
-    color: #94a3b8;
+    font-size: 10px;
+    color: #cbd5e1;
+    flex-shrink: 0;
 }
 
 .label-actions {
     display: flex;
     align-items: center;
-    gap: 6px;
-
-    flex-shrink: 0;
-
+    gap: 4px;
     opacity: 0;
-    transition: 0.2s ease;
+    transition: 0.2s;
 }
 
 .label-item:hover .label-actions {
@@ -147,20 +196,17 @@
 }
 
 .label-actions button {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     border: none;
-    border-radius: 10px;
-
+    border-radius: 8px;
     background: transparent;
     color: #94a3b8;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     cursor: pointer;
-    font-size: 13px;
+    font-size: 12px;
     transition: 0.2s;
 }
 
@@ -172,4 +218,67 @@
 .label-actions .delete-btn:hover {
     background: #fee2e2;
     color: #ef4444;
+}
+
+.label-rename-input {
+    flex: 1;
+    border: none;
+    border-bottom: 1.5px solid #2563eb;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1e293b;
+    padding: 2px 4px;
+    min-width: 0;
+}
+
+.label-empty {
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #94a3b8;
+    font-style: italic;
+}
+
+.label-all-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.label-all-item i {
+    font-size: 14px;
+    color: #94a3b8;
+}
+
+body.dark .label-header:hover,
+body.dark .label-item:hover {
+    background: #1e2a3a;
+}
+
+body.dark .label-add-popup {
+    background: #1e2233;
+    border-color: #3f4760;
+}
+
+body.dark .label-add-popup input {
+    background: #272d40;
+    border-color: #3f4760;
+    color: #e2e8f0;
+}
+
+body.dark .label-popup-actions button {
+    background: #2d3748;
+    color: #94a3b8;
+}
+
+body.dark .label-item.active {
+    background: #1e3a5f;
 }

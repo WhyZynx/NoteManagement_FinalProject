@@ -1,40 +1,54 @@
 <?php
-include("../db.php");
+require_once __DIR__ . '/../db.php';
+require_once __DIR__ . '/response.php';
+session_start();
 
-$note_id = $_POST['note_id'] ?? '';
-$old_password = $_POST['old_password'] ?? '';
-$new_password = $_POST['new_password'] ?? '';
-
-if ($note_id == '' || $old_password == '' || $new_password == '') {
-    echo "Missing data";
-    exit();
+if (!isset($_SESSION['user_id'])) {
+    response("error", "Unauthorized");
 }
 
-$result = $conn->query("
-    SELECT password 
-    FROM note_passwords 
-    WHERE note_id = $note_id
-");
+$userId  = $_SESSION['user_id'];
+$noteId  = intval($_POST['note_id'] ?? 0);
+$oldPw   = $_POST['old_password'] ?? '';
+$newPw   = $_POST['new_password'] ?? '';
 
-if ($result->num_rows == 0) {
-    echo "Note not locked";
-    exit();
+if ($noteId <= 0 || !$oldPw || !$newPw) {
+    response("error", "Missing data");
 }
 
-$row = $result->fetch_assoc();
-
-if (!password_verify($old_password, $row['password'])) {
-    echo "Wrong password";
-    exit();
+if (strlen($newPw) < 4) {
+    response("error", "New password too short (min 4 chars)");
 }
 
-$new_hashed = password_hash($new_password, PASSWORD_DEFAULT);
 
-$conn->query("
-    UPDATE note_passwords 
-    SET password = '$new_hashed' 
-    WHERE note_id = $note_id
-");
+$stmt = $conn->prepare("SELECT user_id FROM notes WHERE id = ?");
+$stmt->bind_param("i", $noteId);
+$stmt->execute();
+$note = $stmt->get_result()->fetch_assoc();
 
-echo "Password changed successfully";
+if (!$note || $note['user_id'] != $userId) {
+    response("error", "Unauthorized");
+}
+
+
+$stmt = $conn->prepare("SELECT password_hash FROM note_passwords WHERE note_id = ?");
+$stmt->bind_param("i", $noteId);
+$stmt->execute();
+$row = $stmt->get_result()->fetch_assoc();
+
+if (!$row) {
+    response("error", "Note is not locked");
+}
+
+if (!password_verify($oldPw, $row['password_hash'])) {
+    response("error", "Wrong current password");
+}
+
+
+$newHash = password_hash($newPw, PASSWORD_DEFAULT);
+$upd = $conn->prepare("UPDATE note_passwords SET password_hash = ? WHERE note_id = ?");
+$upd->bind_param("si", $newHash, $noteId);
+$upd->execute();
+
+response("success", "Password changed successfully");
 ?>

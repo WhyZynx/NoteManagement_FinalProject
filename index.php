@@ -43,6 +43,8 @@ $pref = [
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="/NoteManagement_FinalProject/manifest.json">
+    <meta name="theme-color" content="#6366f1">
 
     <?php
         $myThemeColor = '#5385c7';
@@ -59,6 +61,12 @@ $pref = [
         $tc1 = $t_colors[0];
         $tc2 = $t_colors[1] ?? $tc1;
     ?>
+    <style>
+        :root {
+            --user-color: <?= htmlspecialchars($tc1) ?>;
+            --user-color-2: <?= htmlspecialchars($tc2) ?>;
+        }
+</style>
 </head>
 
 <body class="<?= htmlspecialchars($pref['theme_mode'] ?? 'light') ?>">
@@ -69,7 +77,7 @@ $pref = [
         <button class="menu-toggle" onclick="toggleSidebar()">
             <i class="fa-solid fa-bars"></i>
         </button>
-        
+
         <div class="sidebar-top">
 
             <div class="sidebar-header">
@@ -79,16 +87,15 @@ $pref = [
                 </h2>
             </div>
 
-            <div class="profile-box">
-                <a href="User_Module/profile.php" class="profile-link">
-                    <div class="profile-avatar">
-                        <i class="bi bi-person-circle"></i>
-                    </div>
-                    <span class="profile-name">
-                        <?= htmlspecialchars($user['display_name'] ?? 'User'); ?>
-                    </span>
+            <nav class="main-menu">
+                <a href="?page=notes" class="menu-item <?= (!isset($_GET['page']) || $_GET['page'] === 'notes') ? 'active' : '' ?>">
+                    <i class="bi bi-lightbulb-fill"></i>
+                    <span>Notes</span>
                 </a>
-            </div>
+
+                <?php include __DIR__ . '/Note_Module/share_note.php'; ?>
+                <?php include __DIR__ . '/Note_Module/shared_notes_view.php'; ?>
+            </nav>
 
             <div class="verify-box">
                 <?php if (isset($_SESSION["success_message"])): ?>
@@ -98,7 +105,6 @@ $pref = [
                             unset($_SESSION["success_message"]);
                         ?>
                     </div>
-
                 <?php elseif (!($_SESSION["is_verified"] ?? 0)): ?>
                     <div id="verify-message" class="warning-banner">
                         <i class="bi bi-exclamation-triangle-fill"></i>
@@ -106,17 +112,6 @@ $pref = [
                     </div>
                 <?php endif; ?>
             </div>
-            <nav class="main-menu">
-                <a href="?page=notes"
-                   class="menu-item <?= (!isset($_GET['page']) || $_GET['page'] === 'notes') ? 'active' : '' ?>">
-                    <i class="bi bi-lightbulb-fill"></i>
-                    <span>Notes</span>
-                </a>
-
-                <?php include __DIR__ . '/Note_Module/share_note.php'; ?>
-                <?php include __DIR__ . '/Note_Module/shared_notes_view.php'; ?>
-            </nav>
-
 
             <div class="label-section">
                 <?php include __DIR__ . '/Label_Module/labels.php'; ?>
@@ -126,25 +121,20 @@ $pref = [
 
         <div class="sidebar-bottom">
             <nav class="sidebar-nav">
-
                 <a href="#">
                     <i class="bi bi-trash"></i>
                     <span>Trash</span>
                 </a>
-
                 <a href="User_Module/setting.php">
                     <i class="bi bi-gear-fill"></i>
                     <span>Settings</span>
                 </a>
-
                 <a href="Auth_Module/logout.php">
                     <i class="bi bi-box-arrow-right"></i>
                     <span>Logout</span>
                 </a>
-
             </nav>
         </div>
-
     </aside>
 
     <main class="main-content">
@@ -164,9 +154,11 @@ $pref = [
     const API_BASE = "API/";
 </script>
 
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script src="Assets/js/app.js"></script>
 <script src="Assets/js/notes.js"></script>
 <script src="Assets/js/labels.js"></script>
+<script src="Assets/js/offline.js"></script>
 
 <script>
 window.addEventListener("storage", function (event) {
