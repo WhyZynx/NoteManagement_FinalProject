@@ -53,9 +53,41 @@
                 cursor: pointer;
             "
         >
-            <option value="read">Read Only</option>
+            <option value="read" selected>Read Only</option>
             <option value="edit">Can Edit</option>
         </select>
+
+        <div id="sharedUsersSection" style="
+            margin-top: 5px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        ">
+            <h4 style="
+                margin: 0 0 12px;
+                font-size: 12px;
+                font-weight: 600;
+                color: #555;
+            ">
+                People with access
+            </h4>
+            
+            <div id="sharedUsersList" style="
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+                max-height: 180px;
+                overflow-y: auto;
+            ">
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 8px 0;
+                ">
+                    <span style="font-size: 13px; color: #555;">Loading...</span>
+                </div>
+            </div>
+        </div>
 
         <div style="
             display: flex;

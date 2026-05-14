@@ -148,6 +148,7 @@ $pref = [
     const NOTE_BASE = "Note_Module/";
     const USER_BASE = "User_Module/";
     const API_BASE = "API/";
+    window.currentUserEmail = "<?= htmlspecialchars($_SESSION['email'] ?? '') ?>";
 </script>
 
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>

@@ -79,24 +79,24 @@
 
 .note-actions {
     position: fixed;
-    right: 24px;
-    bottom: 24px;
+    right: clamp(12px, 2vw, 24px);
+    bottom: clamp(12px, 2vh, 24px);
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: clamp(8px, 1vw, 14px);
     z-index: 999;
 }
 
 .note-actions button {
-    width: 56px;
-    height: 56px;
+    width: clamp(36px, 4vw, 56px);
+    height: clamp(36px, 4vw, 56px);
     border: none;
     border-radius: 50%;
     background: #ffffff;
     border: 1px solid #e5e7eb;
     box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     cursor: pointer;
-    font-size: 20px;
+    font-size: clamp(14px, 1.5vw, 20px);
     display: flex;
     align-items: center;
     justify-content: center;

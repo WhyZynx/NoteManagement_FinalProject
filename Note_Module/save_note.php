@@ -21,10 +21,6 @@ $fontSize = (int)($_POST["font_size"] ?? 16);
 $fontStyle = trim($_POST["font_style"] ?? "Arial");
 $noteColor = trim($_POST["note_color"] ?? "#ffffff");
 
-
-// ===== CHECK PERMISSION =====
-
-// get owner of note
 $stmt = $conn->prepare("SELECT user_id FROM notes WHERE id = ?");
 $stmt->bind_param("i", $noteId);
 $stmt->execute();
@@ -35,14 +31,11 @@ if (!$note) {
 }
 
 $ownerId = $note["user_id"];
-
 $canEdit = false;
 
-// owner
 if ($ownerId == $userId) {
     $canEdit = true;
 } else {
-    // check shared permission
     $stmt = $conn->prepare("
         SELECT permission FROM shared_notes 
         WHERE note_id = ? AND shared_with = ?
@@ -59,9 +52,6 @@ if ($ownerId == $userId) {
 if (!$canEdit) {
     response("error", "No permission to edit this note");
 }
-
-
-// ===== UPDATE NOTE =====
 
 $stmt = $conn->prepare("
     UPDATE notes
@@ -85,9 +75,10 @@ $stmt->bind_param(
     $noteId
 );
 
+$stmt->execute();
+
 $labels = json_decode($_POST["labels"] ?? "[]", true);
 if ($ownerId == $userId) {
-
     $conn->query("DELETE FROM note_labels WHERE note_id = $noteId");
 
     if (!empty($labels) && is_array($labels)) {
@@ -104,8 +95,4 @@ if ($ownerId == $userId) {
     }
 }
 
-if ($stmt->execute()) {
-    response("success", "Note saved successfully");
-}
-
-response("error", "Failed to save note");
+response("success", "Note saved successfully");

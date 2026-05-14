@@ -522,7 +522,70 @@ window.openShareModal = function (noteId) {
     if (emailInput) emailInput.value = "";
 
     if (modal) modal.style.display = "flex"; 
+
+    updateSharedUsersList(noteId);
 };
+window.updateSharedUsersList = async function(noteId) {
+    const listContainer = document.getElementById("sharedUsersList");
+    if (!listContainer) return;
+    
+    listContainer.innerHTML = '<div style="padding: 8px 0;"><span style="font-size: 13px; color: #555;">Loading...</span></div>';
+
+    try {
+        const res = await fetch(`${API_BASE}api_sharing.php?action=get_shared_users&note_id=${noteId}`);
+        const data = await res.json();
+
+        if (data.status === "success" && data.data && data.data.length > 0) {
+            listContainer.innerHTML = data.data.map(user => `
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f9f9f9;">
+                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                        <span style="font-size: 13px; font-weight: 600; color: #333;">${escHtmlCard(user.email)}</span>
+                        <span style="font-size: 11px; color: #777; text-transform: uppercase;">${user.permission}</span>
+                    </div>
+                    <button onclick="revokeShare(${noteId}, '${user.email}')" 
+                            style="background: none; border: none; color: #e46e70; cursor: pointer; padding: 5px; border-radius: 5px;"
+                            title="Remove access">
+                        <i class="bi bi-x-circle-fill" style="font-size: 16px;"></i>
+                    </button>
+                </div>
+            `).join("");
+        } else {
+            listContainer.innerHTML = '<div style="padding: 8px 0;"><span style="font-size: 13px; color: #999; font-style: italic;">Not shared with anyone yet.</span></div>';
+        }
+    } catch (err) {
+        console.error("Error fetching shared users:", err);
+        listContainer.innerHTML = '<div style="padding: 8px 0;"><span style="font-size: 13px; color: #e46e70;">Failed to load list.</span></div>';
+    }
+};
+
+window.revokeShare = async function(noteId, email) {
+    if (!confirm(`Revoke access for ${email}?`)) return;
+
+    try {
+        const res = await fetch(`${API_BASE}api_sharing.php`, {
+            method: "POST",
+            body: new URLSearchParams({
+                action: "revoke_share",
+                note_id: noteId,
+                email: email
+            })
+        });
+
+        const data = await res.json();
+        if (data.status === "success") {
+            updateSharedUsersList(noteId);
+            if (typeof socket !== 'undefined') {
+                socket.emit("note_revoked", { note_id: noteId, email: email });
+            }
+        } else {
+            alert(data.message || "Failed to revoke share");
+        }
+    } catch (err) {
+        console.error("Error revoking share:", err);
+        alert("Network error while revoking share");
+    }
+};
+
 
 window.closeShareModal = function () {
     const modal = document.getElementById("shareModal");
@@ -569,13 +632,17 @@ document.addEventListener("click", async function (e) {
             }
 
             if (data.status === "success") {
-                alert("Shared successfully");
-                closeShareModal();
+                updateSharedUsersList(currentShareNoteId);
+                document.getElementById("shareEmail").value = "";
+                showToast("Shared successfully", "success");
+                if (typeof socket !== 'undefined') {
+                    socket.emit("note_shared", { to_email: email });
+                }
             } else {
-                alert(data.message || "Share failed");
-            }
-
-        } catch (err) {
+                showToast(data.message || "Share failed", "error");
+            } 
+        }
+        catch (err) {
             console.error(err);
             alert("Network error");
         }
@@ -608,53 +675,37 @@ async function loadSharedNotes() {
                 </p>`;
             return;
         }
+        if (!window.sharedNotesData) window.sharedNotesData = {};
 
-        container.innerHTML = data.data.map(n => {
+        container.className = currentView; 
+        container.innerHTML = `<div class="notes-group ${currentView}">` + data.data.map(n => {
             const color = n.note_color || "#ffffff";
             const textColor = getTextColorForBg(color);
-            const canEdit = (n.permission === "edit");
-
+            const timeAgo = formatTimeAgo(n.shared_at);
+            
+            window.sharedNotesData[n.id] = n;
 
             return `
-                <div class="note-card shared-card" 
-                     data-id="${n.id}"
-                     style="background: ${color}; color: ${textColor}; border-radius: 20px; padding: 20px; 
-                            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.03);
-                            position: relative; transition: transform 0.2s;">
-                    
-                    <div class="note-card-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-                        ${canEdit ? 
-                            `<input class="note-title" data-id="${n.id}" value="${escHtmlCard(n.title)}" 
-                                    style="font-size: 18px; font-weight: 700; border: none; background: transparent; color: inherit; width: 90%; outline: none;" />` :
-                            `<h3 style="font-size: 18px; font-weight: 700; margin: 0; color: inherit;">${escHtmlCard(n.title) || "Untitled"}</h3>`
-                        }
-                        <i class="bi bi-people-fill" style="color: #5385c7; font-size: 14px;" title="Shared Note"></i>
+                <div class="note-card" data-id="${n.id}"
+                    style="background:${color}; --note-text-color:${textColor}; cursor: pointer;"
+                    onclick="openSharedNoteModal(${n.id})">
+                    <div class="note-card-body">
+                        <div class="note-preview-title">${escHtmlCard(n.title) || "<span class='note-empty-title'>Untitled</span>"}</div>
+                        <div class="note-preview-content">${escHtmlCard(n.content)}</div>
                     </div>
-
-                    ${canEdit ? 
-                        `<textarea class="note-content" data-id="${n.id}" 
-                                   style="font-size: 15px; border: none; background: transparent; color: inherit; width: 100%; min-height: 50px; outline: none; resize: none; line-height: 1.5;">${n.content}</textarea>` :
-                        `<p style="font-size: 15px; color: inherit; line-height: 1.5; margin-bottom: 15px; opacity: 0.9;">${n.content}</p>`
-                    }
-
-                    <div class="shared-meta" style="margin-top: 15px; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 4px;">
-                        <div style="font-size: 12px; color: #9aa4b2; display: flex; align-items: center; gap: 5px;">
-                            <i class="bi bi-person-circle"></i> 
-                            <span>From: <strong>${n.owner_email}</strong></span>
-                        </div>
-                        <div style="font-size: 11px; display: inline-block; padding: 2px 8px; border-radius: 10px; background: rgba(83, 133, 199, 0.1); color: #5385c7; align-self: flex-start; font-weight: 600; text-transform: uppercase;">
-                            ${n.permission}
+                    <div class="note-preview-footer">
+                        <span class="note-meta-time">${timeAgo}</span>
+                        <div class="note-preview-right" style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 12px; background: rgba(0,0,0,0.08); text-transform: uppercase;">${n.permission}</span>
+                            <i class="bi bi-people-fill" title="From: ${n.owner_email}"></i>
                         </div>
                     </div>
-                </div>
-            `;
-        }).join("");
+                </div>`;
+        }).join("") + `</div>`;
 
-        if (typeof attachAutoSaveEvents === "function") {
-            attachAutoSaveEvents();
-        }
-
-    } catch (err) {
+        data.data.forEach(n => socket.emit("join_note", n.id));
+    } 
+    catch (err) {
         console.error("Load shared error:", err);
     }
 }
@@ -670,7 +721,6 @@ window.saveNote = saveNote;
 window.loadNotes = loadNotes;
 
 socket.on("note_updated", (data) => {
-
     isRemoteUpdate = true;
 
     const id = data.noteId;
@@ -689,9 +739,39 @@ socket.on("note_updated", (data) => {
 
     syncNoteStyle(id);
 
+    if (window.sharedNotesData && window.sharedNotesData[id]) {
+        window.sharedNotesData[id].title = data.title;
+        window.sharedNotesData[id].content = data.content;
+        if (data.font_size) window.sharedNotesData[id].font_size = data.font_size;
+        if (data.font_style) window.sharedNotesData[id].font_style = data.font_style;
+        if (data.note_color) window.sharedNotesData[id].note_color = data.note_color;
+
+        const card = document.querySelector(`#shared-notes .note-card[data-id="${id}"]`);
+        if (card) {
+            const previewTitle = card.querySelector(".note-preview-title");
+            const previewContent = card.querySelector(".note-preview-content");
+            if (previewTitle) previewTitle.innerHTML = escHtmlCard(data.title) || "<span class='note-empty-title'>Untitled</span>";
+            if (previewContent) previewContent.innerHTML = escHtmlCard(data.content);
+            if (data.note_color) {
+                card.style.background = data.note_color;
+                card.style.setProperty('--note-text-color', getTextColorForBg(data.note_color));
+            }
+        }
+    }
+
     setTimeout(() => {
         isRemoteUpdate = false;
     }, 50);
+});
+
+socket.on("note_revoked", function(data) {
+    const currentUser = window.currentUserEmail;
+    if (data.email === currentUser) {
+        const modal = document.getElementById("shared-note-edit-modal");
+        if (modal) modal.remove();
+        loadSharedNotes();
+        showToast("Your access to a note has been revoked", "info");
+    }
 });
 
 function formatTimeAgo(dateStr) {
@@ -746,6 +826,7 @@ async function openNoteModal(noteId, isVerified = false) {
     const noteCheck = notesCheck.find(n => n.id == noteId);
 
     if (!isVerified && noteCheck && noteCheck.is_locked == 1) {
+        loadNotes(); 
         showPasswordPrompt(noteId, function () {
             openNoteModal(noteId, true);
         });
@@ -1012,7 +1093,8 @@ async function openLockModal(noteId) {
                 <p class="modal-desc">Enter the current password to remove protection.</p>
                 <div class="lock-input-group">
                     <div class="lock-field">
-                        <input type="password" id="unlockPassword" class="lock-input" placeholder="Current password" autocomplete="current-password">
+                        <input type="password" id="unlockPassword" class="lock-input" placeholder="Current password" 
+                            autocomplete="off" data-form-type="other">
                         <i class="bi bi-eye-slash lock-eye" onclick="toggleLockEye('unlockPassword', this)"></i>
                     </div>
                     <p class="lock-error" id="lockError"></p>
@@ -1037,9 +1119,12 @@ async function openLockModal(noteId) {
     });
 
     setTimeout(() => {
-        const input = modal.querySelector(".lock-input");
-        if (input) input.focus();
-    }, 50);
+        modal.querySelectorAll(".lock-input").forEach(el => {
+            el.value = "";
+        });
+        const first = modal.querySelector(".lock-input");
+        if (first) first.focus();
+    }, 200);
 }
 
 function closeLockModal() {
@@ -1154,7 +1239,10 @@ async function openChangePwModal(noteId) {
     modal.addEventListener("mousedown", function (e) {
         if (e.target === modal) closeChangePwModal();
     });
-    setTimeout(() => modal.querySelector(".lock-input")?.focus(), 50);
+    setTimeout(() => {
+        modal.querySelectorAll(".lock-input").forEach(el => { el.value = ""; });
+        modal.querySelector(".lock-input")?.focus();
+    }, 200);
 }
 
 function closeChangePwModal() {
@@ -1235,7 +1323,10 @@ function showPasswordPrompt(noteId, onSuccess) {
         </div>`;
 
     document.body.appendChild(modal);
-    setTimeout(() => modal.querySelector(".lock-input")?.focus(), 50);
+    setTimeout(() => {
+        modal.querySelectorAll(".lock-input").forEach(el => { el.value = ""; });
+        modal.querySelector(".lock-input")?.focus();
+    }, 200);
 
     modal.querySelector("#promptPassword").addEventListener("keydown", function (e) {
         if (e.key === "Enter") document.getElementById("promptConfirmBtn").click();
@@ -1434,6 +1525,130 @@ function showSaveIndicator(noteId, status) {
 
     setTimeout(() => { el.textContent = ""; }, 3000);
 }
+
+window.openSharedNoteModal = async function(noteId) {
+    const note = window.sharedNotesData ? window.sharedNotesData[noteId] : null;
+    if (!note) return;
+
+    const size = note.font_size || 16;
+    const style = note.font_style || "sans-serif";
+    const color = note.note_color || "#ffffff";
+    const canEdit = (note.permission === "edit");
+
+    const existing = document.getElementById("shared-note-edit-modal");
+    if (existing) existing.remove();
+
+    const modal = document.createElement("div");
+    modal.id = "shared-note-edit-modal";
+    modal.className = "note-modal-overlay";
+    const modalTextColor = getTextColorForBg(color);
+
+    modal.innerHTML = `
+        <div class="note-modal-box" style="background:${color}; --note-text-color:${modalTextColor};" onclick="event.stopPropagation()">
+            <div class="note-modal-header">
+                <input class="note-modal-title note-title" data-id="${noteId}"
+                    placeholder="Title"
+                    value="${(note.title || '').replace(/"/g, '&quot;')}"
+                    ${canEdit ? '' : 'readonly'}>
+                <button class="note-modal-close" onclick="closeSharedNoteModal(${noteId})">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <div style="padding: 0 20px 10px 20px; font-size: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="opacity: 0.8;"><i class="bi bi-person-circle"></i> From: <strong>${note.owner_email}</strong></span>
+                <span style="background: ${canEdit ? 'rgba(34, 197, 94, 0.1)' : 'rgba(245, 158, 11, 0.1)'}; color: ${canEdit ? '#22c55e' : '#f59e0b'}; padding: 4px 10px; border-radius: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                    ${canEdit ? '<i class="bi bi-pencil-fill"></i> Edit' : '<i class="bi bi-eye-fill"></i> Read-only'}
+                </span>
+            </div>
+
+            <textarea class="note-modal-content note-content" data-id="${noteId}"
+                placeholder="Note content..." ${canEdit ? '' : 'readonly'}>${note.content || ''}</textarea>
+
+            <div class="note-modal-toolbar">
+                <div class="note-controls">
+                    <select class="font-size" data-id="${noteId}" ${canEdit ? '' : 'disabled'}>
+                        <option value="14" ${size == 14 ? "selected" : ""}>14</option>
+                        <option value="16" ${size == 16 ? "selected" : ""}>16</option>
+                        <option value="18" ${size == 18 ? "selected" : ""}>18</option>
+                        <option value="20" ${size == 20 ? "selected" : ""}>20</option>
+                    </select>
+                    <select class="font-style" data-id="${noteId}" ${canEdit ? '' : 'disabled'}>
+                        <option value="Arial" ${style === "Arial" ? "selected" : ""}>Arial</option>
+                        <option value="serif" ${style === "serif" ? "selected" : ""}>Serif</option>
+                        <option value="sans-serif" ${style === "sans-serif" ? "selected" : ""}>Sans-serif</option>
+                        <option value="Montserrat" ${style === "Montserrat" ? "selected" : ""}>Montserrat</option>
+                    </select>
+                    <input type="color" class="note-color" data-id="${noteId}" value="${color}" ${canEdit ? '' : 'disabled'}>
+                </div>
+                
+                <div class="note-modal-actions"></div>
+            </div>
+        </div>`;
+
+    document.body.appendChild(modal);
+
+    let mouseDownOnOverlay = false;
+    modal.addEventListener("mousedown", function (e) { mouseDownOnOverlay = (e.target === modal); });
+    modal.addEventListener("mouseup", function (e) {
+        if (mouseDownOnOverlay && e.target === modal) closeSharedNoteModal(noteId);
+        mouseDownOnOverlay = false;
+    });
+
+    const box = modal.querySelector(".note-modal-box");
+    const textarea = box.querySelector("textarea");
+    if (typeof autoResizeModalTextarea === "function") autoResizeModalTextarea(textarea);
+
+    if (canEdit) {
+        const els = box.querySelectorAll(".note-title, .note-content, .font-size, .font-style, .note-color");
+        els.forEach(el => {
+            const type = (el.tagName === "SELECT" || el.type === "color") ? "change" : "input";
+            el.addEventListener(type, function () {
+                if (typeof syncNoteStyle === "function") syncNoteStyle(noteId);
+                
+                if (typeof isRemoteUpdate !== 'undefined' && !isRemoteUpdate && typeof socket !== 'undefined') {
+                    socket.emit("edit_note", {
+                        noteId: noteId,
+                        title: box.querySelector('.note-title').value || "",
+                        content: box.querySelector('.note-content').value || "",
+                        font_size: box.querySelector('.font-size').value,
+                        font_style: box.querySelector('.font-style').value,
+                        note_color: box.querySelector('.note-color').value
+                    });
+                }
+                
+                clearTimeout(autoSaveTimers[noteId]);
+                autoSaveTimers[noteId] = setTimeout(() => {
+                    if (typeof saveNote === "function") saveNote(noteId);
+                }, 300);
+            });
+        });
+
+        const colorPicker = box.querySelector(".note-color");
+        colorPicker.addEventListener("input", function () {
+            box.style.background = this.value;
+            const textColor = getTextColorForBg(this.value);
+            box.style.setProperty('--note-text-color', textColor);
+        });
+    }
+};
+
+window.closeSharedNoteModal = async function(noteId) {
+    if (autoSaveTimers[noteId]) {
+        clearTimeout(autoSaveTimers[noteId]);
+        delete autoSaveTimers[noteId];
+        if (typeof saveNote === "function") await saveNote(noteId);
+    }
+    const modal = document.getElementById("shared-note-edit-modal");
+    if (modal) {
+        modal.style.opacity = "0";
+        setTimeout(() => {
+            modal.remove();
+            loadSharedNotes(); 
+        }, 200);
+    }
+}
+
 
 window.openLockModal = openLockModal;
 window.closeLockModal = closeLockModal;
