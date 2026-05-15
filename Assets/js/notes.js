@@ -1,7 +1,7 @@
 let currentView = "grid";
 let autoSaveTimers = {};
 let searchTimer;
-const socket = io("http://localhost:3001");
+const socket = io("window.location.origin.replace(/^http/, 'http'");
 let isRemoteUpdate = false;
 
 async function fetchJson(url, options = {}) {

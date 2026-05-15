@@ -1,9 +1,9 @@
 <?php
-$host = "db-mindflow-note-lytran041206-4f56.h.aivencloud.com";
-$user = "avnadmin";
-$pass = "AVNS_vYv4Dem09CeTiY1KT2-"; 
-$dbname = "defaultdb";
-$port = 24529;
+$host = getenv('DB_HOST');
+$user = getenv('DB_USER');
+$pass = getenv('DB_PASS');
+$dbname = getenv('DB_NAME');
+$port = getenv('DB_PORT');
 
 $conn = mysqli_connect($host, $user, $pass, $dbname, $port);
 
