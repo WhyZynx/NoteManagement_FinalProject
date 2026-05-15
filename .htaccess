@@ -1,4 +1,5 @@
 RewriteEngine On
-# Nếu thấy yêu cầu socket.io, đẩy nó sang cổng 3001
+RewriteBase /
+
 RewriteCond %{REQUEST_URI} ^/socket.io [NC]
-RewriteRule ^(.*)$ http://localhost:3001/$1 [P,L]
+RewriteRule ^(.*)$ http://127.0.0.1:3001/$1 [P,L]
