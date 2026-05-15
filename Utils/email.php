@@ -17,7 +17,15 @@ function createMailer()
     $mail->Username = 'mindflow.notes2026@gmail.com';
     $mail->Password = 'gkkq ctma dcmm ukyq';
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = 587;
+    $mail->Port = 465;
+
+    $mail->SMTPOptions = array(
+        'ssl' => array(
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true
+        )
+    );
 
     $mail->setFrom('mindflow.notes2026@gmail.com', 'MindFlow');
     $mail->isHTML(true);
