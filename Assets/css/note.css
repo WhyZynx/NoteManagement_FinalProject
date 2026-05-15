@@ -1173,66 +1173,88 @@ body.dark .lock-input:focus {
     border-color: #818cf8;
     background: #252f40;
 }
-
 @media (max-width: 768px) {
-    #notes-list.grid,
+
+    .notes-section {
+        margin-bottom: 18px;
+    }
+
+    .notes-section-label {
+        font-size: 10px;
+        margin-bottom: 10px;
+        padding-left: 2px;
+    }
+
     .notes-group.grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
     }
 
-    #notes-list.list .note-controls {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 8px;
+    .notes-group.grid .note-card {
+        padding: 12px;
+        border-radius: 16px;
     }
 
-    #notes-list.list .note-action {
-        justify-content: flex-end;
+    .notes-group.grid .note-preview-title {
+        font-size: 13px;
+        margin-bottom: 4px;
     }
 
-    .note-card {
-        padding: 20px;
-        border-radius: 20px;
+    .notes-group.grid .note-preview-content {
+        font-size: 11px;
+        line-height: 1.4;
+        -webkit-line-clamp: 2;
+        margin-bottom: 6px;
     }
 
-    .note-title {
-        font-size: 16px;
-    }
-
-    .note-controls {
-        gap: 8px;
-        padding: 6px 12px;
-    }
-
-    .mobile-menu-btn {
-        display: flex;
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 1200;
-        width: 44px;
-        height: 44px;
-        border: none;
-        border-radius: 14px;
-        background: #ffffff;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-        align-items: center;
-        justify-content: center;
-    }
-}
-
-@media (max-width: 600px) {
-    .note-modal-box {
-        padding: 20px;
-        border-radius: 20px;
-        max-height: 95vh;
+    .notes-group.grid .note-preview-images img {
+        max-height: 90px;
+        border-radius: 10px;
     }
 }
 
 @media (max-width: 480px) {
+
     #notes-list.grid,
     .notes-group.grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .note-card {
+        padding: 10px;
+        border-radius: 14px;
+    }
+}
+
+.mobile-modal {
+    padding: 18px;
+    box-sizing: border-box;
+}
+
+.mobile-box {
+    width: 100%;
+    max-width: 420px;
+    max-height: 78vh;
+    padding: 18px;
+    border-radius: 26px;
+}
+
+@media (max-width: 480px) {
+    .mobile-box {
+        max-width: 92vw;
+        max-height: 75vh;
+        padding: 16px;
+        border-radius: 22px;
+    }
+
+    .mobile-box .note-modal-content {
+        min-height: 90px;
+        font-size: 14px;
+    }
+
+    .mobile-box .note-modal-toolbar {
+        gap: 14px;
     }
 }
