@@ -4,6 +4,7 @@ let searchTimer;
 const socket = io("https://mindflow-note.onrender.com");
 let isRemoteUpdate = false;
 
+
 async function fetchJson(url, options = {}) {
     if (!options.headers) {
         options.headers = {};
