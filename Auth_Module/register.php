@@ -84,11 +84,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </button>
 
         <div class="ms-auto d-flex align-items-center nav-right">
-            
-            <div class="d-flex align-items-center gap-1 lang">
-                <i class="fa-solid fa-globe"></i>
-                <span>EN</span>
-            </div>
 
             <a href="login.php" class="btn signUp-btn">Login</a>
             <button class="btn login-btn">Sign Up</button>

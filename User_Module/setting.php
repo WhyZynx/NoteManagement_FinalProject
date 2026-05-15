@@ -101,6 +101,37 @@ $c2 = $colors[1] ?? $c1;
         input[type="color"]:hover { transform: scale(1.1); }
         input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
         input[type="color"]::-webkit-color-swatch { border: 3px solid #fff; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+
+        @media (max-width: 768px){
+
+            .settings-layout{
+                transform: scale(0.88);
+                transform-origin: top center;
+            }
+
+            .settings-glass-card{
+                padding: 28px;
+            }
+
+            .theme-row span{
+                padding: 12px 8px;
+                font-size: 0.85rem;
+            }
+
+            .theme-row span i{
+                font-size: 1rem;
+            }
+
+            .btn-modern-save{
+                font-size: 0.9rem;
+                padding: 12px 20px;
+            }
+
+            input[type="color"]{
+                width: 45px;
+                height: 45px;
+            }
+        }
     </style>
 </head>
 
