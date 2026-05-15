@@ -38,7 +38,7 @@ $avatar = !empty($user['avatar']) ? $user['avatar'] : '../Assets/images/avatar/d
             
             <div class="welcome-card">
                 <div class="welcome-text">
-                    <h2>Hi, <?= htmlspecialchars($user['display_name']) ?>!</h2>
+                    <h2>Hello, <?= htmlspecialchars($user['display_name']) ?>!</h2>
                     <p>Update your profile information to keep your account personalized.</p>
                 </div>
                 <img src="../<?= $avatar ?>" alt="Avatar" class="avatar-wrapper">
@@ -86,5 +86,21 @@ $avatar = !empty($user['avatar']) ? $user['avatar'] : '../Assets/images/avatar/d
     </div>
 
     <script src="../Assets/js/sidebar.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const el = document.querySelector(".file-name-display");
+        if (!el) return;
+
+        const full = el.textContent.trim();
+
+        if (full.length > 12) {
+            const first = full.slice(0, 5);
+            const last = full.slice(-5);
+            el.textContent = first + "..." + last;
+        }
+
+        el.title = full;
+    });
+</script>
 </body>
 </html>
