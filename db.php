@@ -1,14 +1,16 @@
 <?php
-date_default_timezone_set('Asia/Ho_Chi_Minh');
-$servername = "localhost";
-$db_username = "root";   
-$db_password = "";        
-$dbname = "note_management";   
+$host = "db-mindflow-note-lytran041206-4f56.h.aivencloud.com";
+$user = "avnadmin";
+$pass = "AVNS_vYv4Dem09CeTiY1KT2-"; 
+$dbname = "defaultdb";
+$port = 24529;
 
-$conn = new mysqli($servername, $db_username, $db_password, $dbname);
- $conn->set_charset("utf8");
- 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+$conn = mysqli_connect($host, $user, $pass, $dbname, $port);
+
+if (!$conn) {
+    die("Database connect failed " . mysqli_connect_error());
 }
+
+// Thiết lập font tiếng Việt chuẩn
+mysqli_set_charset($conn, "utf8mb4");
 ?>
