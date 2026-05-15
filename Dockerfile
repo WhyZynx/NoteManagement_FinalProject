@@ -11,4 +11,4 @@ RUN npm install
 WORKDIR /var/www/html
 EXPOSE 80 3001
 
-CMD apache2-foreground & node /var/www/html/realtime-server/server.js
+CMD node /var/www/html/realtime-server/server.js & apache2-foreground
