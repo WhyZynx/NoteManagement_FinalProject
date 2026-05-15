@@ -1,6 +1,6 @@
 FROM php:8.1-apache
 
-RUN apt-get update && apt-get install -y nodejs npm supervisor \
+RUN apt-get update && apt-get install -y nodejs npm \
     && docker-php-ext-install mysqli pdo pdo_mysql
 
 COPY . /var/www/html/
@@ -8,8 +8,7 @@ COPY . /var/www/html/
 WORKDIR /var/www/html/realtime-server
 RUN npm install
 
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
+WORKDIR /var/www/html
 EXPOSE 80 3001
 
-CMD ["/usr/bin/supervisord", "-n"]
+CMD apache2-foreground & node /var/www/html/realtime-server/server.js
