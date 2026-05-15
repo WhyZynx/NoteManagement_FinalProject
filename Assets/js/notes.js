@@ -1,7 +1,7 @@
 let currentView = "grid";
 let autoSaveTimers = {};
 let searchTimer;
-const socket = io("window.location.origin.replace(/^http/, 'http'");
+const socket = io("https://mindflow-note.onrender.com");
 let isRemoteUpdate = false;
 
 async function fetchJson(url, options = {}) {

@@ -16,7 +16,7 @@ function createMailer()
     $mail->SMTPAuth = true;
     $mail->Username = 'mindflow.notes2026@gmail.com';
     $mail->Password = 'gkkq ctma dcmm ukyq';
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
     $mail->Port = 465;
 
     $mail->SMTPOptions = array(
@@ -75,6 +75,7 @@ function sendOtpEmail($email, $otp)
             <p>Your OTP is: <b>$otp</b></p>
             <p>This code expires in 5 minutes.</p>
         ";
+        $mail->SMTPDebug = 2;
 
         return $mail->send();
     } catch (Exception $e) {
