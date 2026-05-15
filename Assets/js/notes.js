@@ -779,12 +779,20 @@ socket.on("note_revoked", function(data) {
 
 function formatTimeAgo(dateStr) {
     if (!dateStr) return "";
-    const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+
+    const normalizedDate = dateStr.replace(/-/g, "/");
+    const date = new Date(normalizedDate);
+    const now = new Date();
+    
+    const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diff < 0) return "Just now"; 
     if (diff < 60) return "Just now";
     if (diff < 3600) return Math.floor(diff / 60) + "m ago";
     if (diff < 86400) return Math.floor(diff / 3600) + "h ago";
     if (diff < 604800) return Math.floor(diff / 86400) + "d ago";
-    return new Date(dateStr).toLocaleDateString();
+    
+    return date.toLocaleDateString();
 }
 
 function escHtmlCard(str) {
