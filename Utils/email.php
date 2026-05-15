@@ -75,7 +75,7 @@ function sendOtpEmail($email, $otp)
             <p>Your OTP is: <b>$otp</b></p>
             <p>This code expires in 5 minutes.</p>
         ";
-        $mail->SMTPDebug = 2;
+        $mail->SMTPDebug = 0;
 
         return $mail->send();
     } catch (Exception $e) {

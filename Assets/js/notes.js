@@ -1,13 +1,7 @@
 let currentView = "grid";
 let autoSaveTimers = {};
 let searchTimer;
-const socket = io("https://mindflow-note.onrender.com", {
-    transports: ["websocket", "polling"]
-});
-
-socket.on("connect", () => {
-    console.log("Connect soket successfully", socket.id);
-});
+const socket = io(window.location.origin);
 let isRemoteUpdate = false;
 
 async function fetchJson(url, options = {}) {

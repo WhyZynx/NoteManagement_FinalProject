@@ -7,12 +7,12 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: "https://mindflow-note.onrender.com", 
+        origin: "*", 
         methods: ["GET", "POST"]
     }
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 const noteRooms = {};
 
 io.on("connection", function(socket) {
@@ -51,6 +51,6 @@ app.get("/health", function(req, res) {
     res.json({ status: "ok", connections: io.engine.clientsCount });
 });
 
-server.listen(PORT, '0.0.0.0', () => {
+server.listen(PORT, "0.0.0.0", function() {
     console.log(`[MindFlow] Realtime server running on port ${PORT}`);
 });
