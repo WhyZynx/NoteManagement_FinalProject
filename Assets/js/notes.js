@@ -1,7 +1,9 @@
 let currentView = "grid";
 let autoSaveTimers = {};
 let searchTimer;
-const socket = io("https://mindflow-note.onrender.com");
+const socket = io("/", {
+    transports: ["polling", "websocket"]
+});
 let isRemoteUpdate = false;
 
 
