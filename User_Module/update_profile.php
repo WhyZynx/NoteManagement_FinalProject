@@ -31,7 +31,7 @@ if (!empty($_FILES['avatar']['name'])) {
 
     move_uploaded_file($_FILES['avatar']['tmp_name'], $path . $file);
 
-    $avatar = '/uploads/avatars/' . $file;
+    $avatar = 'uploads/avatars/' . $file;
 }
 
 $stmt = $conn->prepare("UPDATE users SET display_name=?, avatar=? WHERE id=?");
