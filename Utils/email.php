@@ -16,16 +16,8 @@ function createMailer()
     $mail->SMTPAuth = true;
     $mail->Username = 'mindflow.notes2026@gmail.com';
     $mail->Password = 'gkkq ctma dcmm ukyq';
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-    $mail->Port = 465;
-
-    $mail->SMTPOptions = array(
-        'ssl' => array(
-            'verify_peer' => false,
-            'verify_peer_name' => false,
-            'allow_self_signed' => true
-        )
-    );
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = 587;
 
     $mail->setFrom('mindflow.notes2026@gmail.com', 'MindFlow');
     $mail->isHTML(true);
@@ -59,8 +51,7 @@ function sendVerificationEmail($email, $token)
 
         return $mail->send();
     } catch (Exception $e) {
-        error_log("phpmailer error: " . $mail->errorinfo); // ghi lỗi vào log hệ thống
-    return false;
+        return false;
     }
 }
 
@@ -76,12 +67,10 @@ function sendOtpEmail($email, $otp)
             <p>Your OTP is: <b>$otp</b></p>
             <p>This code expires in 5 minutes.</p>
         ";
-        $mail->SMTPDebug = 0;
 
         return $mail->send();
     } catch (Exception $e) {
-        error_log("phpmailer error: " . $mail->errorinfo); // ghi lỗi vào log hệ thống
-    return false;
+        return false;
     }
 }
 
@@ -101,8 +90,7 @@ function sendShareEmail($toEmail, $noteId, $permission) {
 
         return $mail->send();
     } catch (Exception $e) {
-        error_log("phpmailer error: " . $mail->errorinfo); // ghi lỗi vào log hệ thống
-    return false;
+        return false;
     }
 }
 ?>
