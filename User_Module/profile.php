@@ -52,7 +52,7 @@ $avatar = !empty($user['avatar']) ? $user['avatar'] : '../Assets/images/avatar/d
 
             <div class="welcome-card">
                 <div class="welcome-text">
-                    <h2>Hi, <?= htmlspecialchars($user['display_name']) ?>!</h2>
+                    <h2>Hello, <?= htmlspecialchars($user['display_name']) ?>!</h2>
                     <p>Capture the essence of your ideas. Seamlessly organized, naturally mindful.</p>
                 </div>
                 <img src="../<?= $avatar ?>" alt="Avatar" class="avatar-wrapper">

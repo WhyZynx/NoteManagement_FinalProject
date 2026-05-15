@@ -24,3 +24,12 @@
 <div id="notes-list" class="grid"></div>
 
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+const noteActions = document.querySelector('.note-actions');
+
+noteActions.addEventListener('click', (e) => {
+    if (e.target.closest('button') || e.target === noteActions) {
+        noteActions.classList.toggle('active');
+    }
+});
+</script>

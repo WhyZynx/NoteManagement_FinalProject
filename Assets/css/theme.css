@@ -165,9 +165,11 @@ body {
         flex-wrap: wrap;
     }
 
-    .ocean-bg{
-        width: 140%;
+    .ocean-bg {
+        width: 190%;
         max-width: none;
+        transform: translateX(-50%) scale(1.2);
+        bottom: -20px;        
     }
 }
 
@@ -680,4 +682,14 @@ body {
     .content{
         padding: 80px 14px 140px !important;
     }
+}
+
+@keyframes floatOcean {
+    0% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-8px); }
+    100% { transform: translateX(-50%) translateY(0); }
+}
+
+.ocean-bg {
+    animation: floatOcean 6s ease-in-out infinite;
 }
