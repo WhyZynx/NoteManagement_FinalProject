@@ -65,10 +65,6 @@ if (isset($_POST['btnLogin'])) {
         </button>
 
         <div class="ms-auto d-flex align-items-center nav-right">
-            <div class="d-flex align-items-center gap-1 lang">
-                <i class="fa-solid fa-globe"></i>
-                <span>EN</span>
-            </div>
             <button class="btn login-btn">Login</button>
             <a href="register.php" class="btn signUp-btn">Sign Up</a>
         </div>

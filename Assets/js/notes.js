@@ -870,10 +870,13 @@ async function openNoteModal(noteId, isVerified = false) {
 
     const modal = document.createElement("div");
     modal.id = "note-edit-modal";
-    modal.className = "note-modal-overlay";
+
+    const isMobile = window.innerWidth <= 768;
+
+    modal.className = `note-modal-overlay ${isMobile ? "mobile-modal" : ""}`;
     const modalTextColor = getTextColorForBg(color);
     modal.innerHTML = `
-        <div class="note-modal-box" style="background:${color}; --note-text-color:${modalTextColor};" onclick="event.stopPropagation()">
+        <div class="note-modal-box ${isMobile ? "mobile-box" : ""}" style="background:${color}; --note-text-color:${modalTextColor};" onclick="event.stopPropagation()">
             <div class="note-modal-header">
                 <input class="note-modal-title note-title" data-id="${noteId}"
                     placeholder="Title"
