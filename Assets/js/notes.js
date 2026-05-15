@@ -2,7 +2,7 @@ let currentView = "grid";
 let autoSaveTimers = {};
 let searchTimer;
 const socket = io("https://mindflow-note.onrender.com", {
-    transports: ["websocket", "polling"] 
+    transports: ["websocket", "polling"]
 });
 
 socket.on("connect", () => {
