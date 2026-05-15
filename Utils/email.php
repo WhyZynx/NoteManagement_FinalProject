@@ -59,7 +59,8 @@ function sendVerificationEmail($email, $token)
 
         return $mail->send();
     } catch (Exception $e) {
-        return false;
+        error_log("phpmailer error: " . $mail->errorinfo); // ghi lỗi vào log hệ thống
+    return false;
     }
 }
 
@@ -79,7 +80,8 @@ function sendOtpEmail($email, $otp)
 
         return $mail->send();
     } catch (Exception $e) {
-        return false;
+        error_log("phpmailer error: " . $mail->errorinfo); // ghi lỗi vào log hệ thống
+    return false;
     }
 }
 
@@ -99,7 +101,8 @@ function sendShareEmail($toEmail, $noteId, $permission) {
 
         return $mail->send();
     } catch (Exception $e) {
-        return false;
+        error_log("phpmailer error: " . $mail->errorinfo); // ghi lỗi vào log hệ thống
+    return false;
     }
 }
 ?>
