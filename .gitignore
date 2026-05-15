@@ -1,0 +1,3 @@
+realtime-server/node_modules/
+.DS_Store
+*.sql

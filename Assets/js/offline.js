@@ -2,9 +2,7 @@
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () {
         navigator.serviceWorker
-            .register("/NoteManagement_FinalProject/service-worker.js", {
-                scope: "/NoteManagement_FinalProject/"
-            })
+            .register("service-worker.js")
             .then(function (reg) {
                 console.log("[SW] Registered:", reg.scope);
             })
@@ -95,7 +93,7 @@ async function syncPendingChanges() {
     if (queue.length === 0) return;
 
     console.log(`[Offline] Syncing ${queue.length} pending change(s)...`);
-    const base = window.location.origin + "/NoteManagement_FinalProject/Note_Module/";
+    const base = window.location.origin + "Note_Module";
     const uniqueQueue = [];
     const seen = new Set();
 

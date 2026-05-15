@@ -43,7 +43,7 @@ $pref = [
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="manifest" href="/NoteManagement_FinalProject/manifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#6366f1">
 
     <?php
