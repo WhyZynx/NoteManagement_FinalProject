@@ -23,7 +23,12 @@ $user = $stmt->get_result()->fetch_assoc();
 $pref = getPreferences($conn, $userId);
 
 
-$avatar = !empty($user['avatar']) ? $user['avatar'] : 'Assets/images/avatar/default.png';
+// Nếu avatar rỗng HOẶC chứa chữ "default.png" thì ép nó về đường dẫn Assets
+if (empty($user['avatar']) || strpos($user['avatar'], 'default.png') !== false) {
+    $avatar = 'Assets/images/avatar/default.png';
+} else {
+    $avatar = $user['avatar'];
+}
 ?>
 
 <!DOCTYPE html>
