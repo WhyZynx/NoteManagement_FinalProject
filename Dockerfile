@@ -12,7 +12,10 @@ COPY . .
 RUN cd realtime-server && npm install
 
 RUN mkdir -p /var/www/html/uploads/avatars \
+    && mkdir -p /var/www/html/Assets/uploads \
     && chown -R www-data:www-data /var/www/html/uploads \
-    && chmod -R 755 /var/www/html/uploads
+    && chown -R www-data:www-data /var/www/html/Assets/uploads \
+    && chmod -R 755 /var/www/html/uploads \
+    && chmod -R 755 /var/www/html/Assets/uploads
 
 EXPOSE 80 3001
