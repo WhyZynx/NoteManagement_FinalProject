@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASS=admin123
+      - DB_NAME=mindflow_db
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_DATABASE: mindflow_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./sql_init:/docker-entrypoint-initdb.d 
+    command: --default-authentication-plugin=mysql_native_password
+
+  socket:
+    build: .
+    command: node realtime-server/server.js
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+
+volumes:
+  db_data:

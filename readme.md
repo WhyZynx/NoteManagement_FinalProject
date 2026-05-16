@@ -1,417 +1,144 @@
-# Note Management Application
-**Final Project - Web Programming & Applications | Semester II/2024-2025**
+# MindFlow - Smart Note Management System
 
-## Overview
-A web-based note management application that enables users to create, organize, and manage notes with support for text, images, and advanced features like sharing, password protection, and real-time collaboration.
+MindFlow is a professional, PHP-based note management application featuring real-time collaboration, advanced security locking, custom labeling, and robust offline support.
+
+Project Compliance Note: This repository contains the complete source code, required functional modules, configuration assets, and the orchestration setup required to successfully execute the application on any grading environment.
+
+---
+
+## Live Access and Repository
+
+* GitHub Repository: https://github.com/WhyZynx/NoteManagement_FinalProject.git
+* Production Deployment: https://mindflow-note.onrender.com/
+
+---
+
+## Core Features
+
+* User Management: Registration, login, secure logout, profile updating, and email reset flow simulation.
+* Rich Notes CRUD: Create, modify, delete, search, and pin important notes seamlessly.
+* Classification: Dynamic label generation and multi-tag filtering.
+* Security Mechanics: Password-protected encryption handles sensitive individual notes.
+* Real-time Sync: Multi-user collaborative workspace powered exclusively via WebSockets (Socket.IO).
+* PWA Capabilities: Built-in Service Workers provide secure offline read capabilities.
+* Dynamic Themes: Toggle fluidly between Light, Dark, Hologram, Custom, and Gradient view aesthetics.
 
 ---
 
 ## Technology Stack
 
-| Component | Technology |
-|-----------|-----------|
-| Backend | PHP 7.4+ |
-| Database | MySQL 5.7+ |
-| Frontend | HTML5, CSS3, Bootstrap 5, JavaScript |
-| Authentication | bcrypt Password Hashing |
-| Real-time Features | WebSocket (for collaboration) |
-| Progressive Features | Service Workers (offline support) |
+| Layer | Technology | Version / Specification |
+| :--- | :--- | :--- |
+| Backend Core | PHP | v8.2 (with Apache Bundle) |
+| Realtime Engine | Node.js / Socket.IO | v18.x Runtime Environment |
+| Database Storage | MySQL | v8.0 Community Server |
+| Frontend Foundation | HTML5 / CSS3 / Vanilla JS | Responsive Grid and Flexbox |
+| Offline Cache | Service Worker API | Progressive Web App Standard |
+| Orchestration | Docker / Docker Compose | Containerized Cross-Platform Engine |
 
 ---
 
-## System Architecture
+## Project Architecture
 
-```
-┌─────────────────┐
-│   Frontend      │
-│ (HTML/CSS/JS)   │
-└────────┬────────┘
-         │
-┌────────▼────────┐
-│  PHP Backend    │
-│ (MVC Pattern)   │
-└────────┬────────┘
-         │
-┌────────▼────────┐
-│  MySQL Database │
-└─────────────────┘
-```
+The workspace directory is entirely self-contained within the root htdocs layout without nested project subfolders:
 
----
+```text
+C:\xampp\htdocs\
+├── Auth_Module\          # Authentication pages and handlers (login, registration)
+├── User_Module\          # Profile, user preferences, and settings
+├── Note_Module\          # Notes CRUD, locking mechanics, and file uploads
+├── Label_Module\         # Label creation and note filtering logic
+├── API\                  # AJAX and backend API endpoints
+├── Utils\                # Connection helpers, validations, and email utilities
+├── Assets\               # Main CSS stylesheets, JavaScript files, and core UI graphics
+├── realtime-server\      # Node.js Socket.IO server for live multi-user collaboration
+├── sql_init\             # Database schema initialization and data seed SQL scripts
+├── uploads\              # Storage directory for user-uploaded images and avatars
+├── docker-compose.yml    # Docker Compose orchestration configurations
+├── Dockerfile            # Apache and PHP container build specifications
+├── db.php                # Dynamic database connection handler
+└── README.md             # Project documentation
 
-## Database Schema
-
-### Core Tables
-
-#### `users`
-```sql
-CREATE TABLE users (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    display_name VARCHAR(255) NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    avatar_url VARCHAR(255),
-    is_verified INT DEFAULT 0,
-    theme_mode VARCHAR(50) DEFAULT 'light',
-    font_size INT DEFAULT 16,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-```
-
-#### `notes`
-```sql
-CREATE TABLE notes (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    content LONGTEXT,
-    is_pinned BOOLEAN DEFAULT FALSE,
-    is_password_protected BOOLEAN DEFAULT FALSE,
-    password_hash VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-```
-
-#### `labels`
-```sql
-CREATE TABLE labels (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    color VARCHAR(10),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    UNIQUE KEY (user_id, name)
-);
-```
-
-#### `note_labels`
-```sql
-CREATE TABLE note_labels (
-    note_id INT NOT NULL,
-    label_id INT NOT NULL,
-    PRIMARY KEY (note_id, label_id),
-    FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE CASCADE,
-    FOREIGN KEY (label_id) REFERENCES labels(id) ON DELETE CASCADE
-);
-```
-
-#### `note_attachments`
-```sql
-CREATE TABLE note_attachments (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    note_id INT NOT NULL,
-    file_path VARCHAR(255) NOT NULL,
-    file_type VARCHAR(50),
-    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE CASCADE
-);
-```
-
-#### `note_sharing`
-```sql
-CREATE TABLE note_sharing (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    note_id INT NOT NULL,
-    owner_id INT NOT NULL,
-    recipient_id INT NOT NULL,
-    permission_level ENUM('read-only', 'edit') DEFAULT 'read-only',
-    shared_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE CASCADE,
-    FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (recipient_id) REFERENCES users(id) ON DELETE CASCADE,
-    UNIQUE KEY (note_id, recipient_id)
-);
-```
-
-#### `notifications`
-```sql
-CREATE TABLE notifications (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    type VARCHAR(50),
-    message TEXT,
-    related_note_id INT,
-    is_read BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-```
-
-#### `password_reset_tokens`
-```sql
-CREATE TABLE password_reset_tokens (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    token VARCHAR(255) UNIQUE NOT NULL,
-    expires_at TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
 ```
 
 ---
 
-## File Structure
+## Seeded Test Accounts
+
+The operational database initialization automates the insertion of two complete profiles. Use these to comprehensively evaluate permissions and real-time synchronization hooks:
+
+| Target Profile | Test Username / Email | Standard Access Password |
+| --- | --- | --- |
+| Primary Account | testuser1@gmail.com | 12345678 |
+| Secondary Account | testuser2@gmail.com | 12345678 |
+
+---
+
+## Connection Port Matrix
+
+When spun up inside Docker Compose, services communicate internally and bind safely using these mapped network pathways:
+
+* Web Front-facing Client: http://localhost:8080 (Proxied container port 80)
+* Realtime Synchronization: http://localhost:3001 (Socket.IO operational engine)
+* Isolated Database Engine: localhost:3307 (Forwards out from core internal 3306)
+
+---
+
+## Step-by-Step Deployment Guide
+
+### Option A: Standard Containerized Run via Docker Compose (Recommended)
+
+Docker Compose abstracts dependencies, compiles Node requirements, mounts initial structural definitions, and builds the runtime automatically.
+
+1. Launch your host terminal or PowerShell as an Administrator.
+2. Point your command focus into the installation destination folder:
+```bash
+cd C:\xampp\htdocs
 
 ```
-NoteManagement_FinalProject/
-├── index.php                 # Home page (requires login)
-├── db.php                    # Database connection & session init
-│
-├── Auth Module/
-│   ├── login.php            # Login page & form handler
-│   ├── register.php         # Registration page & form handler
-│   ├── logout.php           # Session destruction
-│   ├── forgot_password.php  # Password reset request
-│   ├── reset_password.php   # Password reset form
-│   └── verify_email.php     # Email verification link handler
-│
-├── User Module/
-│   ├── profile.php          # View user profile
-│   ├── update_profile.php   # Update user info & avatar
-│   ├── setting.php          # User preferences (theme, font size)
-│   ├── save_preferences.php # Save user settings
-│   └── change_password.php  # Change account password
-│
-├── Note Module/
-│   ├── notes.php            # Display notes (grid/list view)
-│   ├── create_note.php      # Create/edit note form
-│   ├── save_note.php        # Auto-save note content
-│   ├── delete_note.php      # Delete note with confirmation
-│   ├── upload_attachment.php# Upload images to notes
-│   ├── pin_note.php         # Pin/unpin notes
-│   └── search_notes.php     # Live search endpoint
-│
-├── Label Module/
-│   ├── labels.php           # Label management UI
-│   ├── create_label.php     # Create label
-│   ├── update_label.php     # Edit label
-│   ├── delete_label.php     # Delete label
-│   └── filter_notes.php     # Filter by labels
-│
-├── Sharing Module/
-│   ├── share_note.php       # Share note form
-│   ├── send_share.php       # Process share request
-│   ├── shared_notes.php     # View received notes
-│   ├── manage_sharing.php   # View/revoke sharing
-│   └── collaboration.php    # WebSocket endpoint (realtime edit)
-│
-├── Note Security/
-│   ├── lock_note.php        # Add password to note
-│   ├── unlock_note.php      # View password-protected note
-│   ├── change_note_password.php # Update note password
-│   └── disable_note_lock.php    # Remove password
-│
-├── Assets/
-│   ├── css/
-│   │   ├── style.css        # Main stylesheet
-│   │   ├── responsive.css   # Media queries for devices
-│   │   └── theme.css        # Light/Dark theme styles
-│   ├── js/
-│   │   ├── app.js           # Main application logic
-│   │   ├── notes.js         # Note CRUD operations
-│   │   ├── search.js        # Live search functionality
-│   │   ├── offline.js       # Service worker & offline cache
-│   │   ├── collaboration.js # WebSocket collaboration
-│   │   └── ui.js            # UI interactions & effects
-│   └── images/
-│       └── web_img/         # Images (logo, icons)
-│
-├── API/ (optional - for AJAX)
-│   ├── api_notes.php        # Note endpoints
-│   ├── api_labels.php       # Label endpoints
-│   ├── api_search.php       # Search endpoint
-│   ├── api_sharing.php      # Sharing endpoints
-│   └── api_auth.php         # Authentication endpoints
-│
-├── Utils/
-│   ├── email.php            # Email sending utilities
-│   ├── validation.php       # Input validation functions
-│   ├── security.php         # Security helpers (CSRF, auth)
-│   └── helpers.php          # General helper functions
-│
-├── config.php               # Configuration (if needed)
-├── .env.example             # Environment variables template
-├── docker-compose.yml       # Docker configuration (optional)
-├── README.md                # This file
-└── readme.txt               # Setup instructions for grader
+
+
+3. Execute the standard composition flush and build suite:
+```bash
+docker compose down -v && docker compose up -d --build --force-recreate
+
 ```
 
----
 
-## 28 Required Features
+4. Note: Allow roughly 15 seconds for the structural migrations inside the isolated DB engine to cleanly settle.
+5. Launch your browser of choice and interact directly via: http://localhost:8080
 
-### Account Management (2.0 pts)
+Maintenance Operations:
 
-| # | Feature | Status | Notes |
-|---|---------|--------|-------|
-| 1 | User Registration | Required | Email, display name, password (hashed with bcrypt) |
-| 2 | Account Activation | Required | Email verification link, notification on login |
-| 3 | User Login/Logout | Required | Session-based authentication |
-| 4 | Password Reset | Required | Email verification or OTP token |
-| 5 | View Profile | Required | Display user info |
-| 6 | Edit Profile & Avatar | Required | Update name and profile picture |
-| 7 | Change Password | Required | Verify old password first |
-| 8 | User Preferences | Required | Theme (light/dark), font size |
-
-### Simple Note Management (4.0 pts)
-
-| # | Feature | Status | Notes |
-|---|---------|--------|-------|
-| 9 | List View | Required | Alternative display mode |
-| 10 | Grid View | Required | Default display layout |
-| 11 | Create Notes | Required | Title + content only |
-| 12 | Update Notes | Required | Same interface as create |
-| 13 | Delete Notes | Required | Confirmation dialog required |
-| 14 | Auto-Save | Required | Save without button click |
-| 15 | Image Attachments | Required | Single or multiple images |
-| 16 | Pin Notes | Required | Pinned notes stay at top |
-| 17 | Search Notes | Required | Live search, no button needed |
-| 18 | Label Management | Required | List, add, edit, delete labels |
-| 19 | Attach Labels | Required | One or multiple labels per note |
-| 20 | Filter by Labels | Required | Show only labeled notes |
-
-### Advanced Note Management (2.0 pts)
-
-| # | Feature | Status | Notes |
-|---|---------|--------|-------|
-| 21 | Lock/Unlock Notes | Required | Password protection per note |
-| 22 | Change Note Password | Required | Requires old password verification |
-| 23 | Share Notes | Required | Email recipients, permission levels |
-| 24 | Real-time Collaboration | Required | WebSocket for simultaneous editing |
-
-### Other Requirements (2.0 pts)
-
-| # | Feature | Points | Requirements |
-|---|---------|--------|--------------|
-| 25 | UI/UX Design | 0.5 | Above-average design |
-| 26 | Responsive Design | 0.5 | Mobile, tablet, desktop support |
-| 27 | Offline Capabilities | 0.5 | PWA with service workers & offline sync |
-| 28 | Online Deployment | 0.5 | Public hosting OR Docker Compose setup |
+* To cleanly park the virtual systems: docker compose down
+* To wipe the database data and re-trigger fresh seeded accounts: docker compose down -v
 
 ---
 
-## Key Implementation Requirements
+### Option B: Local Stack Run via Native XAMPP Engine
 
-### Security
-- Use prepared statements to prevent SQL injection
-- Hash all passwords with bcrypt (PASSWORD_BCRYPT)
-- Implement CSRF tokens for form submissions
-- Validate and sanitize all inputs
-- Use HTTPS for online deployment
+The dynamic adapter file db.php is engineered with fallback logic. If it notices missing container definitions, it bridges access back to structural default values on your host.
 
-### User Experience
-- Auto-save without user action (AJAX)
-- Live search with 300ms debounce
-- Responsive design supporting mobile/tablet/desktop
-- Loading indicators for async operations
-- Error handling with user-friendly messages
-
-### Data Integrity
-- Confirmation dialogs for destructive actions
-- Transaction support for multi-table operations
-- Proper cascade deletion for related records
-- Timestamps for all records (created_at, updated_at)
-
-### Performance
-- Index frequently queried columns
-- Cache user preferences in session
-- Optimize image uploads (compression, resizing)
-- Implement pagination for large note lists
+1. Free up ports by running `docker compose down` in your project terminal.
+2. Fire up the XAMPP Control Panel on your desktop.
+3. Turn on the Apache and MySQL modules.
+4. Navigate to your local server admin workspace (http://localhost/phpmyadmin), define a new relational layer catalog titled `mindflow_db`, and import the initialization asset file located at `./sql_init/mindflow_db.sql`.
+5. Point your production browser path cleanly to: http://localhost/
 
 ---
 
-## Setup Instructions for Development
+## Grading Evaluation Checklist
 
-### 1. Prerequisites
-- PHP 7.4+
-- MySQL 5.7+
-- Apache/Nginx with mod_rewrite
-- Composer (optional, for dependencies)
+Instructors are invited to use this structured sequence to verify complete operational alignment:
 
-### 2. Database Setup
-```sql
--- Create database
-CREATE DATABASE note_management;
-USE note_management;
+* [ ] Infrastructure Check: Execute docker compose up -d --build and check that ports 8080 and 3001 are serving safely.
+* [ ] Authentication Flow: Log into http://localhost:8080 using testuser1@gmail.com / 12345678.
+* [ ] Core Utility Run: Create, edit, label, pin, and remove a dynamic note instance.
+* [ ] Data Attachment: Attach an image asset to an active note; ensure upload renders properly.
+* [ ] Locking Integrity: Apply an isolated passcode to a note element; verify content obscures instantly.
+* [ ] Collaborative Echo: Open an Incognito browser pane. Log into testuser2@gmail.com. Share a live permission note from Account 1 and test that edits sync instantly across both screens without manual page reloads.
+* [ ] PWA Offline Integrity: Toggle your developer inspector panel network emulation mode to Offline; ensure cached assets remain reachable.
 
--- Import schema from provided SQL files
--- Or run migrations if available
 ```
 
-### 3. Configuration
-- Edit `db.php` with your database credentials
-- Create `.env` file (if using environment variables)
-- Set proper permissions on upload directories
-
-### 4. Service Workers & Offline Support
-- Place service worker files in root directory
-- Implement IndexedDB for offline note storage
-- Sync data when connection is restored
-
-### 5. Email Configuration
-- Configure mail server credentials in `email.php`
-- Set up email templates for notifications
-- Test email sending locally (use MailHog or similar)
-
-### 6. Testing Before Deployment
-- Test all 28 features
-- Verify responsive design on multiple devices
-- Test offline functionality with browser dev tools
-- Check database performance with large datasets
-- Validate security (no SQL injection, XSS, CSRF)
-
----
-
-## Deployment Options
-
-### Option A: Online Hosting
-- Use cloud services (Heroku, AWS, DigitalOcean, etc.)
-- Configure database on host platform
-- Enable HTTPS certificates
-- Document public URL and credentials
-
-### Option B: Docker Compose
-- Use provided `docker-compose.yml`
-- Include PHP, MySQL, Nginx services
-- Add `.dockerignore` to exclude unnecessary files
-- Provide clear instructions in `readme.txt`
-
----
-
-## Notes for Code Review
-
-1. **Base Code Status**: Current implementation includes authentication basics (login, register), profile management, and user preferences. Advanced features (sharing, real-time collaboration, offline support) still need implementation.
-
-2. **SQL Injection Risks**: Some files use string interpolation in queries. Migrate all queries to prepared statements before submission.
-
-3. **Email Verification**: Placeholder system in place. Implement actual email sending with verification tokens.
-
-4. **Code Organization**: Consider refactoring to MVC pattern with controllers, models, and views for better maintainability.
-
-5. **Testing**: Ensure all features work without errors and handle edge cases (empty notes list, invalid file uploads, etc.).
-
----
-
-## Grading Checklist
-
-- [ ] All 28 features implemented and tested
-- [ ] Code compiles and runs without errors
-- [ ] Database properly structured with all required tables
-- [ ] Responsive design verified on 3+ devices
-- [ ] Offline functionality working
-- [ ] Security vulnerabilities addressed
-- [ ] Demo video recorded (1080p, all members, all 28 features)
-- [ ] Rubric.docx completed with self-assessment
-- [ ] README.txt with setup instructions provided
-- [ ] Source code cleaned (no node_modules, .git history compressed, etc.)
-- [ ] Project submitted in ZIP format with correct naming
-
----
-
-**Last Updated**: April 8, 2026  
-**Version**: 1.0.0
+```

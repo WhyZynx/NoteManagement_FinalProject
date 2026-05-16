@@ -1,0 +1,13 @@
+FROM php:8.2-apache
+
+RUN docker-php-ext-install mysqli pdo pdo_mysql
+
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
+
+WORKDIR /var/www/html
+COPY . .
+
+RUN cd realtime-server && npm install
+
+EXPOSE 80 3001
