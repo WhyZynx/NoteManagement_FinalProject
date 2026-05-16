@@ -6,6 +6,17 @@ Project Compliance Note: This repository contains the complete source code, requ
 
 ---
 
+## Team Members
+
+| No. | Student ID | Full Name |
+|:---:|:-----------|:-----------|
+| 1 | 524H0019 | Liêu Thảo Nghi |
+| 2 | 524H0027 | Nguyễn Thị Như Quỳnh |
+| 3 | 524H0130 | Nguyễn Lý Bảo Trân |
+| 4 | 524H0040 | Võ Ngọc Thanh Vy |
+
+---
+
 ## Live Access and Repository
 
 * GitHub Repository: https://github.com/WhyZynx/NoteManagement_FinalProject.git
