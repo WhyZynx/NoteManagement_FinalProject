@@ -17,10 +17,11 @@ Project Compliance Note: This repository contains the complete source code, requ
 
 ---
 
-## Live Access and Repository
+## Live Access, Repository and Video Demo
 
 * GitHub Repository: https://github.com/WhyZynx/NoteManagement_FinalProject.git
 * Production Deployment: https://mindflow-note.onrender.com/
+* Video Demo: https://drive.google.com/file/d/1hVrtMU3tdV7zGaY4OQNWn60urwKeiJ7W/view?usp=drive_link
 
 ---
 
